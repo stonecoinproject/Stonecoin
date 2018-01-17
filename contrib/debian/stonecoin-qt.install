@@ -1,0 +1,6 @@
+usr/local/bin/stonecoin-qt usr/bin
+share/pixmaps/stonecoin32.xpm usr/share/pixmaps
+share/pixmaps/stonecoin16.xpm usr/share/pixmaps
+share/pixmaps/stonecoin128.png usr/share/pixmaps
+debian/stonecoin-qt.desktop usr/share/applications
+debian/stonecoin-qt.protocol usr/share/kde4/services/
