@@ -1,5 +1,5 @@
 ---
-name: "stonecoin-linux-0.12"
+name: "stonecoin-linux-1.0"
 enable_cache: true
 suites:
 - "trusty"

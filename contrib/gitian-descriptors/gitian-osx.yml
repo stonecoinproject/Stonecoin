@@ -1,11 +1,11 @@
 ---
-name: "stonecoin-osx-0.12"
+name: "stonecoin-osx-1.0"
 enable_cache: true
 suites:
 - "trusty"
 architectures:
 - "amd64"
-packages: 
+packages:
 - "curl"
 - "g++"
 - "git-core"

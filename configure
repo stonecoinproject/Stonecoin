@@ -25760,34 +25760,34 @@ fi
 
 
 
-$as_echo "#define CLIENT_VERSION_MAJOR 0" >>confdefs.h
+$as_echo "#define CLIENT_VERSION_MAJOR 1" >>confdefs.h
 
 
-$as_echo "#define CLIENT_VERSION_MINOR 12" >>confdefs.h
+$as_echo "#define CLIENT_VERSION_MINOR 0" >>confdefs.h
 
 
-$as_echo "#define CLIENT_VERSION_REVISION 1" >>confdefs.h
+$as_echo "#define CLIENT_VERSION_REVISION 0" >>confdefs.h
 
 
-$as_echo "#define CLIENT_VERSION_BUILD 50" >>confdefs.h
+$as_echo "#define CLIENT_VERSION_BUILD 2" >>confdefs.h
 
 
 $as_echo "#define CLIENT_VERSION_IS_RELEASE true" >>confdefs.h
 
 
-$as_echo "#define COPYRIGHT_YEAR 2017" >>confdefs.h
+$as_echo "#define COPYRIGHT_YEAR 2018" >>confdefs.h
 
-CLIENT_VERSION_MAJOR=0
+CLIENT_VERSION_MAJOR=1
 
-CLIENT_VERSION_MINOR=12
+CLIENT_VERSION_MINOR=0
 
-CLIENT_VERSION_REVISION=1
+CLIENT_VERSION_REVISION=0
 
-CLIENT_VERSION_BUILD=50
+CLIENT_VERSION_BUILD=2
 
 CLIENT_VERSION_IS_RELEASE=true
 
-COPYRIGHT_YEAR=2017
+COPYRIGHT_YEAR=2018
 
 
 
