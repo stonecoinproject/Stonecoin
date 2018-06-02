@@ -23,7 +23,7 @@ packages:
 - "python"
 reference_datetime: "2017-01-01 00:00:00"
 remotes:
-- "url": "https://github.com/stonecrypto/stonecoin.git"
+- "url": "https://github.com/tomevoll/stonecoin.git"
   "dir": "stonecoin"
 files:
 - "MacOSX10.9.sdk.tar.gz"
@@ -123,7 +123,7 @@ script: |
     popd
 
     make deploy
-    ${WRAP_DIR}/dmg dmg StoneCoin-Core.dmg ${OUTDIR}/${DISTNAME}-osx-unsigned.dmg
+    ${WRAP_DIR}/dmg dmg StoneCoin-Core.dmg ${OUTDIR}/stonecoin-${VERSION}-osx-unsigned.dmg
 
     cd installed
     find . -name "lib*.la" -delete
@@ -134,4 +134,4 @@ script: |
   done
   mkdir -p $OUTDIR/src
   mv $SOURCEDIST $OUTDIR/src
-  mv ${OUTDIR}/${DISTNAME}-x86_64-*.tar.gz ${OUTDIR}/${DISTNAME}-osx64.tar.gz
+  mv ${OUTDIR}/${DISTNAME}-x86_64-*.tar.gz ${OUTDIR}/stonecoin-${VERSION}-osx64.tar.gz

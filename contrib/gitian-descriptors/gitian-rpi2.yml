@@ -18,7 +18,7 @@ packages:
 - "g++-arm-linux-gnueabihf"
 reference_datetime: "2017-01-01 00:00:00"
 remotes:
-- "url": "https://github.com/stonecrypto/stonecoin.git"
+- "url": "https://github.com/tomevoll/stonecoin.git"
   "dir": "stonecoin"
 files:
 - "raspberrypi-tools.tar.gz"
@@ -110,4 +110,4 @@ script: |
   done
   mkdir -p $OUTDIR/src
   mv $SOURCEDIST $OUTDIR/src
-  mv ${OUTDIR}/${DISTNAME}-arm-*.tar.gz ${OUTDIR}/${DISTNAME}-RPi2.tar.gz
+  mv ${OUTDIR}/${DISTNAME}-arm-*.tar.gz ${OUTDIR}/stonecoin-${VERSION}-RPi2.tar.gz
