@@ -1,5 +1,5 @@
 build_darwin_CC: = $(shell xcrun -f clang)
-build_darwin_CXX: = $(shell xcrun -f clang++) -isystem $(dirname $(xcrun -find clang))/../lib/c++/v1 -isystem $(dirname $(xcrun -find clang))/../include" -DC_INCLUDE_DIRS="$(dirname $(xcrun -find clang))/../lib/c++/v1:$(dirname $(xcrun -find clang))/../include:/usr/include"
+build_darwin_CXX: = $(shell xcrun -f clang++) -I/usr/include/c++/5/ -I/usr/include/x86_64-linux-gnu/c++/5/
 build_darwin_AR: = $(shell xcrun -f ar)
 build_darwin_RANLIB: = $(shell xcrun -f ranlib)
 build_darwin_STRIP: = $(shell xcrun -f strip)
@@ -11,7 +11,7 @@ build_darwin_DOWNLOAD = curl --location --fail --connect-timeout $(DOWNLOAD_CONN
 
 #darwin host on darwin builder. overrides darwin host preferences.
 darwin_CC=$(shell xcrun -f clang) -mmacosx-version-min=$(OSX_MIN_VERSION)
-darwin_CXX:=$(shell xcrun -f clang++) -mmacosx-version-min=$(OSX_MIN_VERSION) -isystem $(dirname $(xcrun -find clang))/../lib/c++/v1 -isystem $(dirname $(xcrun -find clang))/../include" -DC_INCLUDE_DIRS="$(dirname $(xcrun -find clang))/../lib/c++/v1:$(dirname $(xcrun -find clang))/../include:/usr/include"
+darwin_CXX:=$(shell xcrun -f clang++) -mmacosx-version-min=$(OSX_MIN_VERSION) -I/usr/include/c++/5/ -I/usr/include/x86_64-linux-gnu/c++/5/
 darwin_AR:=$(shell xcrun -f ar)
 darwin_RANLIB:=$(shell xcrun -f ranlib)
 darwin_STRIP:=$(shell xcrun -f strip)
