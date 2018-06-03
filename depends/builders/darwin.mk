@@ -1,5 +1,5 @@
 build_darwin_CC: = $(shell xcrun -f clang)
-build_darwin_CXX: = $(shell xcrun -f clang++) 
+build_darwin_CXX: = $(shell xcrun -f clang++)
 build_darwin_AR: = $(shell xcrun -f ar)
 build_darwin_RANLIB: = $(shell xcrun -f ranlib)
 build_darwin_STRIP: = $(shell xcrun -f strip)
@@ -11,7 +11,7 @@ build_darwin_DOWNLOAD = curl --location --fail --connect-timeout $(DOWNLOAD_CONN
 
 #darwin host on darwin builder. overrides darwin host preferences.
 darwin_CC=$(shell xcrun -f clang) -mmacosx-version-min=$(OSX_MIN_VERSION)
-darwin_CXX:=$(shell xcrun -f clang++) -mmacosx-version-min=$(OSX_MIN_VERSION) -stdlib=libc++
+darwin_CXX:=$(shell xcrun -f clang++) -mmacosx-version-min=$(OSX_MIN_VERSION)
 darwin_AR:=$(shell xcrun -f ar)
 darwin_RANLIB:=$(shell xcrun -f ranlib)
 darwin_STRIP:=$(shell xcrun -f strip)

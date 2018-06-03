@@ -6,33 +6,27 @@ suites:
 architectures:
 - "amd64"
 packages:
-- "ca-certificates"
 - "curl"
 - "g++"
 - "git-core"
 - "pkg-config"
 - "autoconf"
-- "librsvg2-bin"
-- "libtiff-tools"
 - "libtool"
 - "automake"
 - "faketime"
 - "bsdmainutils"
 - "cmake"
-- "imagemagick"
 - "libcap-dev"
 - "libz-dev"
 - "libbz2-dev"
+- "ca-certificates"
 - "python"
-- "python-dev"
-- "python-setuptools"
-- "fonts-tuffy"
 reference_datetime: "2017-01-01 00:00:00"
 remotes:
 - "url": "https://github.com/tomevoll/stonecoin.git"
   "dir": "stonecoin"
 files:
-- "MacOSX10.11.sdk.tar.gz"
+- "MacOSX10.9.sdk.tar.gz"
 script: |
   WRAP_DIR=$HOME/wrapped
   HOSTS="x86_64-apple-darwin11"
@@ -80,9 +74,9 @@ script: |
   cd stonecoin
   BASEPREFIX=`pwd`/depends
 
-  mkdir -p ${BASEPREFIX}/SDKs
-  tar -C ${BASEPREFIX}/SDKs -xf ${BUILD_DIR}/MacOSX10.11.sdk.tar.gz
-  
+  mkdir -p ${BASEPREFIX}/SDKs/MacOSX10.9.sdk
+  tar -C ${BASEPREFIX}/SDKs/MacOSX10.9.sdk -xf ${BUILD_DIR}/MacOSX10.9.sdk.tar.gz
+
   # Build dependencies for each host
   for i in $HOSTS; do
     make ${MAKEOPTS} -C ${BASEPREFIX} HOST="${i}"
@@ -129,7 +123,7 @@ script: |
     popd
 
     make deploy
-    ${WRAP_DIR}/dmg dmg StoneCoin-Core.dmg ${OUTDIR}/stonecoin-${VERSION}-osx-unsigned.dmg
+    ${WRAP_DIR}/dmg dmg StoneCoin-Core.dmg ${OUTDIR}/${DISTNAME}-osx-unsigned.dmg
 
     cd installed
     find . -name "lib*.la" -delete
@@ -140,4 +134,4 @@ script: |
   done
   mkdir -p $OUTDIR/src
   mv $SOURCEDIST $OUTDIR/src
-  mv ${OUTDIR}/${DISTNAME}-x86_64-*.tar.gz ${OUTDIR}/stonecoin-${VERSION}-osx64.tar.gz
+  mv ${OUTDIR}/${DISTNAME}-x86_64-*.tar.gz ${OUTDIR}/${DISTNAME}-osx64.tar.gz
