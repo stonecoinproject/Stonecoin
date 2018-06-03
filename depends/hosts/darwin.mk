@@ -3,7 +3,7 @@ OSX_SDK_VERSION=10.9
 OSX_SDK=$(SDK_PATH)/MacOSX$(OSX_SDK_VERSION).sdk
 LD64_VERSION=241.9
 darwin_CC=clang -target $(host) -mmacosx-version-min=$(OSX_MIN_VERSION) --sysroot $(OSX_SDK) -mlinker-version=$(LD64_VERSION)
-darwin_CXX=clang++ -target $(host) -mmacosx-version-min=$(OSX_MIN_VERSION) --sysroot $(OSX_SDK) -mlinker-version=$(LD64_VERSION)
+darwin_CXX=clang++ -target $(host) -mmacosx-version-min=$(OSX_MIN_VERSION) --sysroot $(OSX_SDK) -mlinker-version=$(LD64_VERSION) -isystem $(dirname $(xcrun -find clang))/../lib/c++/v1 -isystem $(dirname $(xcrun -find clang))/../include" -DC_INCLUDE_DIRS="$(dirname $(xcrun -find clang))/../lib/c++/v1:$(dirname $(xcrun -find clang))/../include:/usr/include"
 
 darwin_CFLAGS=-pipe
 darwin_CXXFLAGS=$(darwin_CFLAGS) -isystem $(dirname $(xcrun -find clang))/../lib/c++/v1 -isystem $(dirname $(xcrun -find clang))/../include" -DC_INCLUDE_DIRS="$(dirname $(xcrun -find clang))/../lib/c++/v1:$(dirname $(xcrun -find clang))/../include:/usr/include"
