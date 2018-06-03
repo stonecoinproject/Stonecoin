@@ -32,7 +32,7 @@ remotes:
 - "url": "https://github.com/tomevoll/stonecoin.git"
   "dir": "stonecoin"
 files:
-- "MacOSX10.11.sdk.tar.gz"
+- "MacOSX10.9.sdk.tar.gz"
 script: |
   WRAP_DIR=$HOME/wrapped
   HOSTS="x86_64-apple-darwin11"
@@ -80,8 +80,8 @@ script: |
   cd stonecoin
   BASEPREFIX=`pwd`/depends
 
-  mkdir -p ${BASEPREFIX}/SDKs/MacOSX10.11.sdk
-  tar -C ${BASEPREFIX}/SDKs/MacOSX10.11.sdk -xf ${BUILD_DIR}/MacOSX10.11.sdk.tar.gz
+  mkdir -p ${BASEPREFIX}/SDKs/MacOSX10.9.sdk
+  tar -C ${BASEPREFIX}/SDKs/MacOSX10.9.sdk -xf ${BUILD_DIR}/MacOSX10.9.sdk.tar.gz
   
   # Build dependencies for each host
   for i in $HOSTS; do
