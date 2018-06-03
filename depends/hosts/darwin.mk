@@ -6,12 +6,12 @@ darwin_CC=clang -target $(host) -mmacosx-version-min=$(OSX_MIN_VERSION) --sysroo
 darwin_CXX=clang++ -target $(host) -mmacosx-version-min=$(OSX_MIN_VERSION) --sysroot $(OSX_SDK) -mlinker-version=$(LD64_VERSION)
 
 darwin_CFLAGS=-pipe
-darwin_CXXFLAGS=$(darwin_CFLAGS)
+darwin_CXXFLAGS=$(darwin_CFLAGS) -isystem $(dirname $(xcrun -find clang))/../lib/c++/v1 -isystem $(dirname $(xcrun -find clang))/../include" -DC_INCLUDE_DIRS="$(dirname $(xcrun -find clang))/../lib/c++/v1:$(dirname $(xcrun -find clang))/../include:/usr/include"
 
 darwin_release_CFLAGS=-O2
-darwin_release_CXXFLAGS=$(darwin_release_CFLAGS)
+darwin_release_CXXFLAGS=$(darwin_release_CFLAGS) -isystem $(dirname $(xcrun -find clang))/../lib/c++/v1 -isystem $(dirname $(xcrun -find clang))/../include" -DC_INCLUDE_DIRS="$(dirname $(xcrun -find clang))/../lib/c++/v1:$(dirname $(xcrun -find clang))/../include:/usr/include"
 
 darwin_debug_CFLAGS=-O1
-darwin_debug_CXXFLAGS=$(darwin_debug_CFLAGS)
+darwin_debug_CXXFLAGS=$(darwin_debug_CFLAGS) -isystem $(dirname $(xcrun -find clang))/../lib/c++/v1 -isystem $(dirname $(xcrun -find clang))/../include" -DC_INCLUDE_DIRS="$(dirname $(xcrun -find clang))/../lib/c++/v1:$(dirname $(xcrun -find clang))/../include:/usr/include"
 
 darwin_native_toolchain=native_cctools
