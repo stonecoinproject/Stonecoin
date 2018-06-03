@@ -82,10 +82,7 @@ script: |
 
   mkdir -p ${BASEPREFIX}/SDKs/MacOSX10.11.sdk
   tar -C ${BASEPREFIX}/SDKs/MacOSX10.11.sdk -xf ${BUILD_DIR}/MacOSX10.11.sdk.tar.gz
-  echo ${BASEPREFIX}/SDKs
-  ls ${BASEPREFIX}/SDKs
-  echo ${BASEPREFIX}/SDKs/MacOSX10.11.sdk
-ls ${BASEPREFIX}/SDKs/MacOSX10.11.sdk
+  
   # Build dependencies for each host
   for i in $HOSTS; do
     make ${MAKEOPTS} -C ${BASEPREFIX} HOST="${i}"
