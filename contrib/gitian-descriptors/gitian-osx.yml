@@ -80,8 +80,8 @@ script: |
   cd stonecoin
   BASEPREFIX=`pwd`/depends
 
-  mkdir -p ${BASEPREFIX}/SDKs
-  tar -C ${BASEPREFIX}/SDKs -xf ${BUILD_DIR}/MacOSX10.11.sdk.tar.gz
+  mkdir -p ${BASEPREFIX}/SDKs/MacOSX10.11.sdk
+  tar -C ${BASEPREFIX}/SDKs/MacOSX10.11.sdk -xf ${BUILD_DIR}/MacOSX10.11.sdk.tar.gz
   echo ${BASEPREFIX}/SDKs
   ls ${BASEPREFIX}/SDKs
   echo ${BASEPREFIX}/SDKs/MacOSX10.11.sdk
