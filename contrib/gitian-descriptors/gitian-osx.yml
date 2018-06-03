@@ -23,7 +23,6 @@ packages:
 - "libcap-dev"
 - "libz-dev"
 - "libbz2-dev"
-- "libunivalue-dev"
 - "python"
 - "python-dev"
 - "python-setuptools"
