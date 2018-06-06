@@ -149,14 +149,16 @@ public:
 
         strSporkPubKey = "040ece46c9af164be1c0d6597309c725374a9438e8f26e78530eadfd2e6213036dae3700825b179d282365af1dbd43f5197476ec7bb6af830e2680f57fab2537a7";
         strMasternodePaymentsPubKey = "040ece46c9af164be1c0d6597309c725374a9438e8f26e78530eadfd2e6213036dae3700825b179d282365af1dbd43f5197476ec7bb6af830e2680f57fab2537a7";
-
+       
         checkpointData = (CCheckpointData) {
             boost::assign::map_list_of
             (    0, uint256S("0x00000e8a8fcdc02729b7019097b5d85334698078899ef6d9c791f3995c0e474d"))
-            (88465, uint256S("0x000000004bbe2dd4fc53c4e0f4f4ac9ce9d217084989edb810ce4868c3192006")),
+            (88465, uint256S("0x000000004bbe2dd4fc53c4e0f4f4ac9ce9d217084989edb810ce4868c3192006"))
+            (90000, uint256S("0x000000006ce0d3c216e7184dfae1e11852d7496f5eb27698aba0fe27f77212ac"))
+            (90500, uint256S("0x00000000ef37c0d91c5fae77826998295889e7fa0d81a9e04fd601e94337ad78")),
           //  (    50, uint256S("0x000002478d38dcbbf90750b98c403ecb814d94bcb8a0090c904b5c31e6dedecd")),
-            1527766328, // * UNIX timestamp of last checkpoint block
-            104639,    //  total number of transactions between genesis and last checkpoint
+            1528025164, // * UNIX timestamp of last checkpoint block
+            106929,    //  total number of transactions between genesis and last checkpoint
                         //   (the tx=... number in the SetBestChain debug.log lines)
             720         // * estimated number of transactions per day after checkpoint
         };
