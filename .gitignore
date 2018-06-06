@@ -147,14 +147,3 @@ src/secp256k1/build-aux/m4/ltoptions.m4
 src/secp256k1/build-aux/m4/ltsugar.m4
 src/secp256k1/build-aux/m4/ltversion.m4
 src/secp256k1/build-aux/m4/lt~obsolete.m4
-nbproject/configurations.xml
-nbproject/project.xml
-nbproject/private/c_standard_headers_indexer.c
-nbproject/private/CodeAssistancePathMapper.properties
-nbproject/private/configurations.xml
-nbproject/private/cpp_standard_headers_indexer.cpp
-nbproject/private/Default.properties
-nbproject/private/launcher.properties
-nbproject/private/private.xml
-nbproject/private/tools/localhost/GNU/g++
-nbproject/private/tools/localhost/GNU/gcc
