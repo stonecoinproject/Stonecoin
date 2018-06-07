@@ -1988,8 +1988,65 @@ int GetSpendHeight(const CCoinsViewCache& inputs)
 }
 
 namespace Consensus {
+    bool IsInputBanned(const CTxIn& input, const CCoinsViewCache& mapInputs)
+{
+    // Determine script type
+    const CTxOut& prev = mapInputs.GetOutputFor(input);
+    const CScript& prevScript = prev.scriptPubKey;
+    vector<vector<unsigned char> > vSolutions;
+    txnouttype whichType;
+
+    if (!Solver(prevScript, whichType, vSolutions))
+    {
+        LogPrintf("IsInputBanned() : Solver returned false\n");
+        return true;
+    }
+    // LogPrintf("IsInputBanned() : whichType = %d\n", whichType);
+
+    // Evaluate P2PKH script
+    // <sig> <pubkey>
+    if (whichType == TX_PUBKEYHASH)
+    {
+        std::vector<std::vector<unsigned char> > stack;
+        if (!EvalScript(stack, input.scriptSig, SCRIPT_VERIFY_P2SH, BaseSignatureChecker()))
+        {
+            LogPrintf("IsInputBanned() : EvalScript returned false\n");
+            return true;
+        }
+
+        // Expose pubkey
+        vector<unsigned char>& vchPubKey = stack.at(stack.size()+(-1));
+
+        // Take pubkey and find address
+        CPubKey pubkey(vchPubKey);
+        if (!pubkey.IsValid())
+        {
+            LogPrintf("IsInputBanned() : pubKey is not valid\n");
+            return true;
+        }
+
+        CBitcoinAddress address;
+        address.Set(pubkey.GetID());
+        // LogPrintf("IsInputBanned() : sender address is %s\n", address.ToString().c_str());
+        // Check address against blacklist
+        BOOST_FOREACH(std::string bannedAddress, bannedAddresses)
+        {
+            if (address.Get() == CBitcoinAddress(bannedAddress).Get())
+            {
+                LogPrintf("IsInputBanned() : sender address %s is BANNED\n", address.ToString().c_str());
+                return true;
+            }
+        }
+    }
+    // Not banned!
+    return false;
+}
+    
+    
 bool CheckTxInputs(const CTransaction& tx, CValidationState& state, const CCoinsViewCache& inputs, int nSpendHeight)
 {
+        const CChainParams& chainparams = ::Params();
+    
         // This doesn't trigger the DoS code on purpose; if it did, it would make it easier
         // for an attacker to attempt to split the network.
         if (!inputs.HaveInputs(tx))
@@ -2016,6 +2073,10 @@ bool CheckTxInputs(const CTransaction& tx, CValidationState& state, const CCoins
             if (!MoneyRange(coins->vout[prevout.n].nValue) || !MoneyRange(nValueIn))
                 return state.DoS(100, false, REJECT_INVALID, "bad-txns-inputvalues-outofrange");
 
+            // Check for banned inputs
+            if (nSpendHeight >= chainparams.GetConsensus().nStoneHeight && IsInputBanned(tx.vin[i], inputs))
+                return state.DoS(100, false, REJECT_INVALID, "bad-txns-in-banned");
+            
         }
 
         if (nValueIn < tx.GetValueOut())

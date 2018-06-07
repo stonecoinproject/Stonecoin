@@ -64,6 +64,9 @@ class CMainParams : public CChainParams {
 public:
     CMainParams() {
         strNetworkID = "main";
+        
+        consensus.nPostmine = "SgSFMdHJrX7VaC4pE9BbbW2yenCeTcu5wD";
+        consensus.nStoneHeight = 90000;
         consensus.nSubsidyHalvingInterval = 262800; // one year
         consensus.nMasternodePaymentsStartBlock = 1000;
         consensus.nMasternodePaymentsIncreaseBlock = 158000; // not used

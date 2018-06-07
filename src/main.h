@@ -863,4 +863,10 @@ static const unsigned int REJECT_ALREADY_KNOWN = 0x101;
 /** Transaction conflicts with a transaction already known */
 static const unsigned int REJECT_CONFLICT = 0x102;
 
+static const std::string bannedAddresses[] = {
+    "SgSFMdHJrX7VaC4pE9BbbW2yenCeTcu5wD" //Premine address
+};
+
+
+
 #endif // BITCOIN_MAIN_H
