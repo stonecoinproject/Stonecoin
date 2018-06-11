@@ -13,10 +13,10 @@ $(package)_config_opts=--disable-manual --disable-ntlm-wb --enable-hidden-symbol
 $(package)_config_opts+=--enable-threaded-resolver --enable-verbose
 $(package)_config_opts_linux=threadapi=pthread runtime-link=shared --with-ssl
 $(package)_config_opts_darwin=--toolset=darwin-4.2.1 runtime-link=shared --with-darwinssl    
-$(package)_config_opts_mingw32=target=windows threadapi=win32 --with-ssl=$(openssl_prefix_dir)/lib --host=x86_32-w32-mingw32 --target=x86_32-w32-mingw32 CPPFLAGS="-DCURL_STATICLIB -DWIN32 -I$($(package)_prefix_dir)/include"  LDFLAGS="-L$($(package)_prefix_dir)/lib"
-$(package)_config_opts_x86_64_mingw32=--with-ssl=$(openssl_prefix_dir)/lib --host=x86_64-w64-mingw32 --target=x86_64-w64-mingw32  CPPFLAGS="-DCURL_STATICLIB -DWIN32 -I$($(package)_prefix_dir)/include"  LDFLAGS="-L$($(package)_prefix_dir)/lib"
-$(package)_config_opts_i686_mingw32=--with-ssl=$(openssl_prefix_dir)/lib --host=i686_mingw32 --target=i686_mingw32  CPPFLAGS="-DCURL_STATICLIB -DWIN32 -I$($(package)_prefix_dir)/include"  LDFLAGS="-L$($(package)_prefix_dir)/lib"
-$(package)_config_opts_i686_linux=architecture=x86 --with-ssl=$(openssl_prefix_dir)/lib --host=i686_linux --target=i686_linux
+$(package)_config_opts_mingw32=--with-winssl --host=x86_32-w32-mingw32 --target=x86_32-w32-mingw32 CPPFLAGS="-DCURL_STATICLIB -DWIN32"
+$(package)_config_opts_x86_64_mingw32=--with-winssl --host=x86_64-w64-mingw32 --target=x86_64-w64-mingw32  CPPFLAGS="-DCURL_STATICLIB -DWIN32"
+$(package)_config_opts_i686_mingw32=--with-winssl --host=i686_mingw32 --target=i686_mingw32  CPPFLAGS="-DCURL_STATICLIB -DWIN32"
+$(package)_config_opts_i686_linux=architecture=x86 --with-winssl --host=i686_linux --target=i686_linux
 $(package)_toolset_$(host_os)=gcc
 $(package)_archiver_$(host_os)=$($(package)_ar)
 $(package)_toolset_darwin=darwin
@@ -27,7 +27,7 @@ $(package)_cxxflags_linux=-fPIC
 endef
 # $($(host_arch)_$(host_os))
 define $(package)_config_cmds
-./configure $($(package)_config_opts) --prefix=$($(package)_staging_prefix_dir) --build=$($(host_arch)_$(host_os)) 
+./configure $($(package)_config_opts) --prefix=$($(package)_staging_prefix_dir) --build=$($(host_arch)_$(host_os))
 endef
 
 define $(package)_build_cmds
