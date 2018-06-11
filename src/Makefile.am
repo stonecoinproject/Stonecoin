@@ -1,4 +1,4 @@
-DIST_SUBDIRS = secp256k1 univalue
+DIST_SUBDIRS = secp256k1 univalue updater
 
 AM_LDFLAGS = $(PTHREAD_CFLAGS) $(LIBTOOL_LDFLAGS) $(HARDENED_LDFLAGS)
 AM_CXXFLAGS = $(HARDENED_CXXFLAGS)
@@ -167,6 +167,7 @@ BITCOIN_CORE_H = \
   ui_interface.h \
   uint256.h \
   undo.h \
+  updater/updater.h \
   util.h \
   utilmoneystr.h \
   utilstrencodings.h \
@@ -233,6 +234,7 @@ libbitcoin_server_a_SOURCES = \
   torcontrol.cpp \
   txdb.cpp \
   txmempool.cpp \
+  updater/updater.cpp \
   validationinterface.cpp \
   versionbits.cpp \
   $(BITCOIN_CORE_H)
@@ -381,6 +383,7 @@ endif
 libbitcoin_cli_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
 libbitcoin_cli_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 libbitcoin_cli_a_SOURCES = \
+  updater/updater.cpp \
   rpcclient.cpp \
   $(BITCOIN_CORE_H)
 
@@ -405,7 +408,8 @@ stonecoind_LDADD = \
   $(LIBBITCOIN_CRYPTO) \
   $(LIBLEVELDB) \
   $(LIBMEMENV) \
-  $(LIBSECP256K1)
+  $(LIBSECP256K1) 
+  
 
 if ENABLE_ZMQ
 stonecoind_LDADD += $(LIBBITCOIN_ZMQ) $(ZMQ_LIBS)
@@ -430,7 +434,8 @@ endif
 stonecoin_cli_LDADD = \
   $(LIBBITCOIN_CLI) \
   $(LIBUNIVALUE) \
-  $(LIBBITCOIN_UTIL)
+  $(LIBBITCOIN_UTIL) 
+  
 stonecoin_cli_LDADD += $(BOOST_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(EVENT_LIBS)
 #
 
@@ -450,6 +455,7 @@ stonecoin_tx_LDADD = \
   $(LIBBITCOIN_UTIL) \
   $(LIBBITCOIN_CRYPTO) \
   $(LIBSECP256K1)
+  
 
 stonecoin_tx_LDADD += $(BOOST_LIBS) $(CRYPTO_LIBS)
 #

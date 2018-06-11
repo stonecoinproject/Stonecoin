@@ -1,4 +1,7 @@
 dnl require autoconf 2.60 (AS_ECHO/AS_ECHO_N)
+
+CPPFLAGS="$CPPFLAGS -DCURL_STATICLIB"
+
 AC_PREREQ([2.60])
 define(_CLIENT_VERSION_MAJOR, 1)
 define(_CLIENT_VERSION_MINOR, 0)
@@ -236,7 +239,9 @@ case $host in
      AC_CHECK_LIB([shlwapi],      [main],, AC_MSG_ERROR(lib missing))
      AC_CHECK_LIB([iphlpapi],      [main],, AC_MSG_ERROR(lib missing))
      AC_CHECK_LIB([crypt32],      [main],, AC_MSG_ERROR(lib missing))
+  	 AC_CHECK_LIB([curl],      [main],, AC_MSG_ERROR(lib missing))
 
+	 
      # -static is interpreted by libtool, where it has a different meaning.
      # In libtool-speak, it's -all-static.
      AX_CHECK_LINK_FLAG([[-static]],[LIBTOOL_APP_LDFLAGS="$LIBTOOL_APP_LDFLAGS -all-static"])
