@@ -2,15 +2,12 @@
 
 int progress_callback(void* p, double dltotal, double dlnow, double ultotal, double ulnow)
 {
-    //struct myprogress* myp = (struct myprogress*)p;
-    //CURL* curl = myp->curl;
-
     double dl, dt;
     dl = dlnow / 1024 / 1024;
     dt = dltotal / 1024 / 1024;
     double perc = dl / dt * 100;
 
-   // printf("%f : %f : %d%s\n", dl, dt, (int)perc, "%");
+    // printf("%f : %f : %d%s\n", dl, dt, (int)perc, "%");
 
     return 0;
     //return 1 to stop
@@ -77,7 +74,7 @@ bool updateFile(const char* oldFile, const char* newFile)
 {
     int res = 0;
     if (getFileName(getexepath()).compare(oldFile) == 0)
-    res = rename(oldFile, "dummy~"); 
+        res = rename(oldFile, "temp~");
     else
         res = remove(oldFile); //this also calls unlink
 
@@ -91,113 +88,98 @@ bool updateFile(const char* oldFile, const char* newFile)
     return true;
 }
 
+bool downloadUpdatefile(Consensus::Params& params, std::string os, std::string bits, std::string file)
+{
+#ifndef WIN32
+    if (downloadFile(params.nUpdateLocation + os + "/" + bits + "/" + file, file + "_tmp")) {
+        if (!updateFile(file.c_str(), (file + "_tmp").c_str()))
+            return false;
+    } else {
+        fprintf(stderr, "upgrade of '%s' failed: file not found or server error\nUpdate aborted.\n", file);
+        return false;
+    }
+#else
+    if (downloadFile(params.nUpdateLocation + os + "/" + bits + "/" + file + ".exe", file + "_tmp")) {
+        if (!updateFile((file + ".exe").c_str(), (file + "_tmp").c_str()))
+            return false;
+    } else {
+        fprintf(stderr, "upgrade of '%s.exe' failed: file not found or server error\nUpdate aborted.\n", file);
+        return false;
+    }
+#endif
+
+    return true;
+}
+
+
+bool doupdate(Consensus::Params& params, std::string os, std::string bits)
+{
+    if (!downloadUpdatefile(params, os, bits, "stonecoind"))
+        return false;
+    if (!downloadUpdatefile(params, os, bits, "stonecoin-cli"))
+        return false;
+    if (!downloadUpdatefile(params, os, bits, "stonecoin-tx"))
+        return false;
+    return true;
+}
+
 
 void downloadUpdate(Consensus::Params& params)
 {
-	
-    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-    remove("dummy~");
+    //boost::this_thread::sleep(boost::posix_time::milliseconds(1000)); //needed ?
+    remove("temp~");
     std::string runningApp = getexepath();
-	//test download
-    //downloadFile("https://github.com/tomevoll/stonecoin/releases/download/v1.0.0.3-pre1/stonecrypto-1.0.0.3-linux64.tar.gz", "temp.tar.gz");
+
     switch (getCurrentOs()) {
-    case WINDOWS_32: {
-        printf("%s", "WINDOWS_32");
-        return;
-        break;
-    }
-    case WINDOWS_64: {
-        printf("%s", "WINDOWS_64");
-        return;
-        break;
-    }
-    case LINUX_32: {
-        printf("%s", "LINUX_32\n");
-        bool bDaemon = downloadFile(params.nUpdateLocation + "linux/32/stonecoind", "stonecoind_tmp");
-        if (bDaemon) {
-            if (!updateFile("stonecoind", "stonecoind_tmp"))
-                return;
-        } else {
-            fprintf(stderr, "upgrade of stonecoind failed: file not found or server error\nUpdate aborted.\n");
+		case WINDOWS_32: {
+			printf("%s", "WINDOWS_32");
+			return;
+			break;
+		}
+		case WINDOWS_64: {
+			printf("%s", "WINDOWS_64");
+			return;
+			break;
+		}
+		case LINUX_32: {
+			if (!doupdate(params, "linux", "32"))
+				return;
+
+			execlp(runningApp.c_str(), getFileName(runningApp).c_str(), NULL); //replaces current running process with a new image
+			fprintf(stderr, "failed to restart '%s'\n", getFileName(runningApp).c_str());
+			break;
+		}
+		case LINUX_64: {
+			if (!doupdate(params, "linux", "64"))
+				return;
+
+			execlp(runningApp.c_str(), getFileName(runningApp).c_str(), NULL); //replaces current running process with a new image
+			fprintf(stderr, "failed to restart '%s'\n", getFileName(runningApp).c_str());
+			break;
+		}
+		case MAC_OSX: {
+           if (!doupdate(params, "mac", "osx"))
             return;
-        }
 
-        bool bCli = downloadFile(params.nUpdateLocation + "linux/32/stonecoin-cli", "stonecoin-cli_tmp");
-        if (bCli) {
-            if (!updateFile("stonecoin-cli", "stonecoin-cli_tmp"))
+            execlp(runningApp.c_str(), getFileName(runningApp).c_str(), NULL); //replaces current running process with a new image
+            fprintf(stderr, "failed to restart '%s'\n", getFileName(runningApp).c_str());
+			break;
+		}
+		case PI2: {
+            if (!doupdate(params, "pi", "2"))
                 return;
-        } else {
-            fprintf(stderr, "upgrade of stonecoin-cli failed: file not found or server error\nUpdate aborted.\n");
-            return;
-        }
 
-        bool bTx = downloadFile(params.nUpdateLocation + "linux/32/stonecoin-tx", "stonecoin-tx_tmp");
-        if (bTx) {
-            if (!updateFile("stonecoin-tx", "stonecoin-tx_tmp"))
-                return;
-        } else {
-            fprintf(stderr, "upgrade of stonecoin-tx failed: file not found or server error\nUpdate aborted.\n");
-            return;
-        }
-
-        //detect running file stonecoind/stonecoin-qt and relaunch here
-        execlp(runningApp.c_str(), getFileName(runningApp).c_str(), NULL); //replaces current running process with a new image
-
-        fprintf(stderr, "failed to restart '%s'\n", getFileName(runningApp).c_str());
-        //quick_exit(0);
-           
-      
-        break;
-    }
-    case LINUX_64: {
-        printf("%s", "LINUX_64\n");
-        bool bDaemon = downloadFile(params.nUpdateLocation + "linux/64/stonecoind", "stonecoind_tmp");
-        if (bDaemon) {
-            if (!updateFile("stonecoind", "stonecoind_tmp"))
-                return;
-        } else {
-            fprintf(stderr, "upgrade of stonecoind failed: file not found or server error\nUpdate aborted.\n");
-            return;
-        }
-
-        bool bCli = downloadFile(params.nUpdateLocation + "linux/64/stonecoin-cli", "stonecoin-cli_tmp");
-        if (bCli) {
-            if (!updateFile("stonecoin-cli", "stonecoin-cli_tmp"))
-                return;
-        } else {
-            fprintf(stderr, "upgrade of stonecoin-cli failed: file not found or server error\nUpdate aborted.\n");
-            return;
-        }
-
-        bool bTx = downloadFile(params.nUpdateLocation + "linux/64/stonecoin-tx", "stonecoin-tx_tmp");
-        if (bTx) {
-            if (!updateFile("stonecoin-tx", "stonecoin-tx_tmp"))
-                return;
-        } else {
-            fprintf(stderr, "upgrade of stonecoin-tx failed: file not found or server error\nUpdate aborted.\n");
-            return;
-        }
-
-        //detect running file stonecoind/stonecoin-qt and relaunch here
-          execlp(runningApp.c_str(), getFileName(runningApp).c_str(), NULL); //replaces current running process with a new image
-        
-	    fprintf(stderr, "failed to restart '%s'\n", getFileName(runningApp).c_str());
-        //quick_exit(0);
-        break;
-    }
-    case MAC_OSX: {
-        break;
-    }
-    case PI2: {
-        break;
-    }
-    default: {
-    }
+            execlp(runningApp.c_str(), getFileName(runningApp).c_str(), NULL); //replaces current running process with a new image
+            fprintf(stderr, "failed to restart '%s'\n", getFileName(runningApp).c_str());
+            break;
+		}
+		default: {
+		}
     }
 }
 
 
-//test curl
+
 bool downloadFile(std::string url, std::string saveas)
 {
     CURL* curl;
