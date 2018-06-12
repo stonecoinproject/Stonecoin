@@ -344,11 +344,11 @@ case $host in
      ;;
    *linux*)
      TARGET_OS=linux
-     LEVELDB_TARGET_FLAGS="-DOS_LINUX"
+     LEVELDB_TARGET_FLAGS="-DOS_LINUX  -DCURL_STATICLIB"
      ;;
    *)
      OTHER_OS=`echo ${host_os} | awk '{print toupper($0)}'`
-     LEVELDB_TARGET_FLAGS="-DOS_${OTHER_OS}"
+     LEVELDB_TARGET_FLAGS="-DOS_${OTHER_OS}  -DCURL_STATICLIB"
      ;;
 esac
 
@@ -715,6 +715,7 @@ if test x$use_pkgconfig = xyes; then
     [PKG_CHECK_MODULES],
     [
       PKG_CHECK_MODULES([SSL], [libssl],, [AC_MSG_ERROR(openssl  not found.)])
+      PKG_CHECK_MODULES([CURL], [libcurl],, [AC_MSG_ERROR(libcurl  not found.)])
       PKG_CHECK_MODULES([CRYPTO], [libcrypto],,[AC_MSG_ERROR(libcrypto  not found.)])
       BITCOIN_QT_CHECK([PKG_CHECK_MODULES([PROTOBUF], [protobuf], [have_protobuf=yes], [BITCOIN_QT_FAIL(libprotobuf not found)])])
       if test x$use_qr != xno; then
@@ -741,6 +742,7 @@ if test x$use_pkgconfig = xyes; then
 else
   AC_CHECK_HEADER([openssl/crypto.h],,AC_MSG_ERROR(libcrypto headers missing))
   AC_CHECK_LIB([crypto],      [main],CRYPTO_LIBS=-lcrypto, AC_MSG_ERROR(libcrypto missing))
+  AC_CHECK_LIB([curl],      [main],CURL_LIBS=-lcurl, AC_MSG_ERROR(libcurl missing))
 
   AC_CHECK_HEADER([openssl/ssl.h],, AC_MSG_ERROR(libssl headers missing),)
   AC_CHECK_LIB([ssl],         [main],SSL_LIBS=-lssl, AC_MSG_ERROR(libssl missing))
@@ -777,7 +779,7 @@ fi
 CXXFLAGS_TEMP="$CXXFLAGS"
 LIBS_TEMP="$LIBS"
 CXXFLAGS="$CXXFLAGS $SSL_CFLAGS $CRYPTO_CFLAGS"
-LIBS="$LIBS $SSL_LIBS $CRYPTO_LIBS"
+LIBS="$LIBS $SSL_LIBS $CRYPTO_LIBS $CURL_LIBS"
 AC_CHECK_HEADER([openssl/ec.h],, AC_MSG_ERROR(OpenSSL ec header missing),)
 CXXFLAGS="$CXXFLAGS_TEMP"
 LIBS="$LIBS_TEMP"

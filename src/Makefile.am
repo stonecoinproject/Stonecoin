@@ -419,7 +419,7 @@ if ENABLE_WALLET
 stonecoind_LDADD += libbitcoin_wallet.a
 endif
 
-stonecoind_LDADD += $(BOOST_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS)
+stonecoind_LDADD += $(BOOST_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS) $(CURL_LIBS)
 
 # stonecoin-cli binary #
 stonecoin_cli_SOURCES = stonecoin-cli.cpp
@@ -436,7 +436,7 @@ stonecoin_cli_LDADD = \
   $(LIBUNIVALUE) \
   $(LIBBITCOIN_UTIL) 
   
-stonecoin_cli_LDADD += $(BOOST_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(EVENT_LIBS)
+stonecoin_cli_LDADD += $(BOOST_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(EVENT_LIBS) $(CURL_LIBS)
 #
 
 # stonecoin-tx binary #
@@ -457,7 +457,7 @@ stonecoin_tx_LDADD = \
   $(LIBSECP256K1)
   
 
-stonecoin_tx_LDADD += $(BOOST_LIBS) $(CRYPTO_LIBS)
+stonecoin_tx_LDADD += $(BOOST_LIBS) $(CRYPTO_LIBS) $(CURL_LIBS)
 #
 
 # bitcoinconsensus library #

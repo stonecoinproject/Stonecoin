@@ -42,21 +42,99 @@ updater_ostype getCurrentOs()
 }
 
 
-void downloadUpdate(Consensus::Params* params)
+bool updateFile(const char* oldFile, const char* newFile)
+{
+    int res = remove(oldFile); //this also calls unlink
+    if (res == 0) {
+        rename(newFile, oldFile);
+        fprintf(stdout, "%s updated.\n", oldFile);
+    } else {
+        fprintf(stderr, "unlink failed on '%s' update aborted.\n", oldFile);
+        return false;
+    }
+    return true;
+}
+
+
+void downloadUpdate(Consensus::Params& params)
 {
     //test download
-	downloadFile("https://github.com/tomevoll/stonecoin/releases/download/v1.0.0.3-pre1/stonecrypto-1.0.0.3-linux64.tar.gz", "temp.tar.gz");
+    //downloadFile("https://github.com/tomevoll/stonecoin/releases/download/v1.0.0.3-pre1/stonecrypto-1.0.0.3-linux64.tar.gz", "temp.tar.gz");
     switch (getCurrentOs()) {
     case WINDOWS_32: {
+        printf("%s", "WINDOWS_32");
+        return;
         break;
     }
     case WINDOWS_64: {
+        printf("%s", "WINDOWS_64");
+        return;
         break;
     }
     case LINUX_32: {
-        break;
+        printf("%s", "LINUX_32\n");
+        bool bDaemon = downloadFile(params.nUpdateLocation + "linux/32/stonecoind", "stonecoind_tmp");
+        if (bDaemon) {
+			if (!updateFile("stonecoind", "stonecoind_tmp"))
+                return;
+        } else {
+            fprintf(stderr, "upgrade of stonecoind failed: file not found or server error\nUpdate aborted.\n");
+            return;
+        }
+
+        bool bCli = downloadFile(params.nUpdateLocation + "linux/32/stonecoin-cli", "stonecoin-cli_tmp");
+        if (bCli) {
+            if (!updateFile("stonecoin-cli", "stonecoin-cli_tmp")) 
+                return;
+        } else {
+            fprintf(stderr, "upgrade of stonecoin-cli failed: file not found or server error\nUpdate aborted.\n");
+            return;
+        }
+		
+		bool bTx = downloadFile(params.nUpdateLocation + "linux/32/stonecoin-tx", "stonecoin-tx_tmp");
+        if (bTx) {
+            if (!updateFile("stonecoin-tx", "stonecoin-tx_tmp"))
+                return;
+        } else {
+            fprintf(stderr, "upgrade of stonecoin-tx failed: file not found or server error\nUpdate aborted.\n");
+            return;
+        }
+
+		//detect running file stonecoind/stonecoin-qt and relaunch here
+
+		break;
     }
     case LINUX_64: {
+        printf("%s", "LINUX_64");
+        bool bDaemon = downloadFile(params.nUpdateLocation + "linux/64/stonecoind", "stonecoind_tmp");
+        if (bDaemon) {
+            if (!updateFile("stonecoind", "stonecoind_tmp"))
+                return;
+        } else {
+            fprintf(stderr, "upgrade of stonecoind failed: file not found or server error\nUpdate aborted.\n");
+            return;
+        }
+
+        bool bCli = downloadFile(params.nUpdateLocation + "linux/64/stonecoin-cli", "stonecoin-cli_tmp");
+        if (bCli) {
+            if (!updateFile("stonecoin-cli", "stonecoin-cli_tmp"))
+                return;
+        } else {
+            fprintf(stderr, "upgrade of stonecoin-cli failed: file not found or server error\nUpdate aborted.\n");
+            return;
+        }
+
+        bool bTx = downloadFile(params.nUpdateLocation + "linux/64/stonecoin-tx", "stonecoin-tx_tmp");
+        if (bTx) {
+            if (!updateFile("stonecoin-tx", "stonecoin-tx_tmp"))
+                return;
+        } else {
+            fprintf(stderr, "upgrade of stonecoin-tx failed: file not found or server error\nUpdate aborted.\n");
+            return;
+        }
+
+		//detect running file stonecoind/stonecoin-qt and relaunch here
+
         break;
     }
     case MAC_OSX: {

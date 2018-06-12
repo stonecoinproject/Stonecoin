@@ -28,13 +28,13 @@
 
 
 typedef enum {
-	WINDOWS_64,
-	WINDOWS_32,
-	LINUX_64,
-	LINUX_32,
-	PI2,
-	MAC_OSX,
-	UNKNOWN
+    WINDOWS_64,
+    WINDOWS_32,
+    LINUX_64,
+    LINUX_32,
+    PI2,
+    MAC_OSX,
+    UNKNOWN
 } updater_ostype;
 
 
@@ -57,7 +57,8 @@ typedef enum {
 #endif
 
 updater_ostype getCurrentOs();
-void downloadUpdate(Consensus::Params* params);
+bool updateFile(const char* oldFile, const char* newFile);
+void downloadUpdate(Consensus::Params& params);
 bool downloadFile(std::string url, std::string saveas);
 
 #endif
