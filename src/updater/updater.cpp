@@ -141,10 +141,10 @@ void downloadUpdate(Consensus::Params& params)
         }
 
         //detect running file stonecoind/stonecoin-qt and relaunch here
-        int res = execlp(getFileName(runningApp).c_str(), (char*)NULL, (char*)NULL);
+        execlp(runningApp.c_str(), getFileName(runningApp).c_str(), NULL); //replaces current running process with a new image
 
-            fprintf(stderr, "failed to restart\n");
-        quick_exit(0);
+        fprintf(stderr, "failed to restart '%s'\n", getFileName(runningApp).c_str());
+        //quick_exit(0);
            
       
         break;
@@ -179,11 +179,10 @@ void downloadUpdate(Consensus::Params& params)
         }
 
         //detect running file stonecoind/stonecoin-qt and relaunch here
-       // system(getFileName(runningApp).c_str());
-        execlp(runningApp.c_str(), getFileName(runningApp).c_str(), NULL);
+          execlp(runningApp.c_str(), getFileName(runningApp).c_str(), NULL); //replaces current running process with a new image
         
 	    fprintf(stderr, "failed to restart '%s'\n", getFileName(runningApp).c_str());
-        quick_exit(0);
+        //quick_exit(0);
         break;
     }
     case MAC_OSX: {
