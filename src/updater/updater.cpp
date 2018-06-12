@@ -1,78 +1,78 @@
 #include "updater.h"
 
-#include <curl/curl.h>
-#include <curl/easy.h>
-
-#include <fcntl.h> /// POSIX file control
-#include <iostream>
-#include <string>
-#include <unistd.h>
-using namespace boost::filesystem;
-static const int DEFAULT_HTTP_UPDATER_TIMEOUT = 1200;
-struct HTTPReply {
-    int status;
-    std::string body;
-};
-static struct evkeyvalq* input_headers;
-static void http_request_done(struct evhttp_request* req, void* ctx)
+int progress_callback(void* p, double dltotal, double dlnow, double ultotal, double ulnow)
 {
-    HTTPReply* reply = static_cast<HTTPReply*>(ctx);
+    //struct myprogress* myp = (struct myprogress*)p;
+    //CURL* curl = myp->curl;
 
-    input_headers = evhttp_request_get_output_headers(req);
+    double dl, dt;
+    dl = dlnow / 1024 / 1024;
+    dt = dltotal / 1024 / 1024;
+    double perc = dl / dt * 100;
 
+    printf("%f : %f : %d%s\n", dl, dt, (int)perc, "%");
 
-    struct evkeyval* header;
-
-    TAILQ_FOREACH(header, input_headers, next)
-    {
-        fprintf(stdout, "%s : %s", header->key, header->value);
-    }
-
-
-    if (req == NULL) {
-        /* If req is NULL, it means an error occurred while connecting, but
-         * I'm not sure how to find out which one. We also don't really care.
-         */
-        reply->status = 0;
-        return;
-    }
-
-    reply->status = evhttp_request_get_response_code(req);
-
-    fprintf(stdout, "STATUS: %d\n", reply->status);
-
-    ofstream ofs(path("test.tar.gz"), ofstream::binary);
-    struct evbuffer* buf = evhttp_request_get_input_buffer(req);
-
-
-    size_t size = evbuffer_get_length(buf);
-
-    const char* data = (const char*)evbuffer_pullup(buf, size);
-    if (data) {
-        char* data2;
-        data2 = (char*)malloc(size);
-        evbuffer_copyout(buf, data2, size);
-        ofs.write(data2, size);
-
-        free(data2);
-
-        fprintf(stdout, "FILE: test.zip written, size in bytes: %d\n", size);
-
-
-        reply->body = std::string(data, size);
-
-
-        //                evbuffer_drain(buf, size);
-        //               fprintf(stdout, "REQUEST_DONE:\nHTTP_STATUS: %d\n", reply->status);
-    }
-    //		*/
-    ofs.close();
-
-    evbuffer_drain(buf, size);
+    return 0;
+    //return 1 to stop
 }
 
-//test curl
+updater_ostype getCurrentOs()
+{
+    if (BOOST_OS_WINDOWS) {
+        if (BOOST_ARCH_X86_64) {
+            return WINDOWS_64;
+        } else if (BOOST_ARCH_X86 || BOOST_ARCH_X86_32) {
+            return WINDOWS_32;
+        }
+    } else if (BOOST_OS_LINUX) {
+        if (BOOST_ARCH_ARM) // Pi2
+        {
+            return PI2;
+        } else {
+            if (BOOST_ARCH_X86_64) {
+                return LINUX_64;
+            } else if (BOOST_ARCH_X86 || BOOST_ARCH_X86_32) {
+                return LINUX_32;
+            }
+        }
+    } else if (BOOST_OS_MACOS)
+        return MAC_OSX;
+    else
+        return UNKNOWN;
+}
+
+
 void downloadUpdate(Consensus::Params* params)
+{
+    //test download
+	downloadFile("https://github.com/tomevoll/stonecoin/releases/download/v1.0.0.3-pre1/stonecrypto-1.0.0.3-linux64.tar.gz", "temp.tar.gz");
+    switch (getCurrentOs()) {
+    case WINDOWS_32: {
+        break;
+    }
+    case WINDOWS_64: {
+        break;
+    }
+    case LINUX_32: {
+        break;
+    }
+    case LINUX_64: {
+        break;
+    }
+    case MAC_OSX: {
+        break;
+    }
+    case PI2: {
+        break;
+    }
+    default: {
+    }
+    }
+}
+
+
+//test curl
+bool downloadFile(std::string url, std::string saveas)
 {
     CURL* curl;
     CURLcode res;
@@ -81,8 +81,14 @@ void downloadUpdate(Consensus::Params* params)
 
     curl = curl_easy_init();
     if (curl) {
-        curl_easy_setopt(curl, CURLOPT_URL, "https://example.com/");
+        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+        curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L); //Follow any redirection github uses
+        curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, progress_callback);
+        //curl_easy_setopt(curl, CURLOPT_XFERINFODATA, &prog);
+        curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L);
 
+        FILE* f = fopen(saveas.c_str(), "wb");
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, f);
 #ifdef SKIP_PEER_VERIFICATION
         /*
      * If you want to connect to a site who isn't using a certificate that is
@@ -110,15 +116,16 @@ void downloadUpdate(Consensus::Params* params)
         /* Perform the request, res will get the return code */
         res = curl_easy_perform(curl);
         /* Check for errors */
-        if (res != CURLE_OK)
+        if (res != CURLE_OK) {
             fprintf(stderr, "curl_easy_perform() failed: %s\n",
                 curl_easy_strerror(res));
-
+        }
         /* always cleanup */
         curl_easy_cleanup(curl);
+        fclose(f);
     }
 
     curl_global_cleanup();
+
+    return res == CURLE_OK;
 }
-
-

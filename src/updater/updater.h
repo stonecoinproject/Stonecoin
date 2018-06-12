@@ -1,24 +1,42 @@
 #ifndef STONECOIN_UPDATER_H
 #define STONECOIN_UPDATER_H
 
-#include <stdio.h>
 #include "chainparamsbase.h"
 #include "clientversion.h"
 #include "rpcclient.h"
 #include "rpcprotocol.h"
 #include "util.h"
 #include "utilstrencodings.h"
-#include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/fstream.hpp>
+#include <boost/filesystem/operations.hpp>
+#include <boost/predef.h>
+#include <curl/curl.h>
+#include <curl/easy.h>
 #include <iostream>
+#include <stdio.h>
+#include <string>
 
 #include <event2/buffer.h>
 #include <event2/event.h>
 #include <event2/http.h>
 #include <event2/keyvalq_struct.h>
+#include <fcntl.h> /// POSIX file control
+#include <unistd.h>
 
-#include <univalue.h>
 #include "../versionbits.h"
+#include <univalue.h>
+
+
+typedef enum {
+	WINDOWS_64,
+	WINDOWS_32,
+	LINUX_64,
+	LINUX_32,
+	PI2,
+	MAC_OSX,
+	UNKNOWN
+} updater_ostype;
+
 
 /* Internal use only: Functions that might be missing from <sys/queue.h> */
 #ifndef TAILQ_FIRST
@@ -38,7 +56,8 @@
          (var) = TAILQ_NEXT(var, field))
 #endif
 
+updater_ostype getCurrentOs();
 void downloadUpdate(Consensus::Params* params);
-
+bool downloadFile(std::string url, std::string saveas);
 
 #endif
