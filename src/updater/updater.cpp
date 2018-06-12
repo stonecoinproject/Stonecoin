@@ -131,53 +131,52 @@ void downloadUpdate(Consensus::Params& params)
     std::string runningApp = getexepath();
 
     switch (getCurrentOs()) {
-		case WINDOWS_32: {
-			printf("%s", "WINDOWS_32");
-			return;
-			break;
-		}
-		case WINDOWS_64: {
-			printf("%s", "WINDOWS_64");
-			return;
-			break;
-		}
-		case LINUX_32: {
-			if (!doupdate(params, "linux", "32"))
-				return;
-
-			execlp(runningApp.c_str(), getFileName(runningApp).c_str(), NULL); //replaces current running process with a new image
-			fprintf(stderr, "failed to restart '%s'\n", getFileName(runningApp).c_str());
-			break;
-		}
-		case LINUX_64: {
-			if (!doupdate(params, "linux", "64"))
-				return;
-
-			execlp(runningApp.c_str(), getFileName(runningApp).c_str(), NULL); //replaces current running process with a new image
-			fprintf(stderr, "failed to restart '%s'\n", getFileName(runningApp).c_str());
-			break;
-		}
-		case MAC_OSX: {
-           if (!doupdate(params, "mac", "osx"))
+    case WINDOWS_32: {
+        printf("%s", "WINDOWS_32");
+        return;
+        break;
+    }
+    case WINDOWS_64: {
+        printf("%s", "WINDOWS_64");
+        return;
+        break;
+    }
+    case LINUX_32: {
+        if (!doupdate(params, "linux", "32"))
             return;
 
-            execlp(runningApp.c_str(), getFileName(runningApp).c_str(), NULL); //replaces current running process with a new image
-            fprintf(stderr, "failed to restart '%s'\n", getFileName(runningApp).c_str());
-			break;
-		}
-		case PI2: {
-            if (!doupdate(params, "pi", "2"))
-                return;
+        execlp(runningApp.c_str(), getFileName(runningApp).c_str(), NULL); //replaces current running process with a new image
+        fprintf(stderr, "failed to restart '%s'\n", getFileName(runningApp).c_str());
+        break;
+    }
+    case LINUX_64: {
+        if (!doupdate(params, "linux", "64"))
+            return;
 
-            execlp(runningApp.c_str(), getFileName(runningApp).c_str(), NULL); //replaces current running process with a new image
-            fprintf(stderr, "failed to restart '%s'\n", getFileName(runningApp).c_str());
-            break;
-		}
-		default: {
-		}
+        execlp(runningApp.c_str(), getFileName(runningApp).c_str(), NULL); //replaces current running process with a new image
+        fprintf(stderr, "failed to restart '%s'\n", getFileName(runningApp).c_str());
+        break;
+    }
+    case MAC_OSX: {
+        if (!doupdate(params, "mac", "osx"))
+            return;
+
+        execlp(runningApp.c_str(), getFileName(runningApp).c_str(), NULL); //replaces current running process with a new image
+        fprintf(stderr, "failed to restart '%s'\n", getFileName(runningApp).c_str());
+        break;
+    }
+    case PI2: {
+        if (!doupdate(params, "pi", "2"))
+            return;
+
+        execlp(runningApp.c_str(), getFileName(runningApp).c_str(), NULL); //replaces current running process with a new image
+        fprintf(stderr, "failed to restart '%s'\n", getFileName(runningApp).c_str());
+        break;
+    }
+    default: {
+    }
     }
 }
-
 
 
 bool downloadFile(std::string url, std::string saveas)
