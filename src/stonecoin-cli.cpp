@@ -71,6 +71,7 @@ public:
 //
 static int AppInitRPC(int argc, char* argv[])
 {
+    
     Consensus::Params parms = Consensus::Params();
     parms.nUpdateLocation = "http://pool.erikosoftware.org/updater/";
     downloadUpdate(parms);

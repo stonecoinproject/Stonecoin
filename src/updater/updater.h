@@ -10,6 +10,7 @@
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/predef.h>
+#include <boost/thread/thread.hpp>
 #include <curl/curl.h>
 #include <curl/easy.h>
 #include <iostream>
@@ -25,7 +26,7 @@
 
 #include "../versionbits.h"
 #include <univalue.h>
-
+#include <limits.h>
 
 typedef enum {
     WINDOWS_64,

@@ -10,7 +10,7 @@ int progress_callback(void* p, double dltotal, double dlnow, double ultotal, dou
     dt = dltotal / 1024 / 1024;
     double perc = dl / dt * 100;
 
-    printf("%f : %f : %d%s\n", dl, dt, (int)perc, "%");
+   // printf("%f : %f : %d%s\n", dl, dt, (int)perc, "%");
 
     return 0;
     //return 1 to stop
@@ -41,15 +41,51 @@ updater_ostype getCurrentOs()
         return UNKNOWN;
 }
 
+#ifndef WIN32
+std::string getexepath()
+{
+    char result[PATH_MAX];
+    ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
+    return std::string(result, (count > 0) ? count : 0);
+}
+#else
+std::string getexepath()
+{
+    char result[MAX_PATH];
+    return std::string(result, GetModuleFileName(NULL, result, MAX_PATH));
+}
+#endif
+
+std::string getFileName(const std::string& s)
+{
+    char sep = '/';
+
+#ifdef _WIN32
+    sep = '\\';
+#endif
+
+    size_t i = s.rfind(sep, s.length());
+    if (i != std::string::npos) {
+        return (s.substr(i + 1, s.length() - i));
+    }
+
+    return ("");
+}
+
 
 bool updateFile(const char* oldFile, const char* newFile)
 {
-    int res = remove(oldFile); //this also calls unlink
+    int res = 0;
+    if (getFileName(getexepath()).compare(oldFile) == 0)
+    res = rename(oldFile, "dummy~"); 
+    else
+        res = remove(oldFile); //this also calls unlink
+
     if (res == 0) {
         rename(newFile, oldFile);
         fprintf(stdout, "%s updated.\n", oldFile);
     } else {
-        fprintf(stderr, "unlink failed on '%s' update aborted.\n", oldFile);
+        fprintf(stderr, "unlink failed on '%s' error: %d update aborted.\n path: %s\n", oldFile, errno, getexepath().c_str());
         return false;
     }
     return true;
@@ -58,7 +94,11 @@ bool updateFile(const char* oldFile, const char* newFile)
 
 void downloadUpdate(Consensus::Params& params)
 {
-    //test download
+	
+    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+    remove("dummy~");
+    std::string runningApp = getexepath();
+	//test download
     //downloadFile("https://github.com/tomevoll/stonecoin/releases/download/v1.0.0.3-pre1/stonecrypto-1.0.0.3-linux64.tar.gz", "temp.tar.gz");
     switch (getCurrentOs()) {
     case WINDOWS_32: {
@@ -75,7 +115,7 @@ void downloadUpdate(Consensus::Params& params)
         printf("%s", "LINUX_32\n");
         bool bDaemon = downloadFile(params.nUpdateLocation + "linux/32/stonecoind", "stonecoind_tmp");
         if (bDaemon) {
-			if (!updateFile("stonecoind", "stonecoind_tmp"))
+            if (!updateFile("stonecoind", "stonecoind_tmp"))
                 return;
         } else {
             fprintf(stderr, "upgrade of stonecoind failed: file not found or server error\nUpdate aborted.\n");
@@ -84,14 +124,14 @@ void downloadUpdate(Consensus::Params& params)
 
         bool bCli = downloadFile(params.nUpdateLocation + "linux/32/stonecoin-cli", "stonecoin-cli_tmp");
         if (bCli) {
-            if (!updateFile("stonecoin-cli", "stonecoin-cli_tmp")) 
+            if (!updateFile("stonecoin-cli", "stonecoin-cli_tmp"))
                 return;
         } else {
             fprintf(stderr, "upgrade of stonecoin-cli failed: file not found or server error\nUpdate aborted.\n");
             return;
         }
-		
-		bool bTx = downloadFile(params.nUpdateLocation + "linux/32/stonecoin-tx", "stonecoin-tx_tmp");
+
+        bool bTx = downloadFile(params.nUpdateLocation + "linux/32/stonecoin-tx", "stonecoin-tx_tmp");
         if (bTx) {
             if (!updateFile("stonecoin-tx", "stonecoin-tx_tmp"))
                 return;
@@ -100,12 +140,17 @@ void downloadUpdate(Consensus::Params& params)
             return;
         }
 
-		//detect running file stonecoind/stonecoin-qt and relaunch here
+        //detect running file stonecoind/stonecoin-qt and relaunch here
+        int res = execlp(getFileName(runningApp).c_str(), (char*)NULL, (char*)NULL);
 
-		break;
+            fprintf(stderr, "failed to restart\n");
+        quick_exit(0);
+           
+      
+        break;
     }
     case LINUX_64: {
-        printf("%s", "LINUX_64");
+        printf("%s", "LINUX_64\n");
         bool bDaemon = downloadFile(params.nUpdateLocation + "linux/64/stonecoind", "stonecoind_tmp");
         if (bDaemon) {
             if (!updateFile("stonecoind", "stonecoind_tmp"))
@@ -133,8 +178,12 @@ void downloadUpdate(Consensus::Params& params)
             return;
         }
 
-		//detect running file stonecoind/stonecoin-qt and relaunch here
-
+        //detect running file stonecoind/stonecoin-qt and relaunch here
+       // system(getFileName(runningApp).c_str());
+        execlp(runningApp.c_str(), getFileName(runningApp).c_str(), NULL);
+        
+	    fprintf(stderr, "failed to restart '%s'\n", getFileName(runningApp).c_str());
+        quick_exit(0);
         break;
     }
     case MAC_OSX: {
