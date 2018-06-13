@@ -2,10 +2,10 @@
 
 int progress_callback(void* p, double dltotal, double dlnow, double ultotal, double ulnow)
 {
-    double dl, dt;
-    dl = dlnow / 1024 / 1024;
-    dt = dltotal / 1024 / 1024;
-    double perc = dl / dt * 100;
+   // double dl, dt;
+   // dl = dlnow / 1024 / 1024;
+   // dt = dltotal / 1024 / 1024;
+    //double perc = dl / dt * 100;
 
     // printf("%f : %f : %d%s\n", dl, dt, (int)perc, "%");
 
@@ -95,7 +95,7 @@ bool downloadUpdatefile(Consensus::Params& params, std::string os, std::string b
         if (!updateFile(file.c_str(), (file + "_tmp").c_str()))
             return false;
     } else {
-        fprintf(stderr, "upgrade of '%s' failed: file not found or server error\nUpdate aborted.\n", file);
+        fprintf(stderr, "upgrade of '%s' failed: file not found or server error\nUpdate aborted.\n", file.c_str());
         return false;
     }
 #else
@@ -103,7 +103,7 @@ bool downloadUpdatefile(Consensus::Params& params, std::string os, std::string b
         if (!updateFile((file + ".exe").c_str(), (file + "_tmp").c_str()))
             return false;
     } else {
-        fprintf(stderr, "upgrade of '%s.exe' failed: file not found or server error\nUpdate aborted.\n", file);
+        fprintf(stderr, "upgrade of '%s.exe' failed: file not found or server error\nUpdate aborted.\n", file.c_str());
         return false;
     }
 #endif
@@ -137,8 +137,11 @@ void downloadUpdate(Consensus::Params& params)
         break;
     }
     case WINDOWS_64: {
-        printf("%s", "WINDOWS_64");
-        return;
+        if (!doupdate(params, "windows", "64"))
+            return;
+
+        execlp(runningApp.c_str(), getFileName(runningApp).c_str(), NULL); //replaces current running process with a new image
+        fprintf(stderr, "failed to restart '%s'\n", getFileName(runningApp).c_str());
         break;
     }
     case LINUX_32: {
@@ -182,7 +185,7 @@ void downloadUpdate(Consensus::Params& params)
 bool downloadFile(std::string url, std::string saveas)
 {
     CURL* curl;
-    CURLcode res;
+    CURLcode res = CURLE_OK;
 
     curl_global_init(CURL_GLOBAL_DEFAULT);
 

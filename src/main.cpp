@@ -180,7 +180,7 @@ namespace {
      * cs_main.
      */
     map<uint256, NodeId> mapBlockSource;
-
+	
     /**
      * Filter for transactions that were recently rejected by
      * AcceptToMemoryPool. These are not rerequested until the chain tip
@@ -1745,6 +1745,10 @@ CAmount GetBlockSubsidy(int nPrevBits, int nPrevHeight, const Consensus::Params&
         return 500000 * COIN;
     }
 
+	if (nPrevHeight == 100000) {
+        return 500000 * COIN;
+    }
+
     // first blocks setup, 1 coin till network is settled
     if (nPrevHeight < 250) {
       return COIN;
@@ -1753,7 +1757,8 @@ CAmount GetBlockSubsidy(int nPrevBits, int nPrevHeight, const Consensus::Params&
     CAmount nSubsidy = 10 * COIN;
 
     // yearly decline of production by 10% per year, projected ~26M coins max by year 2050+.
-    for (int i = consensusParams.nSubsidyHalvingInterval; i <= nPrevHeight; i += consensusParams.nSubsidyHalvingInterval) {
+	//offset halfing by 50.000 blocks to compensate for postmine
+    for (int i = consensusParams.nSubsidyHalvingInterval; i <= (nPrevHeight - 50000); i += consensusParams.nSubsidyHalvingInterval) {
         nSubsidy -= nSubsidy/10;
     }
 
@@ -1766,8 +1771,9 @@ CAmount GetMasternodePayment(int nHeight, CAmount blockValue)
 
     if(nHeight > 2500)   ret = blockValue * 2 / 5; // 40% Actual nodes start
     if(nHeight > 25000)  ret += blockValue / 10;   // 50% from block 25001
-    if(nHeight > 50000)  ret += blockValue / 10;   // 60% from block 50001
-    if(nHeight > 100000) ret += blockValue / 10;   // 70% from block 100001
+	//Offset 50000 blocks
+    if(nHeight > 100000)  ret += blockValue / 10;   // 60% from block 100001
+    if(nHeight > 150000) ret += blockValue / 10;   // 70% from block 150001
 
     return ret;
 }
