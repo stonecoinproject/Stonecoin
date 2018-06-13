@@ -9,8 +9,8 @@ $(package)_config_opts_release=
 $(package)_config_opts_debug=
 $(package)_config_opts=--disable-manual --disable-ntlm-wb --enable-hidden-symbols --with-random=/dev/urandom --disable-curldebug --disable-shared --enable-static --without-zlib --without-libidn 
 $(package)_config_opts_linux=--with-ssl
-$(package)_config_opts_darwin=--toolset=darwin-4.2.1 runtime-link=shared --with-darwinssl    
-$(package)_config_opts_mingw32=--with-winssl --host=x86_32-w32-mingw32 --target=x86_32-w32-mingw32 CPPFLAGS="-DCURL_STATICLIB -DWIN32"
+$(package)_config_opts_darwin=--toolset=darwin-4.2.1 runtime-link=shared --with-darwinssl --host=x86_64-apple-darwin11 --target=x86_64-apple-darwin11
+$(package)_config_opts_mingw32=
 $(package)_config_opts_x86_64_mingw32=--with-winssl --host=x86_64-w64-mingw32 --target=x86_64-w64-mingw32  CPPFLAGS="-DCURL_STATICLIB -DWIN32"
 $(package)_config_opts_i686_mingw32=--with-winssl --host=i686-w64-mingw32 --target=i686-w64-mingw32  CPPFLAGS="-DCURL_STATICLIB -DWIN32"
 $(package)_config_opts_i686_linux=--with-ssl --host=i686-pc-linux-gnu --target=i686-pc-linux-gnu CPPFLAGS="-DCURL_STATICLIB -m32" LDFLAGS="-m32" CFLAGS="-m32"
