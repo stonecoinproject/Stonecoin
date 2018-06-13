@@ -1,5 +1,52 @@
 #include "updater.h"
 
+#ifdef MAC_OSX
+#include <errno.h>
+#include <libproc.h>
+#include <stdlib.h>
+#endif
+
+void sha256_hash_string (unsigned char hash[SHA256_DIGEST_LENGTH], char outputBuffer[65])
+{
+    int i = 0;
+
+    for(i = 0; i < SHA256_DIGEST_LENGTH; i++)
+    {
+        sprintf(outputBuffer + (i * 2), "%02x", hash[i]);
+    }
+
+    outputBuffer[64] = 0;
+}
+
+std::string calc_sha256 (const char* path)
+{
+    char output[65];
+    FILE* file = fopen(path, "rb");
+    if(!file) return "";
+
+    unsigned char hash[SHA256_DIGEST_LENGTH];
+    SHA256_CTX sha256;
+    SHA256_Init(&sha256);
+    const int bufSize = 32768;
+    char* buffer = (char*)malloc(bufSize);
+    memset(buffer,0,bufSize);
+    int bytesRead = 0;
+    if(!buffer) return "";
+    while((bytesRead = fread(buffer, 1, bufSize, file)))
+    {
+        SHA256_Update(&sha256, buffer, bytesRead);
+    }
+    SHA256_Final(hash, &sha256);
+
+    sha256_hash_string(hash, output);
+    fclose(file);
+    free(buffer);
+    
+    return std::string(output, SHA256_DIGEST_LENGTH*2);
+       
+}      
+
+
 int progress_callback(void* p, double dltotal, double dlnow, double ultotal, double ulnow)
 {
    // double dl, dt;
@@ -33,7 +80,7 @@ updater_ostype getCurrentOs()
             }
         }
     } else if (BOOST_OS_MACOS)
-        return MAC_OSX;
+        return MACOSX;
     else
         return UNKNOWN;
 }
@@ -41,9 +88,23 @@ updater_ostype getCurrentOs()
 #ifndef WIN32
 std::string getexepath()
 {
+#ifndef MAC_OSX
     char result[PATH_MAX];
     ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
     return std::string(result, (count > 0) ? count : 0);
+#else
+    int ret;
+    pid_t pid; 
+    char pathbuf[PROC_PIDPATHINFO_MAXSIZE];
+
+    pid = getpid();
+    ret = proc_pidpath(pid, pathbuf, sizeof(pathbuf));
+    return std::string(pathbuf, (ret > 0) ? ret : 0);
+    
+#endif
+    
+    
+    
 }
 #else
 std::string getexepath()
@@ -72,14 +133,21 @@ std::string getFileName(const std::string& s)
 
 bool updateFile(const char* oldFile, const char* newFile)
 {
+    
+    
     int res = 0;
     if (getFileName(getexepath()).compare(oldFile) == 0)
+    {
         res = rename(oldFile, "temp~");
+    }
     else
         res = remove(oldFile); //this also calls unlink
 
     if (res == 0) {
         rename(newFile, oldFile);
+#ifdef MAC_OSX
+        chmod(oldFile, S_IRWXU|S_IRWXG|S_IRWXO);
+#endif
         fprintf(stdout, "%s updated.\n", oldFile);
     } else {
         fprintf(stderr, "unlink failed on '%s' error: %d update aborted.\n path: %s\n", oldFile, errno, getexepath().c_str());
@@ -91,20 +159,42 @@ bool updateFile(const char* oldFile, const char* newFile)
 bool downloadUpdatefile(Consensus::Params& params, std::string os, std::string bits, std::string file)
 {
 #ifndef WIN32
-    if (downloadFile(params.nUpdateLocation + os + "/" + bits + "/" + file, file + "_tmp")) {
-        if (!updateFile(file.c_str(), (file + "_tmp").c_str()))
+    if(file_exist(file.c_str()))
+    {
+        remove((file + "_tmp").c_str());
+        if (downloadFile(params.nUpdateLocation + os + "/" + bits + "/" + file, file + "_tmp")) {
+            std::string onlineSha = downloadSHA(params.nUpdateLocation + os + "/" + bits + "/" + file + "_sha");
+            std::string localSha = calc_sha256((file + "_tmp").c_str());
+            if(onlineSha.compare(localSha) != 0)
+            {
+                fprintf(stderr, "\nupgrade of '%s' failed:\n sha256 signature mismatch\n\n%s\n%s\n", file.c_str(),onlineSha.c_str(),localSha.c_str());
+                return false;
+            }
+            if (!updateFile(file.c_str(), (file + "_tmp").c_str()))
+                return false;
+        } else {
+            fprintf(stderr, "upgrade of '%s' failed: file not found or server error\nUpdate aborted.\n", file.c_str());
             return false;
-    } else {
-        fprintf(stderr, "upgrade of '%s' failed: file not found or server error\nUpdate aborted.\n", file.c_str());
-        return false;
+        }
     }
 #else
-    if (downloadFile(params.nUpdateLocation + os + "/" + bits + "/" + file + ".exe", file + "_tmp")) {
-        if (!updateFile((file + ".exe").c_str(), (file + "_tmp").c_str()))
+
+    if(file_exist(file.c_str()))
+    {
+        if (downloadFile(params.nUpdateLocation + os + "/" + bits + "/" + file + ".exe", file + "_tmp")) {
+            std::string onlineSha = downloadSHA(params.nUpdateLocation + os + "/" + bits + "/" + file + "_sha");
+            std::string localSha = calc_sha256((file + "_tmp").c_str());
+            if(onlineSha.compare(localSha) != 0)
+            {
+                fprintf(stderr, "\nupgrade of '%s' failed:\n sha256 signature mismatch\n\n", file.c_str());
+                return false;
+            }
+            if (!updateFile((file + ".exe").c_str(), (file + "_tmp").c_str()))
+                return false;
+        } else {
+            fprintf(stderr, "upgrade of '%s.exe' failed: file not found or server error\nUpdate aborted.\n", file.c_str());
             return false;
-    } else {
-        fprintf(stderr, "upgrade of '%s.exe' failed: file not found or server error\nUpdate aborted.\n", file.c_str());
-        return false;
+        }
     }
 #endif
 
@@ -114,11 +204,14 @@ bool downloadUpdatefile(Consensus::Params& params, std::string os, std::string b
 
 bool doupdate(Consensus::Params& params, std::string os, std::string bits)
 {
+    
     if (!downloadUpdatefile(params, os, bits, "stonecoind"))
         return false;
     if (!downloadUpdatefile(params, os, bits, "stonecoin-cli"))
         return false;
     if (!downloadUpdatefile(params, os, bits, "stonecoin-tx"))
+        return false;
+    if (!downloadUpdatefile(params, os, bits, "stonecoin-qt"))
         return false;
     return true;
 }
@@ -129,7 +222,7 @@ void downloadUpdate(Consensus::Params& params)
     //boost::this_thread::sleep(boost::posix_time::milliseconds(1000)); //needed ?
     remove("temp~");
     std::string runningApp = getexepath();
-
+    fprintf(stderr, "path:%s", runningApp.c_str());
     switch (getCurrentOs()) {
     case WINDOWS_32: {
         printf("%s", "WINDOWS_32");
@@ -160,7 +253,7 @@ void downloadUpdate(Consensus::Params& params)
         fprintf(stderr, "failed to restart '%s'\n", getFileName(runningApp).c_str());
         break;
     }
-    case MAC_OSX: {
+    case MACOSX: {
         if (!doupdate(params, "mac", "osx"))
             return;
 
@@ -181,6 +274,34 @@ void downloadUpdate(Consensus::Params& params)
     }
 }
 
+
+static std::string readBuffer;
+
+static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
+{ 
+    size_t realsize = size * nmemb;
+    readBuffer.append((char*)contents, realsize);
+    return realsize;
+}
+
+std::string downloadSHA(std::string url)
+{
+    CURL *curl;
+    CURLcode res;
+    
+    readBuffer = "";
+    curl = curl_easy_init();
+    if(curl) {
+        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        res = curl_easy_perform(curl);
+        curl_easy_cleanup(curl);
+        curl_global_cleanup();
+        return readBuffer;
+  }
+    return "";
+}
 
 bool downloadFile(std::string url, std::string saveas)
 {

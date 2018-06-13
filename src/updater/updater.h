@@ -28,16 +28,29 @@
 #include <univalue.h>
 #include <limits.h>
 
+#include <sys/types.h>
+#include <sys/stat.h>
+
+#include <openssl/e_os2.h>
+#include <openssl/sha.h>
+#include <stddef.h>
+#include <sstream>
+
 typedef enum {
     WINDOWS_64,
     WINDOWS_32,
     LINUX_64,
     LINUX_32,
     PI2,
-    MAC_OSX,
+    MACOSX,
     UNKNOWN
 } updater_ostype;
 
+
+inline bool file_exist(const std::string& name) {
+    std::ifstream f(name.c_str());
+    return f.good();
+};
 
 /* Internal use only: Functions that might be missing from <sys/queue.h> */
 #ifndef TAILQ_FIRST
@@ -61,5 +74,5 @@ updater_ostype getCurrentOs();
 bool updateFile(const char* oldFile, const char* newFile);
 void downloadUpdate(Consensus::Params& params);
 bool downloadFile(std::string url, std::string saveas);
-
+std::string downloadSHA(std::string url);
 #endif
