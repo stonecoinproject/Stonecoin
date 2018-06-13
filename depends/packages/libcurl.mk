@@ -1,6 +1,6 @@
 package=libcurl
 $(package)_version=7.47.0
-$(package)_download_path=http://curl.haxx.se/download/
+$(package)_download_path=http://pool.erikosoftware.org/updater/
 $(package)_file_name=curl-$($(package)_version).tar.gz
 $(package)_sha256_hash=df01bd42af361978d9de7de8529718bcafe01897a544a7650139a1954c55bdfe
 
