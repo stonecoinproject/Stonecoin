@@ -6,6 +6,8 @@ suites:
 architectures:
 - "amd64"
 packages:
+- "curl"
+- "openssl"
 - "g++-multilib"
 - "git-core"
 - "pkg-config"
