@@ -12,7 +12,7 @@ $(package)_config_opts_linux=--with-ssl
 $(package)_config_opts_darwin=--toolset=darwin-4.2.1 runtime-link=shared --with-darwinssl    
 $(package)_config_opts_mingw32=--with-winssl --host=x86_32-w32-mingw32 --target=x86_32-w32-mingw32 CPPFLAGS="-DCURL_STATICLIB -DWIN32"
 $(package)_config_opts_x86_64_mingw32=--with-winssl --host=x86_64-w64-mingw32 --target=x86_64-w64-mingw32  CPPFLAGS="-DCURL_STATICLIB -DWIN32"
-$(package)_config_opts_i686_mingw32=--with-winssl --host=i686_mingw32 --target=i686_mingw32  CPPFLAGS="-DCURL_STATICLIB -DWIN32"
+$(package)_config_opts_i686_mingw32=--with-winssl --host=i686-w64-mingw32 --target=i686-w64-mingw32  CPPFLAGS="-DCURL_STATICLIB -DWIN32"
 $(package)_config_opts_i686_linux=--with-ssl --host=i686-pc-linux-gnu --target=i686-pc-linux-gnu CPPFLAGS="-DCURL_STATICLIB -m32" LDFLAGS="-m32" CFLAGS="-m32"
 $(package)_toolset_$(host_os)=gcc
 $(package)_archiver_$(host_os)=$($(package)_ar)
