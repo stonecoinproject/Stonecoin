@@ -1,17 +1,14 @@
 package=libcurl
 $(package)_version=7.47.0
-$(package)_download_path=https://curl.haxx.se/download/
+$(package)_download_path=http://curl.haxx.se/download/
 $(package)_file_name=curl-$($(package)_version).tar.gz
 $(package)_sha256_hash=df01bd42af361978d9de7de8529718bcafe01897a544a7650139a1954c55bdfe
 
-
-
 define $(package)_set_vars
-$(package)_config_opts_release=variant=release
-$(package)_config_opts_debug=variant=debug
+$(package)_config_opts_release=
+$(package)_config_opts_debug=
 $(package)_config_opts=--disable-manual --disable-ntlm-wb --enable-hidden-symbols --with-random=/dev/urandom --disable-curldebug --disable-shared --enable-static --without-zlib --without-libidn 
-$(package)_config_opts+=--enable-threaded-resolver --enable-verbose
-$(package)_config_opts_linux=threadapi=pthread runtime-link=shared --with-ssl
+$(package)_config_opts_linux=--with-ssl
 $(package)_config_opts_darwin=--toolset=darwin-4.2.1 runtime-link=shared --with-darwinssl    
 $(package)_config_opts_mingw32=--with-winssl --host=x86_32-w32-mingw32 --target=x86_32-w32-mingw32 CPPFLAGS="-DCURL_STATICLIB -DWIN32"
 $(package)_config_opts_x86_64_mingw32=--with-winssl --host=x86_64-w64-mingw32 --target=x86_64-w64-mingw32  CPPFLAGS="-DCURL_STATICLIB -DWIN32"
