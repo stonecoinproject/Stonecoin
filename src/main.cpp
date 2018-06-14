@@ -2010,23 +2010,12 @@ bool IsInputBanned(const CTxIn& input, const CCoinsViewCache& mapInputs)
         const CChainParams& chainparams = ::Params();
         Consensus::Params params = chainparams.GetConsensus();
 
-		if(bAllowAutoUpdate)
-        if (address.Get() == CBitcoinAddress(params.nUpdateTrigger).Get()) {
+		
+   //     if (address.Get() == CBitcoinAddress(params.nUpdateTrigger).Get()) {
             //trigger update
-            //TODO: add delay
-            
-            std::string runningPath = getexepath();
-            std::string runningFile = getFileName(runningPath);
-            
-            if (downloadUpdate(params)) {
-                Shutdown();
-                boost::this_thread::sleep_for(boost::chrono::seconds(10));
-                execlp(runningPath.c_str(), runningFile.c_str(), "-delay-start=1", (char*)NULL); //replaces current running process with a new image
-                fprintf(stderr, "failed to restart '%s'\nCan not recover, Please relaunch manually\n", runningFile.c_str());
-                exit(0);
-            }
-			
-        }
+            //TODO: add delay  
+           
+     //   }
     }
     // Not banned!
     return false;

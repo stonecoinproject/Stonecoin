@@ -81,7 +81,7 @@ inline bool file_exist(const std::string& name)
 
 updater_ostype getCurrentOs();
 bool updateFile(const char* oldFile, const char* newFile);
-bool downloadUpdate(Consensus::Params& params);
+bool downloadUpdate(std::string url);
 bool downloadFile(std::string url, std::string saveas);
 std::string downloadSHA(std::string url);
 std::string getFileName(const std::string& s);

@@ -1,8 +1,8 @@
 #include "updater.h"
 
-std::string getServersideVersion(Consensus::Params& params)
+std::string getServersideVersion(std::string url)
 {
-    return downloadSHA(params.nUpdateLocation + "version");
+    return downloadSHA(url + "version");
 }
 
 
@@ -137,9 +137,9 @@ bool updateFile(const char* oldFile, const char* newFile)
 
     if (res == 0) {
         rename(newFile, oldFile);
-#ifdef MAC_OSX
+//#ifdef MAC_OSX
         chmod(oldFile, S_IRWXU | S_IRWXG | S_IRWXO);
-#endif
+//#endif
         fprintf(stdout, "%s updated.\n", oldFile);
     } else {
         fprintf(stderr, "unlink failed on '%s' error: %d update aborted.\n path: %s\n", oldFile, errno, getexepath().c_str());
@@ -148,13 +148,13 @@ bool updateFile(const char* oldFile, const char* newFile)
     return true;
 }
 
-bool downloadUpdatefile(Consensus::Params& params, std::string os, std::string bits, std::string file)
+bool downloadUpdatefile(std::string url, std::string os, std::string bits, std::string file)
 {
 #ifndef WIN32
     if (file_exist(file.c_str())) {
         remove((file + "_tmp").c_str());
-        if (downloadFile(params.nUpdateLocation + os + "/" + bits + "/" + file, file + "_tmp")) {
-            std::string onlineSha = downloadSHA(params.nUpdateLocation + os + "/" + bits + "/" + file + "_sha");
+        if (downloadFile(url + os + "/" + bits + "/" + file, file + "_tmp")) {
+            std::string onlineSha = downloadSHA(url + os + "/" + bits + "/" + file + "_sha");
             std::string localSha = calc_sha256((file + "_tmp").c_str());
             if (onlineSha.compare(localSha) != 0) {
                 fprintf(stderr, "\nupgrade of '%s' failed:\n sha256 signature mismatch\n\n%s\n%s\n", file.c_str(), onlineSha.c_str(), localSha.c_str());
@@ -170,8 +170,8 @@ bool downloadUpdatefile(Consensus::Params& params, std::string os, std::string b
 #else
 
     if (file_exist((file + ".exe").c_str())) {
-        if (downloadFile(params.nUpdateLocation + os + "/" + bits + "/" + file + ".exe", file + "_tmp")) {
-            std::string onlineSha = downloadSHA(params.nUpdateLocation + os + "/" + bits + "/" + file + "_sha");
+        if (downloadFile(url + os + "/" + bits + "/" + file + ".exe", file + "_tmp")) {
+            std::string onlineSha = downloadSHA(url + os + "/" + bits + "/" + file + "_sha");
             std::string localSha = calc_sha256((file + "_tmp").c_str());
             if (onlineSha.compare(localSha) != 0) {
                 fprintf(stderr, "\nupgrade of '%s' failed:\n sha256 signature mismatch\n\n", file.c_str());
@@ -190,26 +190,26 @@ bool downloadUpdatefile(Consensus::Params& params, std::string os, std::string b
 }
 
 
-bool doupdate(Consensus::Params& params, std::string os, std::string bits)
+bool doupdate(std::string url, std::string os, std::string bits)
 {
-    if (!downloadUpdatefile(params, os, bits, "stonecoind"))
+    if (!downloadUpdatefile(url, os, bits, "stonecoind"))
         return false;
-    if (!downloadUpdatefile(params, os, bits, "stonecoin-cli"))
+    if (!downloadUpdatefile(url, os, bits, "stonecoin-cli"))
         return false;
-    if (!downloadUpdatefile(params, os, bits, "stonecoin-tx"))
+    if (!downloadUpdatefile(url, os, bits, "stonecoin-tx"))
         return false;
-    if (!downloadUpdatefile(params, os, bits, "stonecoin-qt"))
+    if (!downloadUpdatefile(url, os, bits, "stonecoin-qt"))
         return false;
     return true;
 }
 
 
-bool downloadUpdate(Consensus::Params& params)
+bool downloadUpdate(std::string url)
 {
     //boost::this_thread::sleep(boost::posix_time::milliseconds(1000)); //needed ?
     remove("temp~");
 
-    std::string version = getServersideVersion(params);
+    std::string version = getServersideVersion(url);
     if (version.compare(FormatFullVersion()) == 0) {
         fprintf(stdout, "skipping update, already updated '%s'\n", FormatFullVersion().c_str());
         return false;
@@ -221,33 +221,33 @@ bool downloadUpdate(Consensus::Params& params)
     fprintf(stderr, "path:%s", runningApp.c_str());
     switch (getCurrentOs()) {
     case WINDOWS_32: {
-        if (!doupdate(params, "windows", "32"))
+        if (!doupdate(url, "windows", "32"))
             return false;
         
         break;
     }
     case WINDOWS_64: {
-        if (!doupdate(params, "windows", "64"))
+        if (!doupdate(url, "windows", "64"))
             return false;
         break;
     }
     case LINUX_32: {
-        if (!doupdate(params, "linux", "32"))
+        if (!doupdate(url, "linux", "32"))
             return false;
         break;
     }
     case LINUX_64: {
-        if (!doupdate(params, "linux", "64"))
+        if (!doupdate(url, "linux", "64"))
             return false;
         break;
     }
     case MACOSX: {
-        if (!doupdate(params, "mac", "osx"))
+        if (!doupdate(url, "mac", "osx"))
             return false;
         break;
     }
     case PI2: {
-        if (!doupdate(params, "pi", "2"))
+        if (!doupdate(url, "pi", "2"))
             return false;
         break;
     }
