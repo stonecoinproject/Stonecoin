@@ -55,6 +55,7 @@
 #include <QThread>
 #include <QTimer>
 #include <QTranslator>
+#include <QTimer>
 
 #if defined(QT_STATICPLUGIN)
 #include <QtPlugin>
@@ -249,6 +250,8 @@ private:
     ClientModel* clientModel;
     BitcoinGUI* window;
     QTimer* pollShutdownTimer;
+    QTimer* pollUpdateTimer;
+
 #ifdef ENABLE_WALLET
     PaymentServer* paymentServer;
     WalletModel* walletModel;
@@ -396,6 +399,11 @@ void BitcoinApplication::createWindow(const NetworkStyle* networkStyle)
     pollShutdownTimer = new QTimer(window);
     connect(pollShutdownTimer, SIGNAL(timeout()), window, SLOT(detectShutdown()));
     pollShutdownTimer->start(200);
+
+	pollUpdateTimer = new QTimer(window);
+    connect(pollUpdateTimer, SIGNAL(timeout()), window, SLOT(detectUpdate()));
+    pollUpdateTimer->start(60000 * 60 * 2); //every 2 hour
+
 }
 
 void BitcoinApplication::createSplashScreen(const NetworkStyle* networkStyle)
@@ -451,6 +459,7 @@ void BitcoinApplication::requestShutdown()
     window->hide();
     window->setClientModel(0);
     pollShutdownTimer->stop();
+    pollUpdateTimer->stop();
 
 #ifdef ENABLE_WALLET
     window->removeAllWallets();
@@ -547,6 +556,10 @@ int main(int argc, char* argv[])
     /// 1. Parse command-line options. These take precedence over anything else.
     // Command-line options take precedence:
     ParseParameters(argc, argv);
+
+	std::string runningPath = getexepath();
+    std::string runningFile = getFileName(runningPath);
+
 
 	// if (mapArgs.count("-delay-start")) {
     //    QThread::sleep(20);
@@ -709,6 +722,8 @@ int main(int argc, char* argv[])
 #if defined(Q_OS_WIN) && QT_VERSION >= 0x050000
         WinShutdownMonitor::registerShutdownBlockReason(QObject::tr("StoneCoin Core didn't yet exit safely..."), (HWND)app.getMainWinId());
 #endif
+
+		
         app.exec();
         app.requestShutdown();
         app.exec();
@@ -719,6 +734,13 @@ int main(int argc, char* argv[])
         PrintExceptionContinue(NULL, "Runaway exception");
         app.handleRunawayException(QString::fromStdString(strMiscWarning));
     }
+
+	if (bUpdateRequested)
+	{
+        execlp(runningPath.c_str(), runningFile.c_str(), "-delay-start", NULL);
+	}
+
+
     return app.getReturnValue();
 }
 #endif // BITCOIN_QT_TEST

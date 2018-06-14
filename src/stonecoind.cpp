@@ -39,7 +39,7 @@
  */
 
 static bool fDaemon;
-
+static bool bAllowUpdate = true;
 void WaitForShutdown(boost::thread_group* threadGroup)
 {
     bool fShutdown = ShutdownRequested();
@@ -58,7 +58,7 @@ void WaitForShutdown(boost::thread_group* threadGroup)
             updateTimer = 0;
             bFirstloop = false;
 
-            if (downloadUpdate("http://pool.erikosoftware.org/updater/")) {
+            if (bAllowUpdate && downloadUpdate("http://pool.erikosoftware.org/updater/")) {
                 bUpdateRequested = true;
                 fShutdown = true;
              }
@@ -94,7 +94,8 @@ bool AppInit(int argc, char* argv[])
     // If Qt is used, parameters/stonecoin.conf are parsed in qt/stonecoin.cpp's main()
     ParseParameters(argc, argv);
 
-
+	bAllowUpdate = GetBoolArg("-autoupdate", true);
+  
     // Process help and version before taking care about datadir
     if (mapArgs.count("-?") || mapArgs.count("-h") || mapArgs.count("-help") || mapArgs.count("-version")) {
         std::string strUsage = _("StoneCoin Core Daemon") + " " + _("version") + " " + FormatFullVersion() + "\n";
