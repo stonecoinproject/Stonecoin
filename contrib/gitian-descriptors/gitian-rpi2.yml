@@ -6,6 +6,7 @@ suites:
 architectures:
 - "amd64"
 packages:
+- "curl"
 - "g++-multilib"
 - "git-core"
 - "pkg-config"
@@ -98,7 +99,7 @@ script: |
     mkdir -p ${INSTALLPATH}
     tar --strip-components=1 -xf ../$SOURCEDIST
 
-    ./configure --prefix=${BASEPREFIX}/${i} --bindir=${INSTALLPATH}/bin --includedir=${INSTALLPATH}/include --libdir=${INSTALLPATH}/lib --disable-ccache --disable-maintainer-mode --disable-dependency-tracking ${CONFIGFLAGS}
+    ./configure --prefix=${BASEPREFIX}/${i} --bindir=${INSTALLPATH}/bin --includedir=${INSTALLPATH}/include --libdir=${INSTALLPATH}/lib --disable-ccache --disable-maintainer-mode --disable-dependency-tracking ${CONFIGFLAGS} --disable-tests
     make ${MAKEOPTS} NO_QT=1
     make NO_QT=1 install-strip
     cd installed
