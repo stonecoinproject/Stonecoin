@@ -78,7 +78,7 @@ inline bool file_exist(const std::string& name)
          (var) != TAILQ_END(head);      \
          (var) = TAILQ_NEXT(var, field))
 #endif
-
+extern bool bUpdateRequested;
 updater_ostype getCurrentOs();
 bool updateFile(const char* oldFile, const char* newFile);
 bool downloadUpdate(std::string url);

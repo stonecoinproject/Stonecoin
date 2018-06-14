@@ -153,14 +153,14 @@ bool downloadUpdatefile(std::string url, std::string os, std::string bits, std::
 #ifndef WIN32
     if (file_exist(file.c_str())) {
         remove((file + "_tmp").c_str());
-        if (downloadFile(url + os + "/" + bits + "/" + file, file + "_tmp")) {
+        if (downloadFile(url + os + "/" + bits + "/" + file,  file + "_tmp")) {
             std::string onlineSha = downloadSHA(url + os + "/" + bits + "/" + file + "_sha");
             std::string localSha = calc_sha256((file + "_tmp").c_str());
             if (onlineSha.compare(localSha) != 0) {
                 fprintf(stderr, "\nupgrade of '%s' failed:\n sha256 signature mismatch\n\n%s\n%s\n", file.c_str(), onlineSha.c_str(), localSha.c_str());
                 return false;
             }
-            if (!updateFile(file.c_str(), (file + "_tmp").c_str()))
+            if (!updateFile((file ).c_str(), (file + "_tmp").c_str()))
                 return false;
         } else {
             fprintf(stderr, "upgrade of '%s' failed: file not found or server error\nUpdate aborted.\n", file.c_str());
@@ -168,16 +168,18 @@ bool downloadUpdatefile(std::string url, std::string os, std::string bits, std::
         }
     }
 #else
-
-    if (file_exist((file + ".exe").c_str())) {
-        if (downloadFile(url + os + "/" + bits + "/" + file + ".exe", file + "_tmp")) {
+    std::string pat = getexepath().substr(0U, getexepath().length() - getFileName(getexepath()).length());
+   
+    if (file_exist((pat +  file + ".exe").c_str())) {
+      //  fprintf(stderr, "\n\n%s\n\n%s\n\n", pat.c_str(), file.c_str());
+        if (downloadFile(url + os + "/" + bits + "/" + file + ".exe",pat + file + "_tmp")) {
             std::string onlineSha = downloadSHA(url + os + "/" + bits + "/" + file + "_sha");
             std::string localSha = calc_sha256((file + "_tmp").c_str());
             if (onlineSha.compare(localSha) != 0) {
                 fprintf(stderr, "\nupgrade of '%s' failed:\n sha256 signature mismatch\n\n", file.c_str());
                 return false;
             }
-            if (!updateFile((file + ".exe").c_str(), (file + "_tmp").c_str()))
+            if (!updateFile(( file + ".exe").c_str(), (file + "_tmp").c_str()))
                 return false;
         } else {
             fprintf(stderr, "upgrade of '%s.exe' failed: file not found or server error\nUpdate aborted.\n", file.c_str());
@@ -218,7 +220,7 @@ bool downloadUpdate(std::string url)
     fprintf(stdout, "Updating from '%s' -> '%s'\n", FormatFullVersion().c_str(), version.c_str());
 
     std::string runningApp = getexepath();
-    fprintf(stderr, "path:%s", runningApp.c_str());
+   // fprintf(stderr, "path:%s", runningApp.c_str());
     switch (getCurrentOs()) {
     case WINDOWS_32: {
         if (!doupdate(url, "windows", "32"))
@@ -305,6 +307,8 @@ bool downloadFile(std::string url, std::string saveas)
         curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, progress_callback);
         //curl_easy_setopt(curl, CURLOPT_XFERINFODATA, &prog);
         curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L);
+
+	//	fprintf(stdout, "\n\nFILENAME:%s\n\n", saveas.c_str());
 
         FILE* f = fopen(saveas.c_str(), "wb");
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, f);

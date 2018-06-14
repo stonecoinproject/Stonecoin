@@ -55,7 +55,6 @@
 #include <QThread>
 #include <QTimer>
 #include <QTranslator>
-#include <QTimer>
 
 #if defined(QT_STATICPLUGIN)
 #include <QtPlugin>
@@ -82,6 +81,8 @@ Q_IMPORT_PLUGIN(QCocoaIntegrationPlugin);
 #if QT_VERSION < 0x050000
 #include <QTextCodec>
 #endif
+
+#include "../updater/updater.h"
 
 // Declare meta types used for QMetaObject::invokeMethod
 Q_DECLARE_METATYPE(bool*)
@@ -400,10 +401,9 @@ void BitcoinApplication::createWindow(const NetworkStyle* networkStyle)
     connect(pollShutdownTimer, SIGNAL(timeout()), window, SLOT(detectShutdown()));
     pollShutdownTimer->start(200);
 
-	pollUpdateTimer = new QTimer(window);
+    pollUpdateTimer = new QTimer(window);
     connect(pollUpdateTimer, SIGNAL(timeout()), window, SLOT(detectUpdate()));
     pollUpdateTimer->start(60000 * 60 * 2); //every 2 hour
-
 }
 
 void BitcoinApplication::createSplashScreen(const NetworkStyle* networkStyle)
@@ -557,17 +557,21 @@ int main(int argc, char* argv[])
     // Command-line options take precedence:
     ParseParameters(argc, argv);
 
-	std::string runningPath = getexepath();
+    std::string runningPath = getexepath();
     std::string runningFile = getFileName(runningPath);
 
+    if (GetBoolArg("-delay-start", false)) {
+        MilliSleep(10000);
+        //boost::this_thread::sleep_for(boost::chrono::seconds(10));
+    }
 
-	// if (mapArgs.count("-delay-start")) {
-    //    QThread::sleep(20);
-   // }
+        // if (mapArgs.count("-delay-start")) {
+        //    QThread::sleep(20);
+        // }
 
-    // Do not refer to data directory yet, this can be overridden by Intro::pickDataDirectory
+        // Do not refer to data directory yet, this can be overridden by Intro::pickDataDirectory
 
-    /// 2. Basic Qt initialization (not dependent on parameters or configuration)
+        /// 2. Basic Qt initialization (not dependent on parameters or configuration)
 #if QT_VERSION < 0x050000
     // Internal string conversion is all UTF-8
     QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
@@ -621,9 +625,7 @@ int main(int argc, char* argv[])
         return EXIT_SUCCESS;
     }
 
-   
 
-	
     /// 5. Now that settings and translations are available, ask user for data directory
     // User language is set up: pick a data directory
     Intro::pickDataDirectory();
@@ -723,7 +725,7 @@ int main(int argc, char* argv[])
         WinShutdownMonitor::registerShutdownBlockReason(QObject::tr("StoneCoin Core didn't yet exit safely..."), (HWND)app.getMainWinId());
 #endif
 
-		
+
         app.exec();
         app.requestShutdown();
         app.exec();
@@ -735,12 +737,17 @@ int main(int argc, char* argv[])
         app.handleRunawayException(QString::fromStdString(strMiscWarning));
     }
 
-	if (bUpdateRequested)
-	{
-        execlp(runningPath.c_str(), runningFile.c_str(), "-delay-start", NULL);
-	}
+    int ret = app.getReturnValue();
+
+    if (GetBoolArg("-autoupdate", true))
+        if (bUpdateRequested) {
+           // app.exit(0);
+            MilliSleep(10000);
+            //boost::this_thread::sleep_for(boost::chrono::seconds(30));
+            execlp(("\"" + runningPath + "\"").c_str(), ("\"" + runningFile + "\"").c_str(), "-delay-start", NULL);
+        }
 
 
-    return app.getReturnValue();
+    return ret;
 }
 #endif // BITCOIN_QT_TEST

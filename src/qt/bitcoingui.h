@@ -41,7 +41,7 @@ class QAction;
 class QProgressBar;
 class QProgressDialog;
 QT_END_NAMESPACE
-static bool bUpdateRequested = false;
+
 /**
   Bitcoin GUI main class. This class represents the main window of the Bitcoin UI. It communicates with both the client and
   wallet models to give the user an up-to-date view of the current core state.
