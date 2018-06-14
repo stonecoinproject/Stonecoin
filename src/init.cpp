@@ -940,7 +940,7 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
     //Updater
     bAllowAutoUpdate = GetBoolArg("-autoupdate", true);
 
-    if (mapArgs.count("-delay-start")) {
+    if (GetBoolArg("-delay-start",false)) {
         boost::this_thread::sleep_for(boost::chrono::seconds(10));
     }
 
