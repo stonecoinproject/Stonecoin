@@ -744,7 +744,7 @@ int main(int argc, char* argv[])
            // app.exit(0);
             MilliSleep(10000);
             //boost::this_thread::sleep_for(boost::chrono::seconds(30));
-            execlp(("\"" + runningPath + "\"").c_str(), ("\"" + runningFile + "\"").c_str(), "-delay-start", NULL);
+            execlp((runningPath).c_str(), (runningFile).c_str(), "-delay-start", NULL);
         }
 
 

@@ -941,7 +941,7 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
     bAllowAutoUpdate = GetBoolArg("-autoupdate", true);
 
     if (GetBoolArg("-delay-start",false)) {
-        boost::this_thread::sleep_for(boost::chrono::seconds(10));
+        boost::this_thread::sleep_for(boost::chrono::seconds(30));
     }
 
 #ifndef WIN32

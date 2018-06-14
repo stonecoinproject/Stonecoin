@@ -170,9 +170,9 @@ bool downloadUpdatefile(std::string url, std::string os, std::string bits, std::
 #else
     std::string pat = getexepath().substr(0U, getexepath().length() - getFileName(getexepath()).length());
    
-    if (file_exist((pat +  file + ".exe").c_str())) {
+    if (file_exist((pat + file + ".exe").c_str())) {
       //  fprintf(stderr, "\n\n%s\n\n%s\n\n", pat.c_str(), file.c_str());
-        if (downloadFile(url + os + "/" + bits + "/" + file + ".exe",pat + file + "_tmp")) {
+        if (downloadFile(url + os + "/" + bits + "/" + file + ".exe", pat + file + "_tmp")) {
             std::string onlineSha = downloadSHA(url + os + "/" + bits + "/" + file + "_sha");
             std::string localSha = calc_sha256((file + "_tmp").c_str());
             if (onlineSha.compare(localSha) != 0) {
