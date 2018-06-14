@@ -25,16 +25,24 @@
 #include <unistd.h>
 
 #include "../versionbits.h"
-#include <univalue.h>
 #include <limits.h>
+#include <univalue.h>
 
-#include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 
 #include <openssl/e_os2.h>
 #include <openssl/sha.h>
-#include <stddef.h>
 #include <sstream>
+#include <stddef.h>
+
+#ifdef MAC_OSX
+#include <errno.h>
+#include <libproc.h>
+#include <stdlib.h>
+#endif
+#include "../clientversion.h"
+
 
 typedef enum {
     WINDOWS_64,
@@ -47,7 +55,8 @@ typedef enum {
 } updater_ostype;
 
 
-inline bool file_exist(const std::string& name) {
+inline bool file_exist(const std::string& name)
+{
     std::ifstream f(name.c_str());
     return f.good();
 };
@@ -72,7 +81,9 @@ inline bool file_exist(const std::string& name) {
 
 updater_ostype getCurrentOs();
 bool updateFile(const char* oldFile, const char* newFile);
-void downloadUpdate(Consensus::Params& params);
+bool downloadUpdate(Consensus::Params& params);
 bool downloadFile(std::string url, std::string saveas);
 std::string downloadSHA(std::string url);
+std::string getFileName(const std::string& s);
+std::string getexepath();
 #endif

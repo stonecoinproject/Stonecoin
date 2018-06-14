@@ -793,6 +793,7 @@ bool AppInitServers(boost::thread_group& threadGroup)
 // Parameter interaction based on rules
 void InitParameterInteraction()
 {
+
     // when specifying an explicit binding address, you want to listen on it
     // even when -connect or -proxy is specified
     if (mapArgs.count("-bind")) {
@@ -937,6 +938,9 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
 
     if (!SetupNetworking())
         return InitError("Initializing networking failed");
+
+	//Updater
+    bAllowAutoUpdate = GetBoolArg("-autoupdate", true);
 
 #ifndef WIN32
     if (GetBoolArg("-sysperms", false)) {

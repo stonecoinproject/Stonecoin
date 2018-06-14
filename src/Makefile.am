@@ -167,7 +167,6 @@ BITCOIN_CORE_H = \
   ui_interface.h \
   uint256.h \
   undo.h \
-  updater/updater.h \
   util.h \
   utilmoneystr.h \
   utilstrencodings.h \
@@ -237,6 +236,7 @@ libbitcoin_server_a_SOURCES = \
   updater/updater.cpp \
   validationinterface.cpp \
   versionbits.cpp \
+  updater/updater.h \
   $(BITCOIN_CORE_H)
 
 if ENABLE_ZMQ
@@ -383,7 +383,6 @@ endif
 libbitcoin_cli_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
 libbitcoin_cli_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 libbitcoin_cli_a_SOURCES = \
-  updater/updater.cpp \
   rpcclient.cpp \
   $(BITCOIN_CORE_H)
 

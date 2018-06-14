@@ -74,6 +74,9 @@ bool AppInit(int argc, char* argv[])
     // If Qt is used, parameters/stonecoin.conf are parsed in qt/stonecoin.cpp's main()
     ParseParameters(argc, argv);
 
+	
+
+
     // Process help and version before taking care about datadir
     if (mapArgs.count("-?") || mapArgs.count("-h") ||  mapArgs.count("-help") || mapArgs.count("-version"))
     {

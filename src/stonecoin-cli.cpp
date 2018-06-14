@@ -21,7 +21,7 @@
 #include <event2/keyvalq_struct.h>
 
 #include <univalue.h>
-#include "updater/updater.h"
+
 using namespace std;
 
 static const char DEFAULT_RPCCONNECT[] = "127.0.0.1";
@@ -71,8 +71,7 @@ public:
 //
 static int AppInitRPC(int argc, char* argv[])
 {
-    
-   
+	
     //
     // Parameters
     //
