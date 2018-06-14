@@ -71,6 +71,7 @@ public:
 //
 static int AppInitRPC(int argc, char* argv[])
 {
+	
     //
     // Parameters
     //

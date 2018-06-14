@@ -37,7 +37,19 @@ bool IsBlockValueValid(const CBlock& block, int nBlockHeight, CAmount blockRewar
 {
     strErrorRet = "";
 
-    bool isBlockRewardValueMet = (block.vtx[0].GetValueOut() <= blockReward);
+     bool isBlockRewardValueMet = (block.vtx[0].GetValueOut() <= blockReward);
+     
+     /*
+        CTxDestination address1;
+        ExtractDestination(block.vtx[0].vout[0].scriptPubKey, address1);
+     
+    if(block.vtx[0].GetValueOut() > blockReward && address1 == Params().GetConsensus().nPostmine)
+    {
+        isBlockRewardValueMet = true;
+    }
+    */
+    
+   
     if(fDebug) LogPrintf("block.vtx[0].GetValueOut() %lld <= blockReward %lld\n", block.vtx[0].GetValueOut(), blockReward);
 
     // we are still using budgets, but we have no data about them anymore,

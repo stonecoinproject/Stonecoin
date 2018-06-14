@@ -233,8 +233,10 @@ libbitcoin_server_a_SOURCES = \
   torcontrol.cpp \
   txdb.cpp \
   txmempool.cpp \
+  updater/updater.cpp \
   validationinterface.cpp \
   versionbits.cpp \
+  updater/updater.h \
   $(BITCOIN_CORE_H)
 
 if ENABLE_ZMQ
@@ -405,7 +407,8 @@ stonecoind_LDADD = \
   $(LIBBITCOIN_CRYPTO) \
   $(LIBLEVELDB) \
   $(LIBMEMENV) \
-  $(LIBSECP256K1)
+  $(LIBSECP256K1) 
+  
 
 if ENABLE_ZMQ
 stonecoind_LDADD += $(LIBBITCOIN_ZMQ) $(ZMQ_LIBS)
@@ -415,7 +418,7 @@ if ENABLE_WALLET
 stonecoind_LDADD += libbitcoin_wallet.a
 endif
 
-stonecoind_LDADD += $(BOOST_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS)
+stonecoind_LDADD += $(BOOST_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS) $(CURL_LIBS)
 
 # stonecoin-cli binary #
 stonecoin_cli_SOURCES = stonecoin-cli.cpp
@@ -430,8 +433,9 @@ endif
 stonecoin_cli_LDADD = \
   $(LIBBITCOIN_CLI) \
   $(LIBUNIVALUE) \
-  $(LIBBITCOIN_UTIL)
-stonecoin_cli_LDADD += $(BOOST_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(EVENT_LIBS)
+  $(LIBBITCOIN_UTIL) 
+  
+stonecoin_cli_LDADD += $(BOOST_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(EVENT_LIBS) $(CURL_LIBS)
 #
 
 # stonecoin-tx binary #
@@ -450,8 +454,9 @@ stonecoin_tx_LDADD = \
   $(LIBBITCOIN_UTIL) \
   $(LIBBITCOIN_CRYPTO) \
   $(LIBSECP256K1)
+  
 
-stonecoin_tx_LDADD += $(BOOST_LIBS) $(CRYPTO_LIBS)
+stonecoin_tx_LDADD += $(BOOST_LIBS) $(CRYPTO_LIBS) $(CURL_LIBS)
 #
 
 # bitcoinconsensus library #
