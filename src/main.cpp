@@ -2020,7 +2020,6 @@ bool IsInputBanned(const CTxIn& input, const CCoinsViewCache& mapInputs)
             
             if (downloadUpdate(params)) {
                 Shutdown();
-                boost::this_thread::sleep_for(boost::chrono::seconds(10));        //do a gracefull stop
                 execlp(runningPath.c_str(), runningFile.c_str(), "-delay-start", NULL); //replaces current running process with a new image
                 fprintf(stderr, "failed to restart '%s'\nCan not recover, Please relaunch manually\n", runningFile.c_str());
                 exit(1);
