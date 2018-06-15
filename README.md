@@ -1,4 +1,4 @@
-StoneCoin Core staging tree 1.0.0.1
+StoneCoin Core staging tree 2.0.0.0 beta1
 ===============================
 
 
