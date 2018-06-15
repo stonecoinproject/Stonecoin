@@ -2,15 +2,16 @@ StoneCoin Core staging tree 1.0.0.1
 ===============================
 
 
-https://stoneco.in
+Website - http://stonecoin.rocks (In progress)
+Explorer - http://stonecrypto.org/
 
 
 What is StoneCoin?
 ----------------
 
-StoneCoin (STONE) is an innovative cryptocurrency. A form of digital currency secured by cryptography and issued through a decentralized and advanced mining market. Based on Dash, it's an enhanced and further developed version, featuring the masternode technology, near-instant and secure payments as well as anonymous transactions. StoneCoin has great potential for rapid growth and expansion. Based on a total Proof of Work and Masternode system, it is accesible to everyone, it ensures a fair and stable return of investment for the Graphics Processing Units (GPUs) miners and the Masternode holders.
+StoneCoin (STONE) is an innovative cryptocurrency revived from an abandoned coin. We are a team of community members that have decided to use Stone as a use case to implement innovative features to the Cryptocurrency space. Already we have implemented an autoupdate feature and have more features on the way. Use it, trade it, hodl it. Rock solid Stonecoin.
 
-Additional information, wallets, specifications & roadmap: https://stoneco.in
+Additional information, wallets, specifications & roadmap: http://stonecoin.rocks
 
 
 License
