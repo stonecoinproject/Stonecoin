@@ -137,9 +137,9 @@ bool updateFile(const char* oldFile, const char* newFile)
 
     if (res == 0) {
         rename(newFile, oldFile);
-//#ifdef MAC_OSX
+#ifdef MAC_OSX
         chmod(oldFile, S_IRWXU | S_IRWXG | S_IRWXO);
-//#endif
+#endif
         fprintf(stdout, "%s updated.\n", oldFile);
     } else {
         fprintf(stderr, "unlink failed on '%s' error: %d update aborted.\n path: %s\n", oldFile, errno, getexepath().c_str());
