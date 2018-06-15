@@ -3,6 +3,7 @@ StoneCoin Core staging tree 1.0.0.1
 
 
 Website - http://stonecoin.rocks (In progress)
+
 Explorer - http://stonecrypto.org/
 
 
