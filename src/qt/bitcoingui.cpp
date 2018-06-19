@@ -56,6 +56,13 @@
 #include <QToolBar>
 #include <QVBoxLayout>
 
+#include <QCoreApplication>
+#include <QUrl>
+#include <QNetworkRequest>
+#include <QFile>
+
+
+
 #if QT_VERSION < 0x050000
 #include <QTextDocument>
 #include <QUrl>
@@ -74,6 +81,8 @@ const std::string BitcoinGUI::DEFAULT_UIPLATFORM =
         ;
 
 const QString BitcoinGUI::DEFAULT_WALLET = "~Default";
+
+bool bUpdateRequested = false;
 
 BitcoinGUI::BitcoinGUI(const PlatformStyle *platformStyle, const NetworkStyle *networkStyle, QWidget *parent) :
     QMainWindow(parent),
@@ -191,9 +200,6 @@ BitcoinGUI::BitcoinGUI(const PlatformStyle *platformStyle, const NetworkStyle *n
     statusBar();
 
 
-	//chek update on startu
-    if (GetBoolArg("-autoupdate", true))
-		detectUpdate();
 
     // Disable size grip because it looks ugly and nobody needs it
     statusBar()->setSizeGripEnabled(false);
@@ -257,7 +263,7 @@ BitcoinGUI::BitcoinGUI(const PlatformStyle *platformStyle, const NetworkStyle *n
     // Subscribe to notifications from core
     subscribeToCoreSignals();
 
-	
+
 }
 
 BitcoinGUI::~BitcoinGUI()
@@ -485,6 +491,12 @@ void BitcoinGUI::createActions()
     new QShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_G), this, SLOT(showGraph()));
     new QShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_P), this, SLOT(showPeers()));
     new QShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_R), this, SLOT(showRepair()));
+
+
+    if(GetBoolArg("-autoupdate",true))
+        detectUpdate();
+
+
 }
 
 void BitcoinGUI::createMenuBar()
@@ -1292,22 +1304,6 @@ void BitcoinGUI::toggleHidden()
 {
     showNormalIfMinimized(true);
 }
-bool bUpdateRequested;
-void BitcoinGUI::detectUpdate()
-{
-    
-	//TODO: CHECK UPDATE
-    if(GetBoolArg("-autoupdate", true))
-    if (downloadUpdate("http://pool.erikosoftware.org/updater/")) {
-            StartShutdown();
-			bUpdateRequested = true;
-            detectShutdown();
-                
-    }
-
-
-}
-
 
 
 void BitcoinGUI::detectShutdown()
@@ -1359,6 +1355,177 @@ static bool ThreadSafeMessageBox(BitcoinGUI *gui, const std::string& message, co
                                Q_ARG(bool*, &ret));
     return ret;
 }
+
+static bool ThreadSafeMessageBox2(BitcoinGUI *gui, const std::string& message, const std::string& caption, unsigned int style)
+{
+    bool modal = (style & CClientUIInterface::MODAL);
+    // The SECURE flag has no effect in the Qt GUI.
+    // bool secure = (style & CClientUIInterface::SECURE);
+    style &= ~CClientUIInterface::SECURE;
+    bool ret = false;
+    // In case of modal message, use blocking connection to wait for user to click a button
+    QMetaObject::invokeMethod(gui, "messageUpdate",
+                               modal ? GUIUtil::blockingGUIThreadConnection() : Qt::QueuedConnection,
+                               Q_ARG(QString, QString::fromStdString(caption)),
+                               Q_ARG(QString, QString::fromStdString(message)),
+                               Q_ARG(unsigned int, style),
+                               Q_ARG(bool*, &ret));
+    return ret;
+}
+
+void BitcoinGUI::messageUpdate(const QString &title, const QString &message, unsigned int style, bool *ret)
+{
+    QString strTitle = tr("StoneCoin Core"); // default title
+    // Default to information icon
+    int nMBoxIcon = QMessageBox::Information;
+    int nNotifyIcon = Notificator::Information;
+
+    QString msgType;
+
+    // Prefer supplied title over style based title
+
+        msgType = title;
+
+    // Append title to "StoneCoin Core - "
+    if (!msgType.isEmpty())
+        strTitle += " - " + msgType;
+
+    // Check for error/warning icon
+    if (style & CClientUIInterface::ICON_ERROR) {
+        nMBoxIcon = QMessageBox::Critical;
+        nNotifyIcon = Notificator::Critical;
+    }
+    else if (style & CClientUIInterface::ICON_WARNING) {
+        nMBoxIcon = QMessageBox::Warning;
+        nNotifyIcon = Notificator::Warning;
+    }
+
+    // Display message
+    if (style & CClientUIInterface::MODAL) {
+        // Check for buttons, use OK as default, if none was supplied
+        QMessageBox::StandardButton buttons;
+        if (!(buttons = (QMessageBox::StandardButton)(style & CClientUIInterface::BTN_MASK)))
+            buttons = QMessageBox::Yes;
+
+        showNormalIfMinimized();
+        QMessageBox mBox((QMessageBox::Icon)nMBoxIcon, strTitle, message, buttons, this);
+        int r = mBox.exec();
+        if (ret != NULL)
+            *ret = r == QMessageBox::Yes;
+    }
+    else
+        notificator->notify((Notificator::Class)nNotifyIcon, strTitle, message);
+}
+
+
+void BitcoinGUI::downloadProgress(qint64 recieved, qint64 total) {
+    int val = (int)((double)recieved / (double)total * (double)100);
+   // if(val > 100) val = 100;
+   // if(val < 0) val = 0;
+   // progressBar->setValue(val);
+
+
+    labelBlocksIcon->setPixmap(platformStyle->SingleColorIcon(QString(
+        ":/movies/spinner-%1").arg(spinnerFrame, 3, 10, QChar('0')))
+        .pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
+    spinnerFrame = (spinnerFrame + 1) % SPINNER_FRAMES;
+
+    progressBarLabel->setText(tr("Downloading Update..."));
+    progressBar->setFormat(tr("Downloading update"));
+    progressBar->setMaximum(total);
+    progressBar->setValue(recieved);
+
+
+
+}
+void BitcoinGUI::downloadFinished(QNetworkReply *data) {
+    QFile localFile("stonecoin-qt_tmp");
+    if (!localFile.open(QIODevice::WriteOnly))
+        return;
+    const QByteArray sdata = data->readAll();
+    localFile.write(sdata);
+    //qDebug() << sdata;
+    localFile.close();
+
+    if(ThreadSafeMessageBox2(this,"We need to restart your wallet to complete the update\nDo you want to restart the wallet now?", "Update ready",CClientUIInterface::MODAL | CClientUIInterface::ICON_INFORMATION | CClientUIInterface::BTN_YES | CClientUIInterface::BTN_NO ))
+    {
+
+        QStringList args = QApplication::arguments();
+        args.removeFirst();
+        //Q_EMIT handleRestart(args);
+        StartShutdown();
+        bUpdateRequested = true;
+
+        if(rpcConsole)
+            rpcConsole->hide();
+        qApp->quit();
+        MilliSleep(5000);//sleep 10 seconds to allow all files to free up
+
+
+
+
+    }
+  //  Q_EMIT done();
+}
+
+
+bool BitcoinGUI::detectUpdate()
+{
+    //TODO: CHECK UPDATE
+
+    if(GetBoolArg("-autoupdate", true))
+    {
+        if(hasUpdate("http://pool.erikosoftware.org/updater2/"))
+        {
+            //if(ThreadSafeMessageBox(this,"Update is available\nDo you want to update now?         ", "Update available",CClientUIInterface::MODAL | CClientUIInterface::ICON_INFORMATION | CClientUIInterface::BTN_YES | CClientUIInterface::BTN_NO ))
+           // ThreadSafeMessageBox(this,"you clicked YES","YES",0);
+          //  QThread* downloader = QThread();
+
+       //         bool res = false;
+       //         messageUpdate("Update available","Update is available\nDo you want to update now?         ", CClientUIInterface::MODAL | CClientUIInterface::ICON_INFORMATION | CClientUIInterface::BTN_YES | CClientUIInterface::BTN_NO, &res);
+       //     if (res)
+
+            if(ThreadSafeMessageBox2(this,"Update is available\nDo you want to update now?         ", "Update available",CClientUIInterface::MODAL | CClientUIInterface::ICON_INFORMATION | CClientUIInterface::BTN_YES | CClientUIInterface::BTN_NO ))
+            {
+                connect(&manager, SIGNAL(finished(QNetworkReply*)),this, SLOT(downloadFinished(QNetworkReply*)));
+
+                this->target = "http://pool.erikosoftware.org/updater2/windows/64/stonecoin-qt.exe";
+                QUrl url = QUrl::fromEncoded(this->target.toLocal8Bit());
+                QNetworkRequest request(url);
+                connect(manager.get(request), SIGNAL(downloadProgress(qint64,qint64)), this, SLOT(downloadProgress(qint64,qint64)));
+
+
+
+                //quit when the download is done.
+                //QObject::connect(&dl, SIGNAL(done()), &app, SLOT(quit()));
+                /*
+                if (downloadUpdate("http://pool.erikosoftware.org/updater2/")) {
+                //StartShutdown();
+                bUpdateRequested = true;
+                //detectShutdown();
+
+                QStringList args = QApplication::arguments();
+                args.removeFirst();
+                Q_EMIT handleRestart(args);
+                StartShutdown();
+                detectShutdown();
+                */
+                return true;
+            }
+            else
+            {
+         //       ThreadSafeMessageBox(this,"Update failed, check that 'stonecoin-qt' is not renamed\nIf installed using the setup, make sure to run as administrator.","Update Failed", CClientUIInterface::MODAL | CClientUIInterface::ICON_ERROR | CClientUIInterface::BTN_OK);
+            }
+
+        }
+    }
+}
+
+
+
+
+
+
 
 void BitcoinGUI::subscribeToCoreSignals()
 {
@@ -1452,3 +1619,4 @@ void UnitDisplayStatusBarControl::onMenuSelection(QAction* action)
         optionsModel->setDisplayUnit(action->data());
     }
 }
+

@@ -551,6 +551,9 @@ WId BitcoinApplication::getMainWinId() const
 #ifndef BITCOIN_QT_TEST
 int main(int argc, char* argv[])
 {
+    if(argv[argc-1] == "-delay-start")
+        MilliSleep(20000);
+
     SetupEnvironment();
 
     /// 1. Parse command-line options. These take precedence over anything else.
@@ -559,17 +562,6 @@ int main(int argc, char* argv[])
 
     std::string runningPath = getexepath();
     std::string runningFile = getFileName(runningPath);
-
-    if (GetBoolArg("-delay-start", false)) {
-        MilliSleep(10000);
-        //boost::this_thread::sleep_for(boost::chrono::seconds(10));
-    }
-
-        // if (mapArgs.count("-delay-start")) {
-        //    QThread::sleep(20);
-        // }
-
-        // Do not refer to data directory yet, this can be overridden by Intro::pickDataDirectory
 
         /// 2. Basic Qt initialization (not dependent on parameters or configuration)
 #if QT_VERSION < 0x050000
@@ -741,12 +733,36 @@ int main(int argc, char* argv[])
 
     if (GetBoolArg("-autoupdate", true))
         if (bUpdateRequested) {
-           // app.exit(0);
-            MilliSleep(10000);
-            //boost::this_thread::sleep_for(boost::chrono::seconds(30));
-            execlp((runningPath).c_str(), (runningFile).c_str(), "-delay-start", NULL);
-        }
+            remove((runningFile + "~").c_str());
+            if(rename(runningFile.c_str(), (runningFile + "~").c_str()) == 0)
+            {
+                if(rename("stonecoin-qt_tmp", runningFile.c_str()) == 0)
+                {
+                    MilliSleep(5000);
+                    if(argv[argc-1] == "-delay-start")
+                        execvp(*argv, argv);
+                    else
+                    {
+                        char* arg[argc+1];
 
+                        for(int i = 0; i < argc; i++)
+                        {
+                            arg[i] = argv[i];
+                        }
+                        arg[argc] = "-delay-start";
+                        execvp(*arg, arg);
+                    }
+                    //execlp((runningPath).c_str(), runningFile.c_str(), NULL);
+                    QMessageBox::critical(0, QObject::tr("StoneCoin Core"),
+                    QObject::tr(("Error: We where unable to launch '" + runningFile + "'\nYou must manually start the wallet.").c_str()));
+                    return EXIT_FAILURE;
+                }
+             }
+                QMessageBox::critical(0, QObject::tr("StoneCoin Core"),
+                QObject::tr(("Error: We where unable to complete the update\nYou can rename stonecoin-qt_tmp to '" + runningFile + "' to complete the update").c_str()));
+
+            return EXIT_FAILURE;
+        }
 
     return ret;
 }

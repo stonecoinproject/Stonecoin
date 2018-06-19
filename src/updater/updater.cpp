@@ -45,18 +45,13 @@ std::string calc_sha256(const char* path)
     return std::string(output, SHA256_DIGEST_LENGTH * 2);
 }
 
-
+long DL_NOW = 0;
+long DL_TOTAL = 0;
 int progress_callback(void* p, double dltotal, double dlnow, double ultotal, double ulnow)
 {
-    // double dl, dt;
-    // dl = dlnow / 1024 / 1024;
-    // dt = dltotal / 1024 / 1024;
-    //double perc = dl / dt * 100;
-
-    // printf("%f : %f : %d%s\n", dl, dt, (int)perc, "%");
-
-    return 0;
-    //return 1 to stop
+    DL_NOW = dlnow;
+    DL_TOTAL = dltotal;
+     return 0;
 }
 
 updater_ostype getCurrentOs()
@@ -136,13 +131,20 @@ bool updateFile(const char* oldFile, const char* newFile)
         res = remove(oldFile); //this also calls unlink
 
     if (res == 0) {
-        rename(newFile, oldFile);
+       res = rename(newFile, oldFile);
+
+       if(res != 0)
+       {
+           LogPrintf("UPDATE: update failed on '%s' error: %d update aborted.\n path: %s\n", oldFile, errno, getexepath().c_str(), __func__);
+           return false;
+       }
+
 #ifdef MAC_OSX
         chmod(oldFile, S_IRWXU | S_IRWXG | S_IRWXO);
 #endif
-        fprintf(stdout, "%s updated.\n", oldFile);
+        LogPrintf("UPDATE: %s updated.\n", oldFile);
     } else {
-        fprintf(stderr, "unlink failed on '%s' error: %d update aborted.\n path: %s\n", oldFile, errno, getexepath().c_str());
+        LogPrintf("UPDATE: unlink failed on '%s' error: %d update aborted.\n path: %s\n", oldFile, errno, getexepath().c_str());
         return false;
     }
     return true;
@@ -157,13 +159,13 @@ bool downloadUpdatefile(std::string url, std::string os, std::string bits, std::
             std::string onlineSha = downloadSHA(url + os + "/" + bits + "/" + file + "_sha");
             std::string localSha = calc_sha256((file + "_tmp").c_str());
             if (onlineSha.compare(localSha) != 0) {
-                fprintf(stderr, "\nupgrade of '%s' failed:\n sha256 signature mismatch\n\n%s\n%s\n", file.c_str(), onlineSha.c_str(), localSha.c_str());
+                LogPrintf("UPDATE: upgrade of '%s' failed:\n sha256 signature mismatch", file.c_str(), onlineSha.c_str(), localSha.c_str());
                 return false;
             }
             if (!updateFile((file ).c_str(), (file + "_tmp").c_str()))
                 return false;
         } else {
-            fprintf(stderr, "upgrade of '%s' failed: file not found or server error\nUpdate aborted.\n", file.c_str());
+            LogPrintf("UPDATE: upgrade of '%s' failed: file not found or server error.. Update aborted.", file.c_str());
             return false;
         }
     }
@@ -171,18 +173,17 @@ bool downloadUpdatefile(std::string url, std::string os, std::string bits, std::
     std::string pat = getexepath().substr(0U, getexepath().length() - getFileName(getexepath()).length());
    
     if (file_exist((pat + file + ".exe").c_str())) {
-      //  fprintf(stderr, "\n\n%s\n\n%s\n\n", pat.c_str(), file.c_str());
         if (downloadFile(url + os + "/" + bits + "/" + file + ".exe", pat + file + "_tmp")) {
             std::string onlineSha = downloadSHA(url + os + "/" + bits + "/" + file + "_sha");
             std::string localSha = calc_sha256((file + "_tmp").c_str());
             if (onlineSha.compare(localSha) != 0) {
-                fprintf(stderr, "\nupgrade of '%s' failed:\n sha256 signature mismatch\n\n", file.c_str());
+                LogPrintf("UPDATE: upgrade of '%s' failed:\n sha256 signature mismatch", file.c_str(), onlineSha.c_str(), localSha.c_str());
                 return false;
             }
             if (!updateFile(( file + ".exe").c_str(), (file + "_tmp").c_str()))
                 return false;
         } else {
-            fprintf(stderr, "upgrade of '%s.exe' failed: file not found or server error\nUpdate aborted.\n", file.c_str());
+            LogPrintf("UPDATE: upgrade of '%s.exe' failed: file not found or server error\nUpdate aborted.\n", file.c_str());
             return false;
         }
     }
@@ -205,6 +206,15 @@ bool doupdate(std::string url, std::string os, std::string bits)
     return true;
 }
 
+bool hasUpdate(std::string url)
+{
+    std::string version = getServersideVersion(url);
+    if (version.compare(FormatFullVersion()) == 0) {
+        return false;
+    }
+    return true;
+}
+
 
 bool downloadUpdate(std::string url)
 {
@@ -213,14 +223,11 @@ bool downloadUpdate(std::string url)
 
     std::string version = getServersideVersion(url);
     if (version.compare(FormatFullVersion()) == 0) {
-        fprintf(stdout, "skipping update, already updated '%s'\n", FormatFullVersion().c_str());
+        LogPrintf("UPDATE: skipping update, already updated '%s'\n", FormatFullVersion().c_str());
         return false;
     }
-
-    fprintf(stdout, "Updating from '%s' -> '%s'\n", FormatFullVersion().c_str(), version.c_str());
-
+    LogPrintf("UPDATE: Updating from '%s' -> '%s'\n", FormatFullVersion().c_str(), version.c_str());
     std::string runningApp = getexepath();
-   // fprintf(stderr, "path:%s", runningApp.c_str());
     switch (getCurrentOs()) {
     case WINDOWS_32: {
         if (!doupdate(url, "windows", "32"))
@@ -256,12 +263,6 @@ bool downloadUpdate(std::string url)
     default: {
     }
     }
-
-    //PrepareShutdown();
-    //-delay-start
-    
-	//execlp(runningApp.c_str(), getFileName(runningApp).c_str(), "-delay-start", NULL); //replaces current running process with a new image
-    //fprintf(stderr, "failed to restart '%s'\nCan not recover, Please relaunch manually\n", getFileName(runningApp).c_str());
     return true;
 }
 
@@ -340,7 +341,7 @@ bool downloadFile(std::string url, std::string saveas)
         res = curl_easy_perform(curl);
         /* Check for errors */
         if (res != CURLE_OK) {
-            fprintf(stderr, "curl_easy_perform() failed: %s\n",
+            LogPrintf("UPDATE: curl_easy_perform() failed: %s\n",
                 curl_easy_strerror(res));
         }
         /* always cleanup */

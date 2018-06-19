@@ -18,8 +18,13 @@
 #include <QPoint>
 #include <QPushButton>
 #include <QSystemTrayIcon>
-
+#include <QtNetwork>
 #include "../updater/updater.h"
+#include <QObject>
+#include <QString>
+#include <QtNetwork/QNetworkAccessManager>
+#include <QtNetwork/QNetworkReply>
+
 
 class ClientModel;
 class NetworkStyle;
@@ -73,6 +78,7 @@ public:
 #endif // ENABLE_WALLET
     bool enableWallet;
     
+
 
 protected:
     void changeEvent(QEvent *e);
@@ -141,6 +147,10 @@ private:
 
     const PlatformStyle *platformStyle;
 
+    QNetworkAccessManager manager;
+    QString target;
+
+
     /** Create the main UI actions. */
     void createActions();
     /** Create the menu bar and sub-menus. */
@@ -184,7 +194,7 @@ public Q_SLOTS:
        @param[in] ret       pointer to a bool that will be modified to whether Ok was clicked (modal only)
     */
     void message(const QString &title, const QString &message, unsigned int style, bool *ret = NULL);
-
+    void messageUpdate(const QString &title, const QString &message, unsigned int style, bool *ret);
 #ifdef ENABLE_WALLET
     /** Set the encryption status as shown in the UI.
        @param[in] status            current encryption status
@@ -197,8 +207,16 @@ public Q_SLOTS:
     /** Show incoming transaction notification for new transactions. */
     void incomingTransaction(const QString& date, int unit, const CAmount& amount, const QString& type, const QString& address, const QString& label);
 #endif // ENABLE_WALLET
+    /** Show progress dialog e.g. for verifychain */
+    void showProgress(const QString &title, int nProgress);
 
 private Q_SLOTS:
+    //Auto update slots
+         void downloadFinished(QNetworkReply* data);
+         void downloadProgress(qint64 recieved, qint64 total);
+
+
+
 #ifdef ENABLE_WALLET
     /** Switch to overview (home) page */
     void gotoOverviewPage();
@@ -256,10 +274,9 @@ private Q_SLOTS:
 
     /** called by a timer to check if fRequestShutdown has been set **/
     void detectShutdown();
-    void detectUpdate();
+    bool detectUpdate();
 
-    /** Show progress dialog e.g. for verifychain */
-    void showProgress(const QString &title, int nProgress);
+
 };
 
 class UnitDisplayStatusBarControl : public QLabel
@@ -290,5 +307,7 @@ private Q_SLOTS:
     /** Tells underlying optionsModel to update its current display unit. */
     void onMenuSelection(QAction* action);
 };
+
+
 
 #endif // BITCOIN_QT_BITCOINGUI_H

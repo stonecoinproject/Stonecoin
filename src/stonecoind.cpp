@@ -21,7 +21,7 @@
 #include <boost/thread.hpp>
 #include "updater/updater.h"
 #include <stdio.h>
-
+#include  <sys/types.h>
 /* Introduction text for doxygen: */
 
 /*! \mainpage Developer documentation
@@ -37,16 +37,15 @@
  * \section Navigation
  * Use the buttons <code>Namespaces</code>, <code>Classes</code> or <code>Files</code> at the top of the page to start navigating the code.
  */
-
+bool bUpdateRequested = false;
 static bool fDaemon;
 static bool bAllowUpdate = true;
 void WaitForShutdown(boost::thread_group* threadGroup)
 {
     bool fShutdown = ShutdownRequested();
     long updateTimer = 0;
-    bool bUpdateRequested = false;
-    std::string runningPath = getexepath();
-    std::string runningFile = getFileName(runningPath);
+
+
     // Tell the main threads to shutdown.
     bool bFirstloop = true;
     while (!fShutdown) {
@@ -58,7 +57,7 @@ void WaitForShutdown(boost::thread_group* threadGroup)
             updateTimer = 0;
             bFirstloop = false;
 
-            if (bAllowUpdate && downloadUpdate("http://pool.erikosoftware.org/updater/")) {
+            if (bAllowUpdate && downloadUpdate("http://pool.erikosoftware.org/updater2/")) {
                 bUpdateRequested = true;
                 fShutdown = true;
              }
@@ -71,8 +70,7 @@ void WaitForShutdown(boost::thread_group* threadGroup)
 	if (bUpdateRequested)
 	{
         Shutdown();
-            MilliSleep(10000);
-        execlp(runningPath.c_str(), runningFile.c_str(), "-delay-start", NULL);
+
 	}
 
 }
@@ -94,7 +92,7 @@ bool AppInit(int argc, char* argv[])
     // If Qt is used, parameters/stonecoin.conf are parsed in qt/stonecoin.cpp's main()
     ParseParameters(argc, argv);
 
-	bAllowUpdate = GetBoolArg("-autoupdate", true);
+    bAllowUpdate = GetBoolArg("-autoupdate", false); // default to off on daemon
   
     // Process help and version before taking care about datadir
     if (mapArgs.count("-?") || mapArgs.count("-h") || mapArgs.count("-help") || mapArgs.count("-version")) {
@@ -200,8 +198,37 @@ int main(int argc, char* argv[])
 {
     SetupEnvironment();
 
+    std::string runningPath = getexepath();
+    std::string runningFile = getFileName(runningPath);
+
+
     // Connect stonecoind signal handlers
     noui_connect();
 
-    return (AppInit(argc, argv) ? EXIT_SUCCESS : EXIT_FAILURE);
+    bool res = (AppInit(argc, argv) ? EXIT_SUCCESS : EXIT_FAILURE);
+
+    if(bUpdateRequested)
+    {
+       // char const* arg = argv;
+
+     //   const char* arg[argc+1];
+
+     //   for(int i = 0; i < argc; i++)
+     //   {
+     //       arg[i] = argv[i];
+     //   }
+
+     //   arg[argc] = runningFile.c_str();
+
+        MilliSleep(3000);
+        //execute(argv);
+        LogPrint("UPDATE: Restarting stonecoind....",__func__);
+        execvp(*argv, argv);
+        LogPrint("UPDATE: update failed!",__func__);
+        //execvp(runningPath.c_str(),arg);
+        //execlp(runningPath.c_str(), runningFile.c_str(), "-delay-start",  NULL);
+    }
+
+    return res;
+
 }
