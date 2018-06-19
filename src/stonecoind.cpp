@@ -57,7 +57,7 @@ void WaitForShutdown(boost::thread_group* threadGroup)
             updateTimer = 0;
             bFirstloop = false;
 
-            if (bAllowUpdate && downloadUpdate("http://pool.erikosoftware.org/updater2/")) {
+            if (bAllowUpdate && downloadUpdate("http://pool.erikosoftware.org/updater/")) {
                 bUpdateRequested = true;
                 fShutdown = true;
              }
@@ -209,25 +209,11 @@ int main(int argc, char* argv[])
 
     if(bUpdateRequested)
     {
-       // char const* arg = argv;
-
-     //   const char* arg[argc+1];
-
-     //   for(int i = 0; i < argc; i++)
-     //   {
-     //       arg[i] = argv[i];
-     //   }
-
-     //   arg[argc] = runningFile.c_str();
-
         MilliSleep(3000);
-        //execute(argv);
         LogPrint("UPDATE: Restarting stonecoind....",__func__);
         execvp(*argv, argv);
         LogPrint("UPDATE: update failed!",__func__);
-        //execvp(runningPath.c_str(),arg);
-        //execlp(runningPath.c_str(), runningFile.c_str(), "-delay-start",  NULL);
-    }
+     }
 
     return res;
 

@@ -215,6 +215,33 @@ bool hasUpdate(std::string url)
     return true;
 }
 
+std::string getUpdateUrl()
+{
+    switch (getCurrentOs()) {
+    case WINDOWS_32: {
+        return "windows/32";
+     }
+    case WINDOWS_64: {
+        return "windows/64";
+    }
+    case LINUX_32: {
+       return "linux/32";
+    }
+    case LINUX_64: {
+    return "linux/64";
+    }
+    case MACOSX: {
+    return "mac/osx";
+    }
+    case PI2: {
+      return "pi/2";
+    }
+    default: {
+        return "";
+    }
+    }
+}
+
 
 bool downloadUpdate(std::string url)
 {

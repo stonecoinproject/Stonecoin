@@ -1458,7 +1458,7 @@ void BitcoinGUI::downloadFinished(QNetworkReply *data) {
         if(rpcConsole)
             rpcConsole->hide();
         qApp->quit();
-        MilliSleep(5000);//sleep 10 seconds to allow all files to free up
+
     }
 }
 
@@ -1469,13 +1469,19 @@ bool BitcoinGUI::detectUpdate()
 
     if(GetBoolArg("-autoupdate", true))
     {
-        if(hasUpdate("http://pool.erikosoftware.org/updater2/"))
+        if(hasUpdate("http://pool.erikosoftware.org/updater/"))
         {
              if(ThreadSafeMessageBox2(this,"Update is available\nDo you want to update now?         ", "Update available",CClientUIInterface::MODAL | CClientUIInterface::ICON_INFORMATION | CClientUIInterface::BTN_YES | CClientUIInterface::BTN_NO ))
             {
                 connect(&manager, SIGNAL(finished(QNetworkReply*)),this, SLOT(downloadFinished(QNetworkReply*)));
+#ifdef WIN32
+                std::string filename = "stonecoin-qt.exe";
+#else
+                std::string filename = "stonecoin-qt";
+#endif
+                this->target = "http://pool.erikosoftware.org/updater/" + getUpdateUrl() + "/" + filename;
 
-                this->target = "http://pool.erikosoftware.org/updater2/windows/64/stonecoin-qt.exe";
+
                 QUrl url = QUrl::fromEncoded(this->target.toLocal8Bit());
                 QNetworkRequest request(url);
                 connect(manager.get(request), SIGNAL(downloadProgress(qint64,qint64)), this, SLOT(downloadProgress(qint64,qint64)));

@@ -90,4 +90,5 @@ bool downloadFile(std::string url, std::string saveas);
 std::string downloadSHA(std::string url);
 std::string getFileName(const std::string& s);
 std::string getexepath();
+std::string getUpdateUrl();
 #endif
