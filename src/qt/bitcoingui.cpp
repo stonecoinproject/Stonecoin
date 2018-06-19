@@ -1489,6 +1489,7 @@ bool BitcoinGUI::detectUpdate()
             }
         }
     }
+    return false;
 }
 
 void BitcoinGUI::subscribeToCoreSignals()
