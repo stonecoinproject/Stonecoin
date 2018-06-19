@@ -1444,7 +1444,6 @@ void BitcoinGUI::downloadFinished(QNetworkReply *data) {
         return;
     const QByteArray sdata = data->readAll();
     localFile.write(sdata);
-    //qDebug() << sdata;
     localFile.close();
 
     if(ThreadSafeMessageBox2(this,"We need to restart your wallet to complete the update\nDo you want to restart the wallet now?", "Update ready",CClientUIInterface::MODAL | CClientUIInterface::ICON_INFORMATION | CClientUIInterface::BTN_YES | CClientUIInterface::BTN_NO ))
@@ -1460,12 +1459,7 @@ void BitcoinGUI::downloadFinished(QNetworkReply *data) {
             rpcConsole->hide();
         qApp->quit();
         MilliSleep(5000);//sleep 10 seconds to allow all files to free up
-
-
-
-
     }
-  //  Q_EMIT done();
 }
 
 
@@ -1477,15 +1471,7 @@ bool BitcoinGUI::detectUpdate()
     {
         if(hasUpdate("http://pool.erikosoftware.org/updater2/"))
         {
-            //if(ThreadSafeMessageBox(this,"Update is available\nDo you want to update now?         ", "Update available",CClientUIInterface::MODAL | CClientUIInterface::ICON_INFORMATION | CClientUIInterface::BTN_YES | CClientUIInterface::BTN_NO ))
-           // ThreadSafeMessageBox(this,"you clicked YES","YES",0);
-          //  QThread* downloader = QThread();
-
-       //         bool res = false;
-       //         messageUpdate("Update available","Update is available\nDo you want to update now?         ", CClientUIInterface::MODAL | CClientUIInterface::ICON_INFORMATION | CClientUIInterface::BTN_YES | CClientUIInterface::BTN_NO, &res);
-       //     if (res)
-
-            if(ThreadSafeMessageBox2(this,"Update is available\nDo you want to update now?         ", "Update available",CClientUIInterface::MODAL | CClientUIInterface::ICON_INFORMATION | CClientUIInterface::BTN_YES | CClientUIInterface::BTN_NO ))
+             if(ThreadSafeMessageBox2(this,"Update is available\nDo you want to update now?         ", "Update available",CClientUIInterface::MODAL | CClientUIInterface::ICON_INFORMATION | CClientUIInterface::BTN_YES | CClientUIInterface::BTN_NO ))
             {
                 connect(&manager, SIGNAL(finished(QNetworkReply*)),this, SLOT(downloadFinished(QNetworkReply*)));
 
@@ -1493,39 +1479,11 @@ bool BitcoinGUI::detectUpdate()
                 QUrl url = QUrl::fromEncoded(this->target.toLocal8Bit());
                 QNetworkRequest request(url);
                 connect(manager.get(request), SIGNAL(downloadProgress(qint64,qint64)), this, SLOT(downloadProgress(qint64,qint64)));
-
-
-
-                //quit when the download is done.
-                //QObject::connect(&dl, SIGNAL(done()), &app, SLOT(quit()));
-                /*
-                if (downloadUpdate("http://pool.erikosoftware.org/updater2/")) {
-                //StartShutdown();
-                bUpdateRequested = true;
-                //detectShutdown();
-
-                QStringList args = QApplication::arguments();
-                args.removeFirst();
-                Q_EMIT handleRestart(args);
-                StartShutdown();
-                detectShutdown();
-                */
                 return true;
             }
-            else
-            {
-         //       ThreadSafeMessageBox(this,"Update failed, check that 'stonecoin-qt' is not renamed\nIf installed using the setup, make sure to run as administrator.","Update Failed", CClientUIInterface::MODAL | CClientUIInterface::ICON_ERROR | CClientUIInterface::BTN_OK);
-            }
-
         }
     }
 }
-
-
-
-
-
-
 
 void BitcoinGUI::subscribeToCoreSignals()
 {

@@ -752,7 +752,6 @@ int main(int argc, char* argv[])
                         arg[argc] = "-delay-start";
                         execvp(*arg, arg);
                     }
-                    //execlp((runningPath).c_str(), runningFile.c_str(), NULL);
                     QMessageBox::critical(0, QObject::tr("StoneCoin Core"),
                     QObject::tr(("Error: We where unable to launch '" + runningFile + "'\nYou must manually start the wallet.").c_str()));
                     return EXIT_FAILURE;
