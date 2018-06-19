@@ -126,8 +126,11 @@ public:
         assert(genesis.hashMerkleRoot == uint256S("0xf5d78571b59baf4e0107d7d4f7ca56b62bf68d944ae50bbee00fd8bf0317ba98"));
 
 
-        vSeeds.push_back(CDNSSeedData("stonecoin.network", "seed1.stonecrypto.org"));
-        vSeeds.push_back(CDNSSeedData("stonecoin.network", "seed2.stonecrypto.org"));
+        vSeeds.push_back(CDNSSeedData("stonecoin.network", "explorer.stonecoin.rocks:22323"));
+        vSeeds.push_back(CDNSSeedData("stonecoin.network", "199.247.9.250:22323"));
+        vSeeds.push_back(CDNSSeedData("stonecoin.network", "199.247.16.62:22323"));
+        vSeeds.push_back(CDNSSeedData("stonecoin.network", "93.90.202.119:22323"));
+
 
         // StoneCoin addresses start with 'S'
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1, 63);
@@ -343,7 +346,7 @@ public:
                 (91000, uint256S("0x00000000700b05d31f68f884f9bdd3a85888a19b15717c6423fdd34ace19281e"))
                 (91500, uint256S("0x0000000186c59ea59642296a274b35584d6f843e0199c18c9eef84bdd0109443"))
                 (92000, uint256S("0x00000001d76d0aec1deaa4ec32405ed03e8a025307a0da9b60d18d3b0f7ef9db")),
-				
+                //(101206, uint256S("0x00000000178dee28e5f5a16469b0cb298667dc508a7bec1446fbfac7d5cc0b10")),
              //  (    50, uint256S("0x000002478d38dcbbf90750b98c403ecb814d94bcb8a0090c904b5c31e6dedecd")),
             1528215034, // * UNIX timestamp of last checkpoint block
             108674,     //  total number of transactions between genesis and last checkpoint
@@ -352,6 +355,11 @@ public:
           };
     }
 };
+
+
+//2018-06-19 02:46:28 UpdateTip: new best=00000000178dee28e5f5a16469b0cb298667dc508a7bec1446fbfac7d5cc0b10  height=101206  log2_work=53.861439  tx=119017  date=2018-06-19 02:46:24 progress=0.999999  cache=0.7MiB(3956tx)
+//2018-06-19 02:46:28 ProcessNewBlock : ACCEPTED
+
 static CMainParams mainParams;
 
 /*
