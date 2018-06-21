@@ -39,7 +39,7 @@
  */
 bool bUpdateRequested = false;
 static bool fDaemon;
-static bool bAllowUpdate = true;
+static bool bAllowUpdate = false; //default to off
 void WaitForShutdown(boost::thread_group* threadGroup)
 {
     bool fShutdown = ShutdownRequested();
@@ -92,7 +92,7 @@ bool AppInit(int argc, char* argv[])
     // If Qt is used, parameters/stonecoin.conf are parsed in qt/stonecoin.cpp's main()
     ParseParameters(argc, argv);
 
-    bAllowUpdate = GetBoolArg("-autoupdate", false); // default to off on daemon
+
   
     // Process help and version before taking care about datadir
     if (mapArgs.count("-?") || mapArgs.count("-h") || mapArgs.count("-help") || mapArgs.count("-version")) {
@@ -174,6 +174,9 @@ bool AppInit(int argc, char* argv[])
         // Set this early so that parameter interactions go to console
         InitLogging();
         InitParameterInteraction();
+
+        bAllowUpdate = GetBoolArg("-autoupdate", false); // default to off on daemon, and only accepted as command argument to prevent it being on by mistake
+
         fRet = AppInit2(threadGroup, scheduler);
     } catch (const std::exception& e) {
         PrintExceptionContinue(&e, "AppInit()");

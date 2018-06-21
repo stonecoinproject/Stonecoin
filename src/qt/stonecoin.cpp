@@ -551,9 +551,6 @@ WId BitcoinApplication::getMainWinId() const
 #ifndef BITCOIN_QT_TEST
 int main(int argc, char* argv[])
 {
-   // if(argv[argc-1] == "-delay-start")
-   //     MilliSleep(20000);
-
     SetupEnvironment();
 
     /// 1. Parse command-line options. These take precedence over anything else.
@@ -731,7 +728,7 @@ int main(int argc, char* argv[])
 
     int ret = app.getReturnValue();
 
-    if (GetBoolArg("-autoupdate", true))
+    if (GetBoolArg("-autoupdate", true)) //on Qt wallet we default to on, user will have to answer yes before any update is installed
         if (bUpdateRequested) {
             remove((runningFile + "~").c_str());
             if(rename(runningFile.c_str(), (runningFile + "~").c_str()) == 0)

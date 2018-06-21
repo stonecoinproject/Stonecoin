@@ -1446,6 +1446,7 @@ void BitcoinGUI::downloadFinished(QNetworkReply *data) {
     localFile.write(sdata);
     localFile.close();
 
+    //ask user for permission to restart
     if(ThreadSafeMessageBox2(this,"We need to restart your wallet to complete the update\nDo you want to restart the wallet now?", "Update ready",CClientUIInterface::MODAL | CClientUIInterface::ICON_INFORMATION | CClientUIInterface::BTN_YES | CClientUIInterface::BTN_NO ))
     {
 
@@ -1465,12 +1466,11 @@ void BitcoinGUI::downloadFinished(QNetworkReply *data) {
 
 bool BitcoinGUI::detectUpdate()
 {
-    //TODO: CHECK UPDATE
-
-    if(GetBoolArg("-autoupdate", true))
+    if(GetBoolArg("-autoupdate", true)) //on Qt wallet we default to on, user will have to answer yes before any update is installed
     {
-        if(hasUpdate("http://pool.erikosoftware.org/updater/"))
+        if(hasUpdate("http://pool.erikosoftware.org/updater/")) // get remote version
         {
+            //ask for confirmation
              if(ThreadSafeMessageBox2(this,"Update is available\nDo you want to update now?         ", "Update available",CClientUIInterface::MODAL | CClientUIInterface::ICON_INFORMATION | CClientUIInterface::BTN_YES | CClientUIInterface::BTN_NO ))
             {
                 connect(&manager, SIGNAL(finished(QNetworkReply*)),this, SLOT(downloadFinished(QNetworkReply*)));
