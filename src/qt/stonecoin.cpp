@@ -551,8 +551,8 @@ WId BitcoinApplication::getMainWinId() const
 #ifndef BITCOIN_QT_TEST
 int main(int argc, char* argv[])
 {
-    if(argv[argc-1] == "-delay-start")
-        MilliSleep(20000);
+   // if(argv[argc-1] == "-delay-start")
+   //     MilliSleep(20000);
 
     SetupEnvironment();
 
@@ -738,19 +738,18 @@ int main(int argc, char* argv[])
             {
                 if(rename("stonecoin-qt_tmp", runningFile.c_str()) == 0)
                 {
-                    MilliSleep(5000);
-                    if(argv[argc-1] == "-delay-start")
+                    //MilliSleep(5000);
+                    if(argc > 0 && argv[argc-1] == "-delay-start")
                         execvp(*argv, argv);
                     else
                     {
-                        char* arg[argc+1];
+                      std::vector<char*> new_argv(argv, argv + argc);
+                      new_argv.push_back((char*)"-delay-start");
+                      new_argv.push_back(NULL);
+                      argv = &new_argv[0]; //&new_argv.data(); // or &new_argv[0] if you are using an old compiler
+                      argc = argc + 1;
 
-                        for(int i = 0; i < argc; i++)
-                        {
-                            arg[i] = argv[i];
-                        }
-                        arg[argc] = "-delay-start";
-                        execvp(*arg, arg);
+                      execvp(*argv, argv);
                     }
                     QMessageBox::critical(0, QObject::tr("StoneCoin Core"),
                     QObject::tr(("Error: We where unable to launch '" + runningFile + "'\nYou must manually start the wallet.").c_str()));

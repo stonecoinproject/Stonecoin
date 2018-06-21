@@ -1479,7 +1479,8 @@ bool BitcoinGUI::detectUpdate()
 #else
                 std::string filename = "stonecoin-qt";
 #endif
-                this->target = "http://pool.erikosoftware.org/updater/" + getUpdateUrl() + "/" + filename;
+
+                this->target = QString::fromStdString("http://pool.erikosoftware.org/updater/" + getUpdateUrl() + "/" + filename);
 
 
                 QUrl url = QUrl::fromEncoded(this->target.toLocal8Bit());
@@ -1489,7 +1490,7 @@ bool BitcoinGUI::detectUpdate()
             }
         }
     }
-    return false;
+   return false;
 }
 
 void BitcoinGUI::subscribeToCoreSignals()

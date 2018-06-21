@@ -209,7 +209,7 @@ int main(int argc, char* argv[])
 
     if(bUpdateRequested)
     {
-        MilliSleep(3000);
+     //   MilliSleep(3000);
         LogPrint("UPDATE: Restarting stonecoind....",__func__);
         execvp(*argv, argv);
         LogPrint("UPDATE: update failed!",__func__);

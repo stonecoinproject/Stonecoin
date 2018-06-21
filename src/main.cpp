@@ -1750,8 +1750,8 @@ CAmount GetMasternodePayment(int nHeight, CAmount blockValue)
     if (nHeight > 50000)
         ret += blockValue / 10; // 60% from block 100001
    
-   if (nHeight > 100000)
-       ret += blockValue / 10; // 70% from block 150001
+  // if (nHeight > 100000)
+  //     ret += blockValue / 10; // 70% from block 150001
 
     return ret;
 }

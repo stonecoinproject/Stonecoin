@@ -959,15 +959,32 @@ bool AutoBackupWallet (CWallet* wallet, std::string strWalletFile, std::string& 
             }
         } else {
             // ... strWalletFile file
+            //wait for time to get to a valid point where we can create the backup, prevent error on restart after update
             fs::path sourceFile = GetDataDir() / strWalletFile;
             fs::path backupFile = backupsDir / (strWalletFile + dateTimeStr);
             sourceFile.make_preferred();
             backupFile.make_preferred();
             if (fs::exists(backupFile))
             {
-                strBackupWarning = _("Failed to create backup, file already exists! This could happen if you restarted wallet in less than 60 seconds. You can continue if you are ok with this.");
-                LogPrintf("%s\n", strBackupWarning);
-                return false;
+                if(GetBoolArg("-delay-start",false))
+                {
+                    while(fs::exists(backupFile))
+                    {
+                        MilliSleep(1000);
+                        dateTimeStr = DateTimeStrFormat(".%Y-%m-%d-%H-%M", GetTime());
+                        sourceFile = GetDataDir() / strWalletFile;
+                        backupFile = backupsDir / (strWalletFile + dateTimeStr);
+
+                    }
+                    sourceFile.make_preferred();
+                    backupFile.make_preferred();
+                }
+                else
+                {
+                    strBackupWarning = _("Failed to create backup, file already exists! This could happen if you restarted wallet in less than 60 seconds. You can continue if you are ok with this.");
+                    LogPrintf("%s\n", strBackupWarning);
+                    return false;
+                }
             }
             if(fs::exists(sourceFile)) {
                 try {
