@@ -11,12 +11,12 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-const char* phase = "";
+const char* stone = "";
 static char dbname[200];
 
-static void StartPhase(const char* name) {
+static void StartStone(const char* name) {
   fprintf(stderr, "=== Test %s\n", name);
-  phase = name;
+  stone = name;
 }
 
 static const char* GetTempDir(void) {
@@ -28,13 +28,13 @@ static const char* GetTempDir(void) {
 
 #define CheckNoError(err)                                               \
   if ((err) != NULL) {                                                  \
-    fprintf(stderr, "%s:%d: %s: %s\n", __FILE__, __LINE__, phase, (err)); \
+    fprintf(stderr, "%s:%d: %s: %s\n", __FILE__, __LINE__, stone, (err)); \
     abort();                                                            \
   }
 
 #define CheckCondition(cond)                                            \
   if (!(cond)) {                                                        \
-    fprintf(stderr, "%s:%d: %s: %s\n", __FILE__, __LINE__, phase, #cond); \
+    fprintf(stderr, "%s:%d: %s: %s\n", __FILE__, __LINE__, stone, #cond); \
     abort();                                                            \
   }
 
@@ -47,7 +47,7 @@ static void CheckEqual(const char* expected, const char* v, size_t n) {
     return;
   } else {
     fprintf(stderr, "%s: expected '%s', got '%s'\n",
-            phase,
+            stone,
             (expected ? expected : "(null)"),
             (v ? v : "(null"));
     abort();
@@ -173,7 +173,7 @@ int main(int argc, char** argv) {
            GetTempDir(),
            ((int) geteuid()));
 
-  StartPhase("create_objects");
+  StartStone("create_objects");
   cmp = leveldb_comparator_create(NULL, CmpDestroy, CmpCompare, CmpName);
   env = leveldb_create_default_env();
   cache = leveldb_cache_create_lru(100000);
@@ -198,41 +198,41 @@ int main(int argc, char** argv) {
   woptions = leveldb_writeoptions_create();
   leveldb_writeoptions_set_sync(woptions, 1);
 
-  StartPhase("destroy");
+  StartStone("destroy");
   leveldb_destroy_db(options, dbname, &err);
   Free(&err);
 
-  StartPhase("open_error");
+  StartStone("open_error");
   db = leveldb_open(options, dbname, &err);
   CheckCondition(err != NULL);
   Free(&err);
 
-  StartPhase("leveldb_free");
+  StartStone("leveldb_free");
   db = leveldb_open(options, dbname, &err);
   CheckCondition(err != NULL);
   leveldb_free(err);
   err = NULL;
 
-  StartPhase("open");
+  StartStone("open");
   leveldb_options_set_create_if_missing(options, 1);
   db = leveldb_open(options, dbname, &err);
   CheckNoError(err);
   CheckGet(db, roptions, "foo", NULL);
 
-  StartPhase("put");
+  StartStone("put");
   leveldb_put(db, woptions, "foo", 3, "hello", 5, &err);
   CheckNoError(err);
   CheckGet(db, roptions, "foo", "hello");
 
-  StartPhase("compactall");
+  StartStone("compactall");
   leveldb_compact_range(db, NULL, 0, NULL, 0);
   CheckGet(db, roptions, "foo", "hello");
 
-  StartPhase("compactrange");
+  StartStone("compactrange");
   leveldb_compact_range(db, "a", 1, "z", 1);
   CheckGet(db, roptions, "foo", "hello");
 
-  StartPhase("writebatch");
+  StartStone("writebatch");
   {
     leveldb_writebatch_t* wb = leveldb_writebatch_create();
     leveldb_writebatch_put(wb, "foo", 3, "a", 1);
@@ -251,7 +251,7 @@ int main(int argc, char** argv) {
     leveldb_writebatch_destroy(wb);
   }
 
-  StartPhase("iter");
+  StartStone("iter");
   {
     leveldb_iterator_t* iter = leveldb_create_iterator(db, roptions);
     CheckCondition(!leveldb_iter_valid(iter));
@@ -273,7 +273,7 @@ int main(int argc, char** argv) {
     leveldb_iter_destroy(iter);
   }
 
-  StartPhase("approximate_sizes");
+  StartStone("approximate_sizes");
   {
     int i;
     int n = 20000;
@@ -297,7 +297,7 @@ int main(int argc, char** argv) {
     CheckCondition(sizes[1] > 0);
   }
 
-  StartPhase("property");
+  StartStone("property");
   {
     char* prop = leveldb_property_value(db, "nosuchprop");
     CheckCondition(prop == NULL);
@@ -306,7 +306,7 @@ int main(int argc, char** argv) {
     Free(&prop);
   }
 
-  StartPhase("snapshot");
+  StartStone("snapshot");
   {
     const leveldb_snapshot_t* snap;
     snap = leveldb_create_snapshot(db);
@@ -319,7 +319,7 @@ int main(int argc, char** argv) {
     leveldb_release_snapshot(db, snap);
   }
 
-  StartPhase("repair");
+  StartStone("repair");
   {
     leveldb_close(db);
     leveldb_options_set_create_if_missing(options, 0);
@@ -335,7 +335,7 @@ int main(int argc, char** argv) {
     leveldb_options_set_error_if_exists(options, 1);
   }
 
-  StartPhase("filter");
+  StartStone("filter");
   for (run = 0; run < 2; run++) {
     // First run uses custom filter, second run uses bloom filter
     CheckNoError(err);
@@ -362,7 +362,7 @@ int main(int argc, char** argv) {
     fake_filter_result = 1;
     CheckGet(db, roptions, "foo", "foovalue");
     CheckGet(db, roptions, "bar", "barvalue");
-    if (phase == 0) {
+    if (stone == 0) {
       // Must not find value when custom filter returns false
       fake_filter_result = 0;
       CheckGet(db, roptions, "foo", NULL);
@@ -376,7 +376,7 @@ int main(int argc, char** argv) {
     leveldb_filterpolicy_destroy(policy);
   }
 
-  StartPhase("cleanup");
+  StartStone("cleanup");
   leveldb_close(db);
   leveldb_options_destroy(options);
   leveldb_readoptions_destroy(roptions);

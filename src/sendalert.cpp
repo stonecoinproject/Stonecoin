@@ -12,8 +12,8 @@ If you need to broadcast an alert, here's what to do:
 1. Modify alert parameters below, see alert.* and comments in the code
    for what does what.
 
-2. run stonecoind with -printalert or -sendalert like this:
-   /path/to/stonecoind -printalert
+2. run stoned with -printalert or -sendalert like this:
+   /path/to/stoned -printalert
 
 One minute after starting up the alert will be broadcast. It is then
 flooded through the network until the nRelayUntil time, and will be
@@ -57,10 +57,10 @@ void ThreadSendAlert()
     //  Higher numbers mean higher priority
     alert.nPriority     = 5000;
     alert.strComment    = "";
-    alert.strStatusBar  = "URGENT: Upgrade required: see https://www.stonecoin.org";
+    alert.strStatusBar  = "URGENT: Upgrade required: see https://stone.io";
 
     // Set specific client version/versions here. If setSubVer is empty, no filtering on subver is done:
-    // alert.setSubVer.insert(std::string("/StoneCoin Core:0.12.0.58/"));
+    // alert.setSubVer.insert(std::string("/Stone Core:0.12.0.58/"));
 
     // Sign
     if(!alert.Sign())

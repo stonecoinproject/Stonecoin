@@ -4,11 +4,11 @@
 There are many ways to setup a wallet to support start-many. This guide will walk through two of them.
 
 1. [Importing an existing wallet (recommended if you are consolidating wallets).](#option1)
-2. [Sending 1500 STONE to new wallet addresses.](#option2)
+2. [Sending 1000 STONE to new wallet addresses.](#option2)
 
 ## <a name="option1"></a>Option 1. Importing an existing wallet
 
-This is the way to go if you are consolidating multiple wallets into one that supports start-many.
+This is the way to go if you are consolidating multiple wallets into one that supports start-many. 
 
 ### From your single-instance Masternode Wallet
 
@@ -48,7 +48,7 @@ The wallet will re-scan and you will see your available balance increase by the 
 2. Click the Receive tab.
 3. Fill in the form to request a payment.
     * Label: mn01
-    * Amount: 1500 (optional)
+    * Amount: 1000 (optional)
     * Click *Request payment* button
 5. Click the *Copy Address* button
 
@@ -80,9 +80,9 @@ Create the `masternode.conf` file in the same directory as your `wallet.dat`.
 
 Copy the masternode private key and correspondig collateral output transaction that holds the 1000 STONE.
 
-The masternode private key may be an existing key from [Option 1](#option1), or a newly generated key from [Option 2](#option2).
+The masternode private key may be an existing key from [Option 1](#option1), or a newly generated key from [Option 2](#option2). 
 
-*Note: The masternode priviate key is **not** the same as a wallet private key. **Never** put your wallet private key in the masternode.conf file. That is almost equivalent to putting your 1500 STONE on the remote server and defeats the purpose of a hot/cold setup.*
+*Note: The masternode priviate key is **not** the same as a wallet private key. **Never** put your wallet private key in the masternode.conf file. That is almost equivalent to putting your 1000 STONE on the remote server and defeats the purpose of a hot/cold setup.*
 
 ### Get the collateral output
 
@@ -95,7 +95,7 @@ Issue the following:
 Make note of the hash (which is your collateral_output) and index.
 
 ### Enter your Masternode details into your masternode.conf file
-[From the stonecoin github repo](https://github.com/stonecrypto/stonecoin/blob/master/doc/masternode_conf.md)
+[From the stone github repo](https://github.com/stone/stone/blob/master/doc/masternode_conf.md)
 
 `masternode.conf` format is a space seperated text file. Each line consisting of an alias, IP address followed by port, masternode private key, collateral output transaction id and collateral output index.
 
@@ -106,36 +106,36 @@ alias ipaddress:port masternode_private_key collateral_output collateral_output_
 Example:
 
 ```
-mn01 127.0.0.1:22323 93HaYBVUCYjEMeeH1Y4sBGLALQZE1Yc1K64xiqgX37tGBDQL8Xg 2bcd3c84c84f87eaa86e4e56834c92927a07f9e18718810b92e0d0324456a67c 0
-mn02 127.0.0.2:22323 93WaAb3htPJEV8E9aQcN23Jt97bPex7YvWfgMDTUdWJvzmrMqey aa9f1034d973377a5e733272c3d0eced1de22555ad45d6b24abadff8087948d4 0
+mn01 127.0.0.1:9999 93HaYBVUCYjEMeeH1Y4sBGLALQZE1Yc1K64xiqgX37tGBDQL8Xg 2bcd3c84c84f87eaa86e4e56834c92927a07f9e18718810b92e0d0324456a67c 0
+mn02 127.0.0.2:9999 93WaAb3htPJEV8E9aQcN23Jt97bPex7YvWfgMDTUdWJvzmrMqey aa9f1034d973377a5e733272c3d0eced1de22555ad45d6b24abadff8087948d4 0
 ```
 
-## What about the stonecoin.conf file?
+## What about the stone.conf file?
 
-If you are using a `masternode.conf` file you no longer need the `stonecoin.conf` file. The exception is if you need custom settings (_thanks oblox_). In that case you **must** remove `masternode=1` from local `stonecoin.conf` file. This option should be used only to start local Hot masternode now.
+If you are using a `masternode.conf` file you no longer need the `stone.conf` file. The exception is if you need custom settings (_thanks oblox_). In that case you **must** remove `masternode=1` from local `stone.conf` file. This option should be used only to start local Hot masternode now.
 
-## Update stonecoin.conf on server
+## Update stone.conf on server
 
-If you generated a new masternode private key, you will need to update the remote `stonecoin.conf` files.
+If you generated a new masternode private key, you will need to update the remote `stone.conf` files.
 
 Shut down the daemon and then edit the file.
 
-```nano .stonecrypto/stonecoin.conf```
+```nano .stonecore/stone.conf```
 
 ### Edit the masternodeprivkey
-If you generated a new masternode private key, you will need to update the `masternodeprivkey` value in your remote `stonecoin.conf` file.
+If you generated a new masternode private key, you will need to update the `masternodeprivkey` value in your remote `stone.conf` file.
 
 ## Start your Masternodes
 
 ### Remote
 
-If your remote server is not running, start your remote daemon as you normally would.
+If your remote server is not running, start your remote daemon as you normally would. 
 
 You can confirm that remote server is on the correct block by issuing
 
-```stonecoin-cli getinfo```
+```stone-cli getinfo```
 
-and comparing with the official explorer at https://explorer.stonecoin.org/chain/StoneCoin
+and comparing with the official explorer at https://explorer.stone.info/chain/Proton
 
 ### Local
 
@@ -162,11 +162,11 @@ Example ```masternode start-alias mn01```
 Issue command `masternode status`
 It should return you something like that:
 ```
-stonecoin-cli masternode status
+stone-cli masternode status
 {
     "vin" : "CTxIn(COutPoint(<collateral_output>, <collateral_output_index>), scriptSig=)",
     "service" : "<ipaddress>:<port>",
-    "pubkey" : "<1500 STONE address>",
+    "pubkey" : "<1000 STONE address>",
     "status" : "Masternode successfully started"
 }
 ```
@@ -174,6 +174,6 @@ Command output should have "_Masternode successfully started_" in its `status` f
 
 ### Local
 
-Search your Masternodes on https://stonecoinninja.pl/masternodes.html
+Search your Masternodes on https://stoneninja.pl/masternodes.html
 
 _Hint: Bookmark it, you definitely will be using this site a lot._

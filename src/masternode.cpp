@@ -1,5 +1,5 @@
 // Copyright (c) 2014-2017 The Dash Core developers
-// Copyright (c) 2017-2018 The StoneCoin Core developers
+// Copyright (c) 2017-2018 The Stone Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -158,8 +158,36 @@ arith_uint256 CMasternode::CalculateScore(const uint256& blockHash)
     ss2 << blockHash;
     ss2 << aux;
     arith_uint256 hash3 = UintToArith256(ss2.GetHash());
+    arith_uint256 score = (hash3 > hash2 ? hash3 - hash2 : hash2 - hash3);
+    CCoins coins;
+   	pcoinsTip->GetCoins(vin.prevout.hash, coins);
+   	int height = chainActive.Height();
+    Level mnLevel;
+	if(vin.prevout.n >= coins.vout.size()) {
+            height = NULL_LEVEL;
+	} else {
+	    CAmount collateral = coins.vout[vin.prevout.n].nValue;
+	    //LogPrintf("CalculateScore(): getting masternode level\n");
+	    mnLevel = getMasternodeLevel(collateral, height);
+    }
 
-    return (hash3 > hash2 ? hash3 - hash2 : hash2 - hash3);
+   	//CAmount collateral = coins.vout[vin.prevout.n].nValue;
+   	//Level mnLevel = getMasternodeLevel(collateral, height);
+   	switch(mnLevel) {
+   	case LEVEL1:
+   	case LEVEL2:
+   		break;
+   	case LEVEL3:
+   		score *= 2.2;
+   		break;
+   	case LEVEL4:
+   		score *= 3.6;
+   		break;
+   	default:
+   		break;
+   	}
+
+    return score;
 }
 
 void CMasternode::Check(bool fForce)
@@ -625,10 +653,12 @@ bool CMasternodeBroadcast::CheckOutpoint(int& nDos)
             LogPrint("masternode", "CMasternodeBroadcast::CheckOutpoint -- Failed to find Masternode UTXO, masternode=%s\n", vin.prevout.ToStringShort());
             return false;
         }
-        if(coins.vout[vin.prevout.n].nValue != 1500 * COIN) {
-            LogPrint("masternode", "CMasternodeBroadcast::CheckOutpoint -- Masternode UTXO should have 1500 STONE, masternode=%s\n", vin.prevout.ToStringShort());
+        int height = chainActive.Height();
+        if(!isValidMasternode(coins.vout[vin.prevout.n].nValue, height)) {
+            LogPrint("masternode", "CMasternodeBroadcast::CheckOutpoint -- Masternode UTXO should have at least %"PRId64" STONE, masternode=%s\n", getMinimumCollateral(height), vin.prevout.ToStringShort());
             return false;
         }
+
         if(chainActive.Height() - coins.nHeight + 1 < Params().GetConsensus().nMasternodeMinimumConfirmations) {
             LogPrintf("CMasternodeBroadcast::CheckOutpoint -- Masternode UTXO must have at least %d confirmations, masternode=%s\n",
                     Params().GetConsensus().nMasternodeMinimumConfirmations, vin.prevout.ToStringShort());
@@ -649,7 +679,7 @@ bool CMasternodeBroadcast::CheckOutpoint(int& nDos)
     }
 
     // verify that sig time is legit in past
-    // should be at least not earlier than block when 1500 STONE tx got nMasternodeMinimumConfirmations
+    // should be at least not earlier than block when 5000 STONE tx got nMasternodeMinimumConfirmations
     uint256 hashBlock = uint256();
     CTransaction tx2;
     GetTransaction(vin.prevout.hash, tx2, Params().GetConsensus(), hashBlock, true);
@@ -657,7 +687,7 @@ bool CMasternodeBroadcast::CheckOutpoint(int& nDos)
         LOCK(cs_main);
         BlockMap::iterator mi = mapBlockIndex.find(hashBlock);
         if (mi != mapBlockIndex.end() && (*mi).second) {
-            CBlockIndex* pMNIndex = (*mi).second; // block for 1500 STONE tx -> 1 confirmation
+            CBlockIndex* pMNIndex = (*mi).second; // block for 5000 STONE tx -> 1 confirmation
             CBlockIndex* pConfIndex = chainActive[pMNIndex->nHeight + Params().GetConsensus().nMasternodeMinimumConfirmations - 1]; // block where tx got nMasternodeMinimumConfirmations
             if(pConfIndex->GetBlockTime() > sigTime) {
                 LogPrintf("CMasternodeBroadcast::CheckOutpoint -- Bad sigTime %d (%d conf block is at %d) for Masternode %s %s\n",

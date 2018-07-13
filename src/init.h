@@ -17,7 +17,7 @@ class thread_group;
 } // namespace boost
 
 extern CWallet* pwalletMain;
-extern bool bAllowAutoUpdate;
+
 void StartShutdown();
 bool ShutdownRequested();
 /** Interrupt threads */

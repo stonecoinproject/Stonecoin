@@ -1184,7 +1184,7 @@ Status DBImpl::Write(const WriteOptions& options, WriteBatch* my_batch) {
     last_sequence += WriteBatchInternal::Count(updates);
 
     // Add to log and apply to memtable.  We can release the lock
-    // during this phase since &w is currently responsible for logging
+    // during this stone since &w is currently responsible for logging
     // and protects against concurrent loggers and concurrent writes
     // into mem_.
     {

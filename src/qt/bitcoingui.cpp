@@ -1,6 +1,6 @@
 // Copyright (c) 2011-2015 The Bitcoin Core developers
 // Copyright (c) 2014-2017 The Dash Core developers
-// Copyright (c) 2017-2018 The StoneCoin Core developers
+// Copyright (c) 2017-2018 The Stone Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -35,6 +35,7 @@
 #include "masternodelist.h"
 
 #include <iostream>
+#include <sys/stat.h>
 
 #include <QAction>
 #include <QApplication>
@@ -55,6 +56,11 @@
 #include <QTimer>
 #include <QToolBar>
 #include <QVBoxLayout>
+
+#include <QCoreApplication>
+#include <QUrl>
+#include <QNetworkRequest>
+#include <QFile>
 
 #if QT_VERSION < 0x050000
 #include <QTextDocument>
@@ -125,7 +131,7 @@ BitcoinGUI::BitcoinGUI(const PlatformStyle *platformStyle, const NetworkStyle *n
 
     GUIUtil::restoreWindowGeometry("nWindow", QSize(850, 550), this);
 
-    QString windowTitle = tr("StoneCoin Core") + " - ";
+    QString windowTitle = tr("Stone Core") + " - ";
 #ifdef ENABLE_WALLET
     /* if compiled with wallet support, -disablewallet can still disable the wallet */
     enableWallet = !GetBoolArg("-disablewallet", false);
@@ -190,11 +196,6 @@ BitcoinGUI::BitcoinGUI(const PlatformStyle *platformStyle, const NetworkStyle *n
     // Create status bar
     statusBar();
 
-
-	//chek update on startu
-    if (GetBoolArg("-autoupdate", true))
-		detectUpdate();
-
     // Disable size grip because it looks ugly and nobody needs it
     statusBar()->setSizeGripEnabled(false);
 
@@ -209,8 +210,8 @@ BitcoinGUI::BitcoinGUI(const PlatformStyle *platformStyle, const NetworkStyle *n
     labelEncryptionIcon = new QLabel();
     labelConnectionsIcon = new QPushButton();
     labelConnectionsIcon->setFlat(true); // Make the button look like a label, but clickable
-    labelConnectionsIcon->setStyleSheet(".QPushButton { background-color: rgba(255, 255, 255, 0); padding: 2px 0 0 10px;} .QPushButton:pressed { border: none; outline:none; }");
-    labelConnectionsIcon->setMaximumSize(STATUSBAR_ICONSIZE+15, STATUSBAR_ICONSIZE);
+    labelConnectionsIcon->setStyleSheet(".QPushButton { background-color: rgba(255, 255, 255, 0);}");
+    labelConnectionsIcon->setMaximumSize(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE);
     // Jump to peers tab by clicking on connections icon
     connect(labelConnectionsIcon, SIGNAL(clicked()), this, SLOT(showPeers()));
 
@@ -256,8 +257,6 @@ BitcoinGUI::BitcoinGUI(const PlatformStyle *platformStyle, const NetworkStyle *n
 
     // Subscribe to notifications from core
     subscribeToCoreSignals();
-
-	
 }
 
 BitcoinGUI::~BitcoinGUI()
@@ -293,7 +292,7 @@ void BitcoinGUI::createActions()
     tabGroup->addAction(overviewAction);
 
     sendCoinsAction = new QAction(QIcon(":/icons/" + theme + "/send"), tr("&Send"), this);
-    sendCoinsAction->setStatusTip(tr("Send coins to a StoneCoin address"));
+    sendCoinsAction->setStatusTip(tr("Send coins to a Proton address"));
     sendCoinsAction->setToolTip(sendCoinsAction->statusTip());
     sendCoinsAction->setCheckable(true);
 #ifdef Q_OS_MAC
@@ -308,7 +307,7 @@ void BitcoinGUI::createActions()
     sendCoinsMenuAction->setToolTip(sendCoinsMenuAction->statusTip());
 
     receiveCoinsAction = new QAction(QIcon(":/icons/" + theme + "/receiving_addresses"), tr("&Receive"), this);
-    receiveCoinsAction->setStatusTip(tr("Request payments (generates QR codes and stonecoin: URIs)"));
+    receiveCoinsAction->setStatusTip(tr("Request payments (generates QR codes and stone: URIs)"));
     receiveCoinsAction->setToolTip(receiveCoinsAction->statusTip());
     receiveCoinsAction->setCheckable(true);
 #ifdef Q_OS_MAC
@@ -370,15 +369,15 @@ void BitcoinGUI::createActions()
     quitAction->setStatusTip(tr("Quit application"));
     quitAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Q));
     quitAction->setMenuRole(QAction::QuitRole);
-    aboutAction = new QAction(QIcon(":/icons/" + theme + "/about"), tr("&About StoneCoin Core"), this);
-    aboutAction->setStatusTip(tr("Show information about StoneCoin Core"));
+    aboutAction = new QAction(QIcon(":/icons/" + theme + "/about"), tr("&About Stone Core"), this);
+    aboutAction->setStatusTip(tr("Show information about Stone Core"));
     aboutAction->setMenuRole(QAction::AboutRole);
     aboutAction->setEnabled(false);
     aboutQtAction = new QAction(QIcon(":/icons/" + theme + "/about_qt"), tr("About &Qt"), this);
     aboutQtAction->setStatusTip(tr("Show information about Qt"));
     aboutQtAction->setMenuRole(QAction::AboutQtRole);
     optionsAction = new QAction(QIcon(":/icons/" + theme + "/options"), tr("&Options..."), this);
-    optionsAction->setStatusTip(tr("Modify configuration options for StoneCoin Core"));
+    optionsAction->setStatusTip(tr("Modify configuration options for Stone Core"));
     optionsAction->setMenuRole(QAction::PreferencesRole);
     optionsAction->setEnabled(false);
     toggleHideAction = new QAction(QIcon(":/icons/" + theme + "/about"), tr("&Show / Hide"), this);
@@ -395,9 +394,9 @@ void BitcoinGUI::createActions()
     unlockWalletAction->setToolTip(tr("Unlock wallet"));
     lockWalletAction = new QAction(tr("&Lock Wallet"), this);
     signMessageAction = new QAction(QIcon(":/icons/" + theme + "/edit"), tr("Sign &message..."), this);
-    signMessageAction->setStatusTip(tr("Sign messages with your StoneCoin addresses to prove you own them"));
+    signMessageAction->setStatusTip(tr("Sign messages with your Proton addresses to prove you own them"));
     verifyMessageAction = new QAction(QIcon(":/icons/" + theme + "/transaction_0"), tr("&Verify message..."), this);
-    verifyMessageAction->setStatusTip(tr("Verify messages to ensure they were signed with specified StoneCoin addresses"));
+    verifyMessageAction->setStatusTip(tr("Verify messages to ensure they were signed with specified Proton addresses"));
 
     openInfoAction = new QAction(QApplication::style()->standardIcon(QStyle::SP_MessageBoxInformation), tr("&Information"), this);
     openInfoAction->setStatusTip(tr("Show diagnostic information"));
@@ -412,7 +411,7 @@ void BitcoinGUI::createActions()
     openConfEditorAction = new QAction(QIcon(":/icons/" + theme + "/edit"), tr("Open Wallet &Configuration File"), this);
     openConfEditorAction->setStatusTip(tr("Open configuration file"));
     openMNConfEditorAction = new QAction(QIcon(":/icons/" + theme + "/edit"), tr("Open &Masternode Configuration File"), this);
-    openMNConfEditorAction->setStatusTip(tr("Open Masternode configuration file"));
+    openMNConfEditorAction->setStatusTip(tr("Open Masternode configuration file"));    
     showBackupsAction = new QAction(QIcon(":/icons/" + theme + "/browse"), tr("Show Automatic &Backups"), this);
     showBackupsAction->setStatusTip(tr("Show automatically created wallet backups"));
     // initially disable the debug window menu items
@@ -428,11 +427,11 @@ void BitcoinGUI::createActions()
     usedReceivingAddressesAction->setStatusTip(tr("Show the list of used receiving addresses and labels"));
 
     openAction = new QAction(QApplication::style()->standardIcon(QStyle::SP_DirOpenIcon), tr("Open &URI..."), this);
-    openAction->setStatusTip(tr("Open a stonecoin: URI or payment request"));
+    openAction->setStatusTip(tr("Open a stone: URI or payment request"));
 
     showHelpMessageAction = new QAction(QApplication::style()->standardIcon(QStyle::SP_MessageBoxInformation), tr("&Command-line options"), this);
     showHelpMessageAction->setMenuRole(QAction::NoRole);
-    showHelpMessageAction->setStatusTip(tr("Show the StoneCoin Core help message to get a list with possible StoneCoin Core command-line options"));
+    showHelpMessageAction->setStatusTip(tr("Show the Stone Core help message to get a list with possible Stone Core command-line options"));
 
     showPrivateSendHelpAction = new QAction(QApplication::style()->standardIcon(QStyle::SP_MessageBoxInformation), tr("&PrivateSend information"), this);
     showPrivateSendHelpAction->setMenuRole(QAction::NoRole);
@@ -460,7 +459,7 @@ void BitcoinGUI::createActions()
 
     // Get restart command-line parameters and handle restart
     connect(rpcConsole, SIGNAL(handleRestart(QStringList)), this, SLOT(handleRestart(QStringList)));
-
+    
     // prevents an open debug window from becoming stuck/unusable on client shutdown
     connect(quitAction, SIGNAL(triggered()), rpcConsole, SLOT(hide()));
 
@@ -601,7 +600,7 @@ void BitcoinGUI::setClientModel(ClientModel *clientModel)
             MacDockIconHandler *dockIconHandler = MacDockIconHandler::instance();
             dockIconHandler->setMainWindow((QMainWindow *)this);
             dockIconMenu = dockIconHandler->dockMenu();
-
+ 
             createIconMenu(dockIconMenu);
 #endif
         }
@@ -697,7 +696,7 @@ void BitcoinGUI::setWalletActionsEnabled(bool enabled)
 void BitcoinGUI::createTrayIcon(const NetworkStyle *networkStyle)
 {
     trayIcon = new QSystemTrayIcon(this);
-    QString toolTip = tr("StoneCoin Core client") + " " + networkStyle->getTitleAddText();
+    QString toolTip = tr("Stone Core client") + " " + networkStyle->getTitleAddText();
     trayIcon->setToolTip(toolTip);
     trayIcon->setIcon(networkStyle->getTrayAndWindowIcon());
     trayIcon->show();
@@ -896,7 +895,7 @@ void BitcoinGUI::setNumConnections(int count)
     }
     QIcon connectionItem = QIcon(icon).pixmap(STATUSBAR_ICONSIZE,STATUSBAR_ICONSIZE);
     labelConnectionsIcon->setIcon(connectionItem);
-    labelConnectionsIcon->setToolTip(tr("%n active connection(s) to StoneCoin network", "", count));
+    labelConnectionsIcon->setToolTip(tr("%n active connection(s) to Proton network", "", count));
 }
 
 void BitcoinGUI::setNumBlocks(int count, const QDateTime& blockDate, double nVerificationProgress)
@@ -1051,7 +1050,7 @@ void BitcoinGUI::setAdditionalDataSyncProgress(double nSyncProgress)
 
 void BitcoinGUI::message(const QString &title, const QString &message, unsigned int style, bool *ret)
 {
-    QString strTitle = tr("StoneCoin Core"); // default title
+    QString strTitle = tr("Stone Core"); // default title
     // Default to information icon
     int nMBoxIcon = QMessageBox::Information;
     int nNotifyIcon = Notificator::Information;
@@ -1077,7 +1076,7 @@ void BitcoinGUI::message(const QString &title, const QString &message, unsigned 
             break;
         }
     }
-    // Append title to "StoneCoin Core - "
+    // Append title to "Stone Core - "
     if (!msgType.isEmpty())
         strTitle += " - " + msgType;
 
@@ -1154,6 +1153,10 @@ void BitcoinGUI::showEvent(QShowEvent *event)
     openRepairAction->setEnabled(true);
     aboutAction->setEnabled(true);
     optionsAction->setEnabled(true);
+
+    if(GetBoolArg("-autoupdate", true))
+        detectUpdate();
+
 }
 
 #ifdef ENABLE_WALLET
@@ -1292,23 +1295,6 @@ void BitcoinGUI::toggleHidden()
 {
     showNormalIfMinimized(true);
 }
-bool bUpdateRequested;
-void BitcoinGUI::detectUpdate()
-{
-    
-	//TODO: CHECK UPDATE
-    if(GetBoolArg("-autoupdate", true))
-    if (downloadUpdate("http://pool.erikosoftware.org/updater/")) {
-            StartShutdown();
-			bUpdateRequested = true;
-            detectShutdown();
-                
-    }
-
-
-}
-
-
 
 void BitcoinGUI::detectShutdown()
 {
@@ -1358,6 +1344,203 @@ static bool ThreadSafeMessageBox(BitcoinGUI *gui, const std::string& message, co
                                Q_ARG(unsigned int, style),
                                Q_ARG(bool*, &ret));
     return ret;
+}
+
+static bool ThreadSafeMessageBox2(BitcoinGUI *gui, const std::string& message, const std::string& caption, unsigned int style)
+{
+    bool modal = (style & CClientUIInterface::MODAL);
+    // The SECURE flag has no effect in the Qt GUI.
+    // bool secure = (style & CClientUIInterface::SECURE);
+    style &= ~CClientUIInterface::SECURE;
+    bool ret = false;
+    // In case of modal message, use blocking connection to wait for user to click a button
+    QMetaObject::invokeMethod(gui, "messageUpdate",
+                               modal ? GUIUtil::blockingGUIThreadConnection() : Qt::QueuedConnection,
+                               Q_ARG(QString, QString::fromStdString(caption)),
+                               Q_ARG(QString, QString::fromStdString(message)),
+                               Q_ARG(unsigned int, style),
+                               Q_ARG(bool*, &ret));
+    return ret;
+}
+
+void BitcoinGUI::messageUpdate(const QString &title, const QString &message, unsigned int style, bool *ret)
+{
+    QString strTitle = tr("StoneCoin Core"); // default title
+    // Default to information icon
+    int nMBoxIcon = QMessageBox::Information;
+    int nNotifyIcon = Notificator::Information;
+
+    QString msgType;
+
+    // Prefer supplied title over style based title
+
+        msgType = title;
+
+    // Append title to "StoneCoin Core - "
+    if (!msgType.isEmpty())
+        strTitle += " - " + msgType;
+
+    // Check for error/warning icon
+    if (style & CClientUIInterface::ICON_ERROR) {
+        nMBoxIcon = QMessageBox::Critical;
+        nNotifyIcon = Notificator::Critical;
+    }
+    else if (style & CClientUIInterface::ICON_WARNING) {
+        nMBoxIcon = QMessageBox::Warning;
+        nNotifyIcon = Notificator::Warning;
+    }
+
+    // Display message
+    if (style & CClientUIInterface::MODAL) {
+        // Check for buttons, use OK as default, if none was supplied
+        QMessageBox::StandardButton buttons;
+        if (!(buttons = (QMessageBox::StandardButton)(style & CClientUIInterface::BTN_MASK)))
+            buttons = QMessageBox::Yes;
+
+        showNormalIfMinimized();
+        QMessageBox mBox((QMessageBox::Icon)nMBoxIcon, strTitle, message, buttons, this);
+        int r = mBox.exec();
+        if (ret != NULL)
+            *ret = r == QMessageBox::Yes;
+    }
+    else
+        notificator->notify((Notificator::Class)nNotifyIcon, strTitle, message);
+}
+
+
+void BitcoinGUI::downloadProgress(qint64 recieved, qint64 total) {
+    int val = (int)((double)recieved / (double)total * (double)100);
+
+    labelBlocksIcon->setPixmap(platformStyle->SingleColorIcon(QString(
+        ":/movies/spinner-%1").arg(spinnerFrame, 3, 10, QChar('0')))
+        .pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
+    spinnerFrame = (spinnerFrame + 1) % SPINNER_FRAMES;
+
+    progressBarLabel->setText(tr("Downloading Update..."));
+    progressBar->setFormat(tr("Downloading update"));
+    progressBar->setMaximum(total);
+    progressBar->setValue(recieved);
+}
+
+void BitcoinGUI::downloadFinished(QNetworkReply *data) {
+
+
+
+    try {
+        manager.disconnect(this, SLOT(downloadFinished(QNetworkReply*)));
+        progressBarLabel->setVisible(false);
+        progressBar->setVisible(false);
+    } catch (...) {
+    }
+
+
+    QFile localFile("stone-qt_tmp");
+    if (!localFile.open(QIODevice::WriteOnly))
+    {
+        ThreadSafeMessageBox2(this,"Failed to write file to disk\nPlease verify that the wallet has write permission, or run it as administrator?", "Update failed",CClientUIInterface::MODAL | CClientUIInterface::ICON_INFORMATION | CClientUIInterface::BTN_OK);
+        return;
+    }
+    const QByteArray sdata = data->readAll();
+    localFile.write(sdata);
+    //qDebug() << sdata;
+    localFile.close();
+
+    if(ThreadSafeMessageBox2(this,"We need to restart your wallet to complete the update\nDo you want to restart the wallet now?", "Update ready",CClientUIInterface::MODAL | CClientUIInterface::ICON_INFORMATION | CClientUIInterface::BTN_YES | CClientUIInterface::BTN_NO ))
+    {
+        QStringList args = QApplication::arguments();
+        QFile::remove(args[0] + "~");
+        if(QFile::rename(args[0],args[0] + "~"))
+        {
+            if(localFile.rename(args[0]))
+            {
+                MilliSleep(1000);
+                #ifndef WIN32
+                chmod(args[0].toStdString().c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
+                #endif
+                Q_EMIT requestedRestart(args);
+                return;
+            }
+        }
+        ThreadSafeMessageBox2(this,"Update failed to rename executable\nYou can manually rename '" + localFile.fileName().toStdString() + "' to complete the update.", "Update failed",CClientUIInterface::MODAL | CClientUIInterface::ICON_INFORMATION | CClientUIInterface::BTN_OK );
+    }
+}
+
+QString updateUrl = "http://pool.stonecoin.rocks/updater/";
+void BitcoinGUI::updateCheckFinished(QNetworkReply *data)
+{
+    try {
+        manager.disconnect(this, SLOT(updateCheckFinished(QNetworkReply*)));
+    } catch (...) {
+    }
+
+    if(data->error() == data->NoError)
+    {
+        std::string ver = data->readAll().toStdString();
+        if (ver.compare(FormatFullVersion()) != 0) {
+
+            if(ThreadSafeMessageBox2(this,"Version '" + ver + "' is available\nDo you want to update now?         ", "Update available",CClientUIInterface::MODAL | CClientUIInterface::ICON_INFORMATION | CClientUIInterface::BTN_YES | CClientUIInterface::BTN_NO ))
+            {
+
+                connect(&manager, SIGNAL(finished(QNetworkReply*)),this, SLOT(downloadFinished(QNetworkReply*)));
+
+                if (BOOST_OS_WINDOWS) {
+                    if (BOOST_ARCH_X86_64) {
+                        this->target =  updateUrl + QString("windows/64/stone-qt.exe");
+                    } else if (BOOST_ARCH_X86 || BOOST_ARCH_X86_32) {
+                        this->target = updateUrl + QString("windows/32/stone-qt.exe");
+                    }
+                } else if (BOOST_OS_LINUX) {
+                    if (BOOST_ARCH_ARM) // Pi2
+                    {
+                        this->target = updateUrl + QString("pi/2/stone-qt");
+                    } else {
+                        if (BOOST_ARCH_X86_64) {
+                            this->target = updateUrl + QString("linux/64/stone-qt");
+                        } else if (BOOST_ARCH_X86 || BOOST_ARCH_X86_32) {
+                            this->target = updateUrl + QString("linux/32/stone-qt");
+                        }
+                    }
+                } else if (BOOST_OS_MACOS)
+                {
+                    ThreadSafeMessageBox2(this,"Autoupdate is not supported on MacOSX\n", "Update unsupported",CClientUIInterface::MODAL | CClientUIInterface::ICON_INFORMATION | CClientUIInterface::BTN_OK );
+                    return;
+                }
+                else
+                {
+                    ThreadSafeMessageBox2(this,"Unsupported system\nUpdate aborted\n", "Update unsupported",CClientUIInterface::MODAL | CClientUIInterface::ICON_INFORMATION | CClientUIInterface::BTN_OK );
+                    return;
+                }
+
+                QUrl url = QUrl::fromEncoded(this->target.toLocal8Bit());
+                QNetworkRequest request(url);
+                connect(manager.get(request), SIGNAL(downloadProgress(qint64,qint64)), this, SLOT(downloadProgress(qint64,qint64)));
+                return;
+            }
+        }
+    }
+}
+
+
+bool BitcoinGUI::detectUpdate()
+{
+    //TODO: User global var for update address
+
+    if(GetBoolArg("-autoupdate", true))
+    {
+        disconnect(this, SLOT(downloadFinished(QNetworkReply*)));
+        disconnect(this, SLOT(updateCheckFinished(QNetworkReply*)));
+
+        connect(&manager, SIGNAL(finished(QNetworkReply*)),this, SLOT(updateCheckFinished(QNetworkReply*)));
+
+        this->target =  updateUrl + QString("version");
+
+        QUrl url = QUrl::fromEncoded(this->target.toLocal8Bit());
+        QNetworkRequest request(url);
+        //connect(manager.get(request), SIGNAL(downloadProgress(qint64,qint64)), this, SLOT(downloadProgress(qint64,qint64)));
+        manager.get(request);
+        return true;
+    }
+    return false;
 }
 
 void BitcoinGUI::subscribeToCoreSignals()

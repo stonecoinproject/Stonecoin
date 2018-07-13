@@ -6,13 +6,13 @@ and tests weren't explicitly disabled.
 
 After configuring, they can be run with `make check`.
 
-To run the stonecoind tests manually, launch `src/test/test_stonecoin`.
+To run the stoned tests manually, launch `src/test/test_stone`.
 
-To add more stonecoind tests, add `BOOST_AUTO_TEST_CASE` functions to the existing
+To add more stoned tests, add `BOOST_AUTO_TEST_CASE` functions to the existing
 .cpp files in the `test/` directory or add new .cpp files that
 implement new BOOST_AUTO_TEST_SUITE sections.
 
-To run the stonecoin-qt tests manually, launch `src/qt/test/test_stonecoin-qt`
+To run the stone-qt tests manually, launch `src/qt/test/test_stone-qt`
 
-To add more stonecoin-qt tests, add them to the `src/qt/test/` directory and
+To add more stone-qt tests, add them to the `src/qt/test/` directory and
 the `src/qt/test/test_main.cpp` file.

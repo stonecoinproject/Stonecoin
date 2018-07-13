@@ -1,11 +1,11 @@
-StoneCoin Core 1.0.0
+Stone Core 1.0.0
 =====================
 
-This is the official reference wallet for StoneCoin digital currency and comprises the backbone of the StoneCoin peer-to-peer network. You can [download StoneCoin Core](https://www.stonecoin.org/downloads/) or [build it yourself](#building) using the guides below.
+This is the official reference wallet for Proton digital currency and comprises the backbone of the Proton peer-to-peer network. You can [download Stone Core](https://stone.io) or [build it yourself](#building) using the guides below.
 
 Running
 ---------------------
-The following are some helpful notes on how to run StoneCoin on your native platform.
+The following are some helpful notes on how to run Proton on your native platform.
 
 ### Unix
 
@@ -16,22 +16,22 @@ Unpack the files into a directory and run:
 
 ### Windows
 
-Unpack the files into a directory, and then run stonecoin-qt.exe.
+Unpack the files into a directory, and then run stone-qt.exe.
 
 ### OS X
 
-Drag StoneCoin-Qt to your applications folder, and then run StoneCoin-Qt.
+Drag Proton-Qt to your applications folder, and then run Proton-Qt.
 
 ### Need Help?
 
-* See the [StoneCoin documentation](https://dash.atlassian.net/wiki/display/DOC)
+* See the [Proton documentation](https://stone.atlassian.net/wiki/display/DOC)
 for help and more information.
-* Ask for help on [#stonecrypto](http://webchat.freenode.net?channels=stonecrypto) on Freenode. If you don't have an IRC client use [webchat here](http://webchat.freenode.net?channels=stonecrypto).
-* Ask for help on the [StoneCoinTalk](https://stonecointalk.org/) forums.
+* Ask for help on [#stone](http://webchat.freenode.net?channels=stone) on Freenode. If you don't have an IRC client use [webchat here](http://webchat.freenode.net?channels=stone).
+* Ask for help on the [ProtonTalk](https://stonetalk.org/) forums.
 
 Building
 ---------------------
-The following are developer notes on how to build StoneCoin Core on your native platform. They are not complete guides, but include notes on the necessary libraries, compile flags, etc.
+The following are developer notes on how to build Stone Core on your native platform. They are not complete guides, but include notes on the necessary libraries, compile flags, etc.
 
 - [OS X Build Notes](build-osx.md)
 - [Unix Build Notes](build-unix.md)
@@ -41,7 +41,7 @@ The following are developer notes on how to build StoneCoin Core on your native 
 
 Development
 ---------------------
-The StoneCoin Core repo's [root README](/README.md) contains relevant information on the development process and automated testing.
+The Stone Core repo's [root README](/README.md) contains relevant information on the development process and automated testing.
 
 - [Developer Notes](developer-notes.md)
 - [Multiwallet Qt Development](multiwallet-qt.md)
@@ -57,8 +57,8 @@ The StoneCoin Core repo's [root README](/README.md) contains relevant informatio
 - [Dnsseed Policy](dnsseed-policy.md)
 
 ### Resources
-* Discuss on the [StoneCoinTalk](https://stonecointalk.org/) forums, in the Development & Technical Discussion board.
-* Discuss on [#stonecrypto](http://webchat.freenode.net/?channels=stonecrypto) on Freenode. If you don't have an IRC client use [webchat here](http://webchat.freenode.net/?channels=stonecrypto).
+* Discuss on the [ProtonTalk](https://stonetalk.org/) forums, in the Development & Technical Discussion board.
+* Discuss on [#stone](http://webchat.freenode.net/?channels=stone) on Freenode. If you don't have an IRC client use [webchat here](http://webchat.freenode.net/?channels=stone).
 
 ### Miscellaneous
 - [Assets Attribution](assets-attribution.md)

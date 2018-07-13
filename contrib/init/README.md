@@ -1,11 +1,11 @@
 Sample configuration files for:
 
-SystemD: stonecoind.service
-Upstart: stonecoind.conf
-OpenRC:  stonecoind.openrc
-         stonecoind.openrcconf
-CentOS:  stonecoind.init
-OS X:    org.stonecoin.stonecoind.plist
+SystemD: stoned.service
+Upstart: stoned.conf
+OpenRC:  stoned.openrc
+         stoned.openrcconf
+CentOS:  stoned.init
+OS X:    org.stone.stoned.plist
 
 have been made available to assist packagers in creating node packages here.
 

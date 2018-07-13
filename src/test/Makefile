@@ -1,6 +1,6 @@
 all:
-	$(MAKE) -C .. stonecoin_test
+	$(MAKE) -C .. stone_test
 clean:
-	$(MAKE) -C .. stonecoin_test_clean
+	$(MAKE) -C .. stone_test_clean
 check:
-	$(MAKE) -C .. stonecoin_test_check
+	$(MAKE) -C .. stone_test_check

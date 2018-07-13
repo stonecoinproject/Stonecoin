@@ -1,0 +1,22 @@
+[Unit]
+Description=Proton's distributed currency daemon
+After=network.target
+
+[Service]
+User=stonecore
+Group=stonecore
+
+Type=forking
+PIDFile=/var/lib/stoned/stoned.pid
+ExecStart=/usr/bin/stoned -daemon -pid=/var/lib/stoned/stoned.pid \
+-conf=/etc/stonecore/stone.conf -datadir=/var/lib/stoned -disablewallet
+
+Restart=always
+PrivateTmp=true
+TimeoutStopSec=60s
+TimeoutStartSec=2s
+StartLimitInterval=120s
+StartLimitBurst=5
+
+[Install]
+WantedBy=multi-user.target

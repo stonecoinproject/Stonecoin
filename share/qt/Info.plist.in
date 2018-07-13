@@ -17,7 +17,7 @@
   <string>APPL</string>
 
   <key>CFBundleGetInfoString</key>
-  <string>@CLIENT_VERSION_MAJOR@.@CLIENT_VERSION_MINOR@.@CLIENT_VERSION_REVISION@, Copyright © 2009-@COPYRIGHT_YEAR@ The Bitcoin Core developers, 2014-@COPYRIGHT_YEAR@ The DashCoin Core developers, 2017-@COPYRIGHT_YEAR@ The StoneCoin Core developers</string>
+  <string>@CLIENT_VERSION_MAJOR@.@CLIENT_VERSION_MINOR@.@CLIENT_VERSION_REVISION@, Copyright © 2009-@COPYRIGHT_YEAR@ The Bitcoin Core developers, 2014-@COPYRIGHT_YEAR@ The Stone Core developers</string>
 
   <key>CFBundleShortVersionString</key>
   <string>@CLIENT_VERSION_MAJOR@.@CLIENT_VERSION_MINOR@.@CLIENT_VERSION_REVISION@</string>
@@ -29,16 +29,16 @@
   <string>????</string>
 
   <key>CFBundleExecutable</key>
-  <string>StoneCoin-Qt</string>
+  <string>Proton-Qt</string>
   
   <key>CFBundleName</key>
-  <string>StoneCoin-Qt</string>
+  <string>Proton-Qt</string>
 
   <key>LSHasLocalizedDisplayName</key>
   <true/>
 
   <key>CFBundleIdentifier</key>
-  <string>org.stonecoin.StoneCoin-Qt</string>
+  <string>org.stone.Proton-Qt</string>
 
   <key>CFBundleURLTypes</key>
   <array>
@@ -46,10 +46,10 @@
       <key>CFBundleTypeRole</key>
       <string>Editor</string>
       <key>CFBundleURLName</key>
-      <string>org.stonecoin.StoneCoinPayment</string>
+      <string>org.stone.ProtonPayment</string>
       <key>CFBundleURLSchemes</key>
       <array>
-        <string>stonecoin</string>
+        <string>stone</string>
       </array>
     </dict>
   </array>
@@ -58,9 +58,9 @@
   <array>
     <dict>
       <key>UTTypeIdentifier</key>
-      <string>org.stonecoin.paymentrequest</string>
+      <string>org.stone.paymentrequest</string>
       <key>UTTypeDescription</key>
-      <string>StoneCoin payment request</string>
+      <string>Proton payment request</string>
       <key>UTTypeConformsTo</key>
       <array>
         <string>public.data</string>
@@ -68,10 +68,10 @@
       <key>UTTypeTagSpecification</key>
       <dict>
         <key>public.mime-type</key>
-        <string>application/x-stonecoin-payment-request</string>
+        <string>application/x-stone-payment-request</string>
         <key>public.filename-extension</key>
         <array>
-          <string>stonecryptomentrequest</string>
+          <string>stonementrequest</string>
         </array>
       </dict>
     </dict>
@@ -84,7 +84,7 @@
       <string>Editor</string>
       <key>LSItemContentTypes</key>
       <array>
-        <string>org.stonecoin.paymentrequest</string>
+        <string>org.stone.paymentrequest</string>
       </array>
       <key>LSHandlerRank</key>
       <string>Owner</string>

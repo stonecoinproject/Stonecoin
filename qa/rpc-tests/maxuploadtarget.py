@@ -87,8 +87,8 @@ class MaxUploadTest(BitcoinTestFramework):
  
     def add_options(self, parser):
         parser.add_option("--testbinary", dest="testbinary",
-                          default=os.getenv("GBXD", "stonecoind"),
-                          help="stonecoind binary to test")
+                          default=os.getenv("STONED", "stoned"),
+                          help="stoned binary to test")
 
     def setup_chain(self):
         initialize_chain_clean(self.options.tmpdir, 2)

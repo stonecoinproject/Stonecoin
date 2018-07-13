@@ -1,11 +1,11 @@
 ---
-name: "stonecoin-osx-1.0"
+name: "stone-osx-1.0"
 enable_cache: true
 suites:
 - "trusty"
 architectures:
 - "amd64"
-packages:
+packages: 
 - "curl"
 - "g++"
 - "git-core"
@@ -23,8 +23,8 @@ packages:
 - "python"
 reference_datetime: "2017-01-01 00:00:00"
 remotes:
-- "url": "https://github.com/stonecoinproject/Stonecoin.git"
-  "dir": "stonecoin"
+- "url": "https://github.com/stone/stone.git"
+  "dir": "stone"
 files:
 - "MacOSX10.9.sdk.tar.gz"
 script: |
@@ -71,11 +71,11 @@ script: |
   done
   export PATH=${WRAP_DIR}:${PATH}
 
-  cd stonecoin
+  cd stone
   BASEPREFIX=`pwd`/depends
 
-  mkdir -p ${BASEPREFIX}/SDKs/MacOSX10.9.sdk
-  tar -C ${BASEPREFIX}/SDKs/MacOSX10.9.sdk -xf ${BUILD_DIR}/MacOSX10.9.sdk.tar.gz
+  mkdir -p ${BASEPREFIX}/SDKs
+  tar -C ${BASEPREFIX}/SDKs -xf ${BUILD_DIR}/MacOSX10.9.sdk.tar.gz
 
   # Build dependencies for each host
   for i in $HOSTS; do
@@ -86,14 +86,14 @@ script: |
   ./autogen.sh
   CONFIG_SITE=${BASEPREFIX}/`echo "${HOSTS}" | awk '{print $1;}'`/share/config.site ./configure --prefix=/
   make dist
-  SOURCEDIST=`echo stonecrypto-*.tar.gz`
+  SOURCEDIST=`echo stonecore-*.tar.gz`
   DISTNAME=`echo ${SOURCEDIST} | sed 's/.tar.*//'`
 
   # Correct tar file order
   mkdir -p temp
   pushd temp
   tar xf ../$SOURCEDIST
-  find stonecrypto-* | sort | tar --no-recursion --mode='u+rw,go+r-w,a+X' --owner=0 --group=0 -c -T - | gzip -9n > ../$SOURCEDIST
+  find stonecore-* | sort | tar --no-recursion --mode='u+rw,go+r-w,a+X' --owner=0 --group=0 -c -T - | gzip -9n > ../$SOURCEDIST
   popd
 
   ORIGPATH="$PATH"
@@ -106,7 +106,7 @@ script: |
     mkdir -p ${INSTALLPATH}
     tar --strip-components=1 -xf ../$SOURCEDIST
 
-    CONFIG_SITE=${BASEPREFIX}/${i}/share/config.site ./configure --prefix=/ --disable-ccache --disable-maintainer-mode --disable-dependency-tracking ${CONFIGFLAGS} --disable-tests
+    CONFIG_SITE=${BASEPREFIX}/${i}/share/config.site ./configure --prefix=/ --disable-ccache --disable-maintainer-mode --disable-dependency-tracking ${CONFIGFLAGS}
     make ${MAKEOPTS}
     make install-strip DESTDIR=${INSTALLPATH}
 
@@ -123,7 +123,7 @@ script: |
     popd
 
     make deploy
-    ${WRAP_DIR}/dmg dmg StoneCoin-Core.dmg ${OUTDIR}/${DISTNAME}-osx-unsigned.dmg
+    ${WRAP_DIR}/dmg dmg Proton-Core.dmg ${OUTDIR}/${DISTNAME}-osx-unsigned.dmg
 
     cd installed
     find . -name "lib*.la" -delete

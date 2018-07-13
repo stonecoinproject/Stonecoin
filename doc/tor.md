@@ -1,7 +1,7 @@
 TOR SUPPORT IN STONE CORE
 =======================
 
-It is possible to run StoneCoin Core as a Tor hidden service, and connect to such services.
+It is possible to run Stone Core as a Tor hidden service, and connect to such services.
 
 The following directions assume you have a Tor proxy running on port 9050. Many
 distributions default to having a SOCKS proxy listening on port 9050, but others
@@ -10,10 +10,10 @@ port. See [Tor Project FAQ:TBBSocksPort](https://www.torproject.org/docs/faq.htm
 for how to properly configure Tor.
 
 
-1. Run StoneCoin Core behind a Tor proxy
+1. Run Stone Core behind a Tor proxy
 ----------------------------------
 
-The first step is running StoneCoin Core behind a Tor proxy. This will already make all
+The first step is running Stone Core behind a Tor proxy. This will already make all
 outgoing connections be anonymized, but more is possible.
 
 	-proxy=ip:port  Set the proxy server. If SOCKS5 is selected (default), this proxy
@@ -37,31 +37,31 @@ outgoing connections be anonymized, but more is possible.
 An example how to start the client if the Tor proxy is running on local host on
 port 9050 and only allows .onion nodes to connect:
 
-	./stonecoind -onion=127.0.0.1:9050 -onlynet=tor -listen=0 -addnode=ssapp53tmftyjmjb.onion
+	./stoned -onion=127.0.0.1:9050 -onlynet=tor -listen=0 -addnode=ssapp53tmftyjmjb.onion
 
 In a typical situation, this suffices to run behind a Tor proxy:
 
-	./stonecoind -proxy=127.0.0.1:9050
+	./stoned -proxy=127.0.0.1:9050
 
 
-2. Run a StoneCoin Core hidden server
+2. Run a Stone Core hidden server
 -------------------------------
 
 If you configure your Tor system accordingly, it is possible to make your node also
 reachable from the Tor network. Add these lines to your /etc/tor/torrc (or equivalent
 config file):
 
-	HiddenServiceDir /var/lib/tor/stonecrypto-service/
-	HiddenServicePort 22323 127.0.0.1:22323
-	HiddenServicePort 23323 127.0.0.1:23323
+	HiddenServiceDir /var/lib/tor/stonecore-service/
+	HiddenServicePort 9999 127.0.0.1:9999
+	HiddenServicePort 19999 127.0.0.1:19999
 
 The directory can be different of course, but (both) port numbers should be equal to
-your stonecoind's P2P listen port (22323 by default).
+your stoned's P2P listen port (9999 by default).
 
-	-externalip=X   You can tell StoneCoin Core about its publicly reachable address using
+	-externalip=X   You can tell Stone Core about its publicly reachable address using
 	                this option, and this can be a .onion address. Given the above
 	                configuration, you can find your onion address in
-	                /var/lib/tor/stonecrypto-service/hostname. Onion addresses are given
+	                /var/lib/tor/stonecore-service/hostname. Onion addresses are given
 	                preference for your node to advertise itself with, for connections
 	                coming from unroutable addresses (such as 127.0.0.1, where the
 	                Tor proxy typically runs).
@@ -78,28 +78,28 @@ your stonecoind's P2P listen port (22323 by default).
 
 In a typical situation, where you're only reachable via Tor, this should suffice:
 
-	./stonecoind -proxy=127.0.0.1:9050 -externalip=ssapp53tmftyjmjb.onion -listen
+	./stoned -proxy=127.0.0.1:9050 -externalip=ssapp53tmftyjmjb.onion -listen
 
 (obviously, replace the Onion address with your own). It should be noted that you still
 listen on all devices and another node could establish a clearnet connection, when knowing
 your address. To mitigate this, additionally bind the address of your Tor proxy:
 
-	./stonecoind ... -bind=127.0.0.1
+	./stoned ... -bind=127.0.0.1
 
 If you don't care too much about hiding your node, and want to be reachable on IPv4
 as well, use `discover` instead:
 
-	./stonecoind ... -discover
+	./stoned ... -discover
 
-and open port 22323 on your firewall (or use -upnp).
+and open port 9999 on your firewall (or use -upnp).
 
 If you only want to use Tor to reach onion addresses, but not use it as a proxy
 for normal IPv4/IPv6 communication, use:
 
-	./stonecoind -onion=127.0.0.1:9050 -externalip=ssapp53tmftyjmjb.onion -discover
+	./stoned -onion=127.0.0.1:9050 -externalip=ssapp53tmftyjmjb.onion -discover
 
 
-3. List of known StoneCoin Core Tor relays
+3. List of known Stone Core Tor relays
 ------------------------------------
 
 * [darkcoinie7ghp67.onion](http://darkcoinie7ghp67.onion/)
@@ -120,14 +120,14 @@ for normal IPv4/IPv6 communication, use:
 
 Starting with Tor version 0.2.7.1 it is possible, through Tor's control socket
 API, to create and destroy 'ephemeral' hidden services programmatically.
-StoneCoin Core has been updated to make use of this.
+Stone Core has been updated to make use of this.
 
 This means that if Tor is running (and proper authorization is available),
-StoneCoin Core automatically creates a hidden service to listen on, without
+Stone Core automatically creates a hidden service to listen on, without
 manual configuration. This will positively affect the number of available
 .onion nodes.
 
-This new feature is enabled by default if StoneCoin Core is listening, and
+This new feature is enabled by default if Stone Core is listening, and
 a connection to Tor can be made. It can be configured with the `-listenonion`,
 `-torcontrol` and `-torpassword` settings. To show verbose debugging
 information, pass `-debug=tor`.
