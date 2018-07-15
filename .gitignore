@@ -31,3 +31,6 @@
 *.out
 *.app
 *.Po
+src/stone-cli
+src/stone-tx
+src/stoned
