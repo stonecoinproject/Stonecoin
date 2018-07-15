@@ -139,7 +139,7 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_CSV].nStartTime = 1502280000; // Aug 9th, 2017
         consensus.vDeployments[Consensus::DEPLOYMENT_CSV].nTimeout = 1533816000;   // Aug 9th, 2018
         // The best chain should have at least this much work.
-        consensus.nMinimumChainWork = uint256S("0x000000000000000000000000000000000000000000000000003b5a7289fdd904"); //117888
+        consensus.nMinimumChainWork = uint256S("0x000000000000000000000000000000000000000000000000003c3370d25a6926"); //119000
         // By default assume that the signatures in ancestors of this block are valid.
         consensus.defaultAssumeValid = uint256S("0x0000000009cc1f28c974798e6222442be48a61a8f23a1497d4cdada1c38a76c4"); //1938
 
@@ -217,9 +217,12 @@ public:
                    (113688, uint256S("0x000000005aaee7d3d495a549756097cb5c6a3c18e54b3e56a99c856a2125cdb5"))
                    (115241, uint256S("0x000000000f32c676dd96343cfced95f467e912066d1cee40fb3379c1a5119f43"))
                    (117870, uint256S("0x0000000008b68d052b014b174b192f0268ddc15591f24989ee085e023082446e"))
-                   (117888, uint256S("0x000000001970d350b4ecdb5544449e6950ca6eb14f1d73a0a273b59ce24909e3")),
-                1531492429, // * UNIX timestamp of last checkpoint block
-                139317,      // * total number of transactions between genesis and last checkpoint
+                   (117888, uint256S("0x000000001970d350b4ecdb5544449e6950ca6eb14f1d73a0a273b59ce24909e3"))
+                   (118000, uint256S("0x000000000456143eac91458e816e7f198681c318ed97174f0e123aa35b65e463"))
+                   (118500, uint256S("0x000000000600aed69f3f1e742d663b5646637d41610b6694d0df5c609c22893a"))
+                   (119000, uint256S("0x00000000033db25e562e571b5e2ffa3fc062a02da3458952ee08a47f63e8d991")),
+                1531630137, // * UNIX timestamp of last checkpoint block
+                140653,      // * total number of transactions between genesis and last checkpoint
                         //   (the tx=... number in the SetBestChain debug.log lines)
                 700        // * estimated number of transactions per day after checkpoint
         };
