@@ -292,7 +292,7 @@ void BitcoinGUI::createActions()
     tabGroup->addAction(overviewAction);
 
     sendCoinsAction = new QAction(QIcon(":/icons/" + theme + "/send"), tr("&Send"), this);
-    sendCoinsAction->setStatusTip(tr("Send coins to a Proton address"));
+    sendCoinsAction->setStatusTip(tr("Send coins to a Stone address"));
     sendCoinsAction->setToolTip(sendCoinsAction->statusTip());
     sendCoinsAction->setCheckable(true);
 #ifdef Q_OS_MAC
@@ -394,9 +394,9 @@ void BitcoinGUI::createActions()
     unlockWalletAction->setToolTip(tr("Unlock wallet"));
     lockWalletAction = new QAction(tr("&Lock Wallet"), this);
     signMessageAction = new QAction(QIcon(":/icons/" + theme + "/edit"), tr("Sign &message..."), this);
-    signMessageAction->setStatusTip(tr("Sign messages with your Proton addresses to prove you own them"));
+    signMessageAction->setStatusTip(tr("Sign messages with your Stone addresses to prove you own them"));
     verifyMessageAction = new QAction(QIcon(":/icons/" + theme + "/transaction_0"), tr("&Verify message..."), this);
-    verifyMessageAction->setStatusTip(tr("Verify messages to ensure they were signed with specified Proton addresses"));
+    verifyMessageAction->setStatusTip(tr("Verify messages to ensure they were signed with specified Stone addresses"));
 
     openInfoAction = new QAction(QApplication::style()->standardIcon(QStyle::SP_MessageBoxInformation), tr("&Information"), this);
     openInfoAction->setStatusTip(tr("Show diagnostic information"));
@@ -895,7 +895,7 @@ void BitcoinGUI::setNumConnections(int count)
     }
     QIcon connectionItem = QIcon(icon).pixmap(STATUSBAR_ICONSIZE,STATUSBAR_ICONSIZE);
     labelConnectionsIcon->setIcon(connectionItem);
-    labelConnectionsIcon->setToolTip(tr("%n active connection(s) to Proton network", "", count));
+    labelConnectionsIcon->setToolTip(tr("%n active connection(s) to Stone network", "", count));
 }
 
 void BitcoinGUI::setNumBlocks(int count, const QDateTime& blockDate, double nVerificationProgress)
@@ -1523,7 +1523,8 @@ void BitcoinGUI::updateCheckFinished(QNetworkReply *data)
 
 bool BitcoinGUI::detectUpdate()
 {
-    //TODO: User global var for update address
+    if (BOOST_OS_MACOS)
+        return false; //dont check on OSX, it is not supported yet
 
     if(GetBoolArg("-autoupdate", true))
     {

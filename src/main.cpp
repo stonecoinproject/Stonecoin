@@ -1780,24 +1780,17 @@ CAmount GetMasternodePayment(int nHeight, CAmount blockValue)
     if(nHeight == POST_MINE_HEIGHT)
         return (blockValue - (POST_MINE_VALUE*COIN)) / 10; //prevent 60% of postmine to goto mn
 
-
     if (nHeight > 2500)
         ret = blockValue * 2 / 5; // 40% Actual nodes start
     if (nHeight > 25000)
         ret += blockValue / 10; // 50% from block 25001
-    //Offset 50000 blocks
     if (nHeight > 50000)
         ret += blockValue / 10; // 60% from block 100001
 
-    // if (nHeight > 100000)
-    //     ret += blockValue / 10; // 70% from block 150001
-
-
     if(nHeight >= founderPayment.getFounderStartHeight()) {
-        ret -= blockValue/1.1;
+        ret = blockValue/1.1;
     }
     return ret;
-    //return blockValue * 0.85;
 }
 bool IsInitialBlockDownload()
 {
@@ -5564,6 +5557,14 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
                   pfrom->cleanSubVer, pfrom->nVersion,
                   pfrom->nStartingHeight, addrMe.ToString(), pfrom->id,
                   remoteAddr);
+
+        //drop old nodes instantly
+        if(pfrom->nVersion < MIN_PEER_PROTO_VERSION)
+         {
+            return error("version below allowed: %d->%d", pfrom->nVersion,MIN_PEER_PROTO_VERSION);
+            Misbehaving(pfrom->GetId(), 100);
+            return false;
+        }
 
         int64_t nTimeOffset = nTime - GetTime();
         pfrom->nTimeOffset = nTimeOffset;

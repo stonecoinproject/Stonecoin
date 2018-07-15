@@ -73,10 +73,10 @@ QString BitcoinUnits::description(int unit)
     {
         switch(unit)
         {
-            case STONE: return QString("Proton");
-            case mSTONE: return QString("Milli-Proton (1 / 1" THIN_SP_UTF8 "000)");
-            case uSTONE: return QString("Micro-Proton (1 / 1" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
-            case duffs: return QString("Ten Nano-Proton (1 / 100" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
+            case STONE: return QString("Stone");
+            case mSTONE: return QString("Milli-Stone (1 / 1" THIN_SP_UTF8 "000)");
+            case uSTONE: return QString("Micro-Stone (1 / 1" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
+            case duffs: return QString("Ten Nano-Stone (1 / 100" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
             default: return QString("???");
         }
     }
@@ -84,10 +84,10 @@ QString BitcoinUnits::description(int unit)
     {
         switch(unit)
         {
-            case STONE: return QString("TestProtons");
-            case mSTONE: return QString("Milli-TestProton (1 / 1" THIN_SP_UTF8 "000)");
-            case uSTONE: return QString("Micro-TestProton (1 / 1" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
-            case duffs: return QString("Ten Nano-TestProton (1 / 100" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
+            case STONE: return QString("TestStones");
+            case mSTONE: return QString("Milli-TestStone (1 / 1" THIN_SP_UTF8 "000)");
+            case uSTONE: return QString("Micro-TestStone (1 / 1" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
+            case duffs: return QString("Ten Nano-TestStone (1 / 100" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
             default: return QString("???");
         }
     }

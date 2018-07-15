@@ -253,7 +253,7 @@
             <string notr="true"/>
            </property>
            <property name="text">
-            <string>Amount of Proton to keep anonymized</string>
+            <string>Amount of Stone to keep anonymized</string>
            </property>
           </widget>
          </item>
@@ -318,7 +318,7 @@
        <item>
         <widget class="QCheckBox" name="connectSocks">
          <property name="toolTip">
-          <string>Connect to the Proton network through a SOCKS5 proxy.</string>
+          <string>Connect to the Stone network through a SOCKS5 proxy.</string>
          </property>
          <property name="text">
           <string>&amp;Connect through SOCKS5 proxy (default proxy):</string>
@@ -505,7 +505,7 @@
        <item>
         <widget class="QCheckBox" name="connectSocksTor">
          <property name="toolTip">
-          <string>Connect to the Proton network through a separate SOCKS5 proxy for Tor hidden services.</string>
+          <string>Connect to the Stone network through a separate SOCKS5 proxy for Tor hidden services.</string>
          </property>
          <property name="text">
           <string>Use separate SOCKS5 proxy to reach peers via Tor hidden services:</string>

@@ -48,9 +48,9 @@ static const int MAX_URI_LENGTH = 255;
 /* Number of frames in spinner animation */
 #define SPINNER_FRAMES 36
 
-#define QAPP_ORG_NAME "Proton"
+#define QAPP_ORG_NAME "Stone"
 #define QAPP_ORG_DOMAIN "stone.io"
-#define QAPP_APP_NAME_DEFAULT "Proton-Qt"
-#define QAPP_APP_NAME_TESTNET "Proton-Qt-testnet"
+#define QAPP_APP_NAME_DEFAULT "Stone-Qt"
+#define QAPP_APP_NAME_TESTNET "Stone-Qt-testnet"
 
 #endif // BITCOIN_QT_GUICONSTANTS_H
