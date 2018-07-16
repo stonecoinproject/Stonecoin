@@ -54,8 +54,8 @@ static const vector<MasternodeLevel> COLLATERALS = {
         MasternodeLevel(LEVEL3, 12000*COIN),
         MasternodeLevel(LEVEL4, 24000*COIN)
 };
-static const int OLD_COLLATERAL_STOP_HEIGHT = 119500;
-static const int LEVEL_COLLATERAL_START_HEIGHT = 119000;
+static const int OLD_COLLATERAL_STOP_HEIGHT = 9999999;
+static const int LEVEL_COLLATERAL_START_HEIGHT = 9999999;
 
 extern bool isValidMasternode(CAmount value, int height);
 extern Level getMasternodeLevel(CAmount value, int height);
