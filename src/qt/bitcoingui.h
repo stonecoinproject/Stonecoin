@@ -19,6 +19,7 @@
 #include <QPushButton>
 #include <QSystemTrayIcon>
 
+
 #include <QString>
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkReply>
@@ -128,6 +129,9 @@ private:
     QAction *openAction;
     QAction *showHelpMessageAction;
     QAction *showPrivateSendHelpAction;
+    QAction *forceCheckupdate;
+    bool updateCalledFromMenu;
+    
 
     QSystemTrayIcon *trayIcon;
     QMenu *trayIconMenu;
@@ -260,6 +264,7 @@ private Q_SLOTS:
 
     /** called by a timer to check if any updates exist on server **/
     bool detectUpdate();
+    bool detectUpdateMenuCalled();
 
     void downloadFinished(QNetworkReply *data);
     void updateCheckFinished(QNetworkReply *data);

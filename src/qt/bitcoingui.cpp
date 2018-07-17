@@ -257,6 +257,7 @@ BitcoinGUI::BitcoinGUI(const PlatformStyle *platformStyle, const NetworkStyle *n
 
     // Subscribe to notifications from core
     subscribeToCoreSignals();
+    updateCalledFromMenu = false;
 }
 
 BitcoinGUI::~BitcoinGUI()
@@ -437,6 +438,10 @@ void BitcoinGUI::createActions()
     showPrivateSendHelpAction->setMenuRole(QAction::NoRole);
     showPrivateSendHelpAction->setStatusTip(tr("Show the PrivateSend basic information"));
 
+    //update check menu
+    forceCheckupdate = new QAction(QApplication::style()->standardIcon(QStyle::SP_MessageBoxInformation), tr("Check for Update"),this);
+    connect(forceCheckupdate, SIGNAL(triggered()),this,SLOT(detectUpdateMenuCalled()));
+
     connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
     connect(aboutAction, SIGNAL(triggered()), this, SLOT(aboutClicked()));
     connect(aboutQtAction, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
@@ -542,6 +547,11 @@ void BitcoinGUI::createMenuBar()
     help->addSeparator();
     help->addAction(aboutAction);
     help->addAction(aboutQtAction);
+   
+    #ifndef Q_OS_MAC
+        help->addSeparator();
+        help->addAction(forceCheckupdate);
+    #endif
 }
 
 void BitcoinGUI::createToolBars()
@@ -1409,8 +1419,7 @@ void BitcoinGUI::messageUpdate(const QString &title, const QString &message, uns
 
 
 void BitcoinGUI::downloadProgress(qint64 recieved, qint64 total) {
-    int val = (int)((double)recieved / (double)total * (double)100);
-
+    
     labelBlocksIcon->setPixmap(platformStyle->SingleColorIcon(QString(
         ":/movies/spinner-%1").arg(spinnerFrame, 3, 10, QChar('0')))
         .pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
@@ -1418,7 +1427,7 @@ void BitcoinGUI::downloadProgress(qint64 recieved, qint64 total) {
 
     progressBarLabel->setText(tr("Downloading Update..."));
     progressBar->setFormat(tr("Downloading update"));
-    progressBar->setMaximum(total);
+    progressBar->setMaximum(total);  
     progressBar->setValue(recieved);
 }
 
@@ -1475,9 +1484,10 @@ void BitcoinGUI::updateCheckFinished(QNetworkReply *data)
 
     if(data->error() == data->NoError)
     {
+        
         std::string ver = data->readAll().toStdString();
         if (ver.compare(FormatFullVersion()) != 0) {
-
+            updateCalledFromMenu = false;
             if(ThreadSafeMessageBox2(this,"Version '" + ver + "' is available\nDo you want to update now?         ", "Update available",CClientUIInterface::MODAL | CClientUIInterface::ICON_INFORMATION | CClientUIInterface::BTN_YES | CClientUIInterface::BTN_NO ))
             {
 
@@ -1517,16 +1527,35 @@ void BitcoinGUI::updateCheckFinished(QNetworkReply *data)
                 return;
             }
         }
+        else
+        {
+            if(updateCalledFromMenu)
+            {
+                updateCalledFromMenu = false;
+                ThreadSafeMessageBox2(this,"Your wallet is up to date!","Update check",CClientUIInterface::MODAL | CClientUIInterface::ICON_INFORMATION | CClientUIInterface::BTN_OK);        
+            }
+        }
+    }
+    if(updateCalledFromMenu)
+    {
+        ThreadSafeMessageBox2(this,"Failed to get version from server, try again later","Update check failed",CClientUIInterface::MODAL | CClientUIInterface::ICON_INFORMATION | CClientUIInterface::BTN_OK);
+        updateCalledFromMenu = false;
     }
 }
 
+
+bool BitcoinGUI::detectUpdateMenuCalled()
+{
+    updateCalledFromMenu = true;
+    detectUpdate();
+}
 
 bool BitcoinGUI::detectUpdate()
 {
     if (BOOST_OS_MACOS)
         return false; //dont check on OSX, it is not supported yet
 
-    if(GetBoolArg("-autoupdate", true))
+    if(GetBoolArg("-autoupdate", true) || updateCalledFromMenu)
     {
         disconnect(this, SLOT(downloadFinished(QNetworkReply*)));
         disconnect(this, SLOT(updateCheckFinished(QNetworkReply*)));

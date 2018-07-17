@@ -5562,7 +5562,8 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
         if(pfrom->nVersion < MIN_PEER_PROTO_VERSION)
          {
             return error("version below allowed: %d->%d", pfrom->nVersion,MIN_PEER_PROTO_VERSION);
-            Misbehaving(pfrom->GetId(), 100);
+            pfrom->fDisconnect = true;
+            //Misbehaving(pfrom->GetId(), 100);
             return false;
         }
 
