@@ -139,7 +139,7 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_CSV].nStartTime = 1502280000; // Aug 9th, 2017
         consensus.vDeployments[Consensus::DEPLOYMENT_CSV].nTimeout = 1533816000;   // Aug 9th, 2018
         // The best chain should have at least this much work.
-        consensus.nMinimumChainWork = uint256S("0x000000000000000000000000000000000000000000000000003c3370d25a6926"); //119000
+        consensus.nMinimumChainWork = uint256S("0x000000000000000000000000000000000000000000000000003e1771746eb14f"); //121429
         // By default assume that the signatures in ancestors of this block are valid.
         consensus.defaultAssumeValid = uint256S("0x0000000009cc1f28c974798e6222442be48a61a8f23a1497d4cdada1c38a76c4"); //1938
 
@@ -221,9 +221,10 @@ public:
                    (118000, uint256S("0x000000000456143eac91458e816e7f198681c318ed97174f0e123aa35b65e463"))
                    (118500, uint256S("0x000000000600aed69f3f1e742d663b5646637d41610b6694d0df5c609c22893a"))
                    (119000, uint256S("0x00000000033db25e562e571b5e2ffa3fc062a02da3458952ee08a47f63e8d991"))
-		   (119587, uint256S("0x0000000003cfa1827970edc77291c0e531e24a618cce6629915c5a645521292e")),
-                1531704794, // * UNIX timestamp of last checkpoint block
-                141402,      // * total number of transactions between genesis and last checkpoint
+		           (119587, uint256S("0x0000000003cfa1827970edc77291c0e531e24a618cce6629915c5a645521292e"))
+                   (121400, uint256S("0x000000000086cd2daed0df8c9ba4f8e7413bdb7c512a12326fbcbdf2d91f4f38")),
+                1531933353, // * UNIX timestamp of last checkpoint block
+                143842,      // * total number of transactions between genesis and last checkpoint
                         //   (the tx=... number in the SetBestChain debug.log lines)
                 700        // * estimated number of transactions per day after checkpoint
         };
