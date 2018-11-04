@@ -194,7 +194,7 @@ public:
         nPoolMaxTransactions = 3;
         nFulfilledRequestExpireTime = 60*60; // fulfilled requests expire in 1 hour
         //strSporkPubKey = "04d9491a6cf40a2afaf51de3939eadca259a95843b637f82c772a5719bc64051409031803a1c33f1f9b14c24a2d6937fe5b76ffa99a9730aa27726f9934cabf7f4";
-        strSporkPubKey =              "0314c3c7d5388b787055fbc1ab6335ba40d4c12007ba2773cec7d8821f15c208e6"; //"VLNBCt7v9VxHzw19ezz6dhi5pFF7EJpHrqG8mVHwhPqftEsAVn3V";
+        strSporkPubKey =              "0314c3c7d5388b787055fbc1ab6335ba40d4c12007ba2773cec7d8821f15c208e6"; 
         strMasternodePaymentsPubKey = "0314c3c7d5388b787055fbc1ab6335ba40d4c12007ba2773cec7d8821f15c208e6";
 
         checkpointData = (CCheckpointData) {
