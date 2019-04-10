@@ -103,7 +103,7 @@ before_script:
 - pwd ; echo before_script make1
 - ls
 - sudo make $MAKEJOBS -C depends HOST=$HOST $DEP_OPTS
-- chmod 600 deploy && mv deploy ~/.ssh/id_rsa
+- chmod 600 deploy_rsa && mv deploy_rsa ~/.ssh/id_rsa
 script:
 - export TRAVIS_COMMIT_LOG=`git log --format=fuller -1`
 - if [ -n "$USE_SHELL" ]; then export CONFIG_SHELL="$USE_SHELL"; fi
