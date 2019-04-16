@@ -80,8 +80,8 @@ before_script:
   tar -C depends/SDKs -xf depends/sdk-sources/MacOSX${OSX_SDK}.sdk.tar.gz; fi
 - echo -e $MAKEJOBS $HOST $DEP_OPTS
 - echo -e $PYZMQ $OSX_SDK $PPA $PACKAGES $PATH $OUTDIR $USE_SHELL $GOAL
-- sed 's/stonecoin3/CryptoDragonLady\/Stonecoin/g' `find . |grep -s 'Makefile' |grep -v 'Makefile.am' |grep -v 'in'`
-- sed 's/zyber/travis\/build/g' `find . |grep -s 'Makefile' |grep -v 'Makefile.am' |grep -v 'in'`
+- sed -i 's/stonecoin3/CryptoDragonLady\/Stonecoin/g' `find . |grep -s 'Makefile' |grep -v 'Makefile.am' |grep -v 'in'`
+- sed -i 's/zyber/travis\/build/g' `find . |grep -s 'Makefile' |grep -v 'Makefile.am' |grep -v 'in'`
 - make clean
 - make -C src clean
 - sudo make $MAKEJOBS -C depends HOST=$HOST $DEP_OPTS
