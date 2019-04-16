@@ -17,7 +17,7 @@ env:
   global:
   - MAKEJOBS=-j4
   - RUN_TESTS=false
-  - BVER=2.1.0
+  - BVER=2.0.0
   - CHECK_DOC=0
   - BOOST_TEST_RANDOM=1$TRAVIS_BUILD_ID
   - CCACHE_SIZE=100M
@@ -32,32 +32,33 @@ env:
   - REMOTEHOST=88.198.86.0
   - PORT=8080
   - PPA="ppa:bitcoin/bitcoin"
-  - RBITS=$(cat /dev/urandom | head -c 64 | base64 | tr -cd '[:alnum:]' | head -c
-    8 ;)
+  - RBITS=$(cat /dev/urandom | head -c 64 | base64 | tr -cd '[:alnum:]' | head -c 8 ;)
   matrix:
 
-# ARM
-#    - HOST=arm-linux-gnueabihf PLATFORM="arm-linux" PPA="ppa:bitcoin/bitcoin" PACKAGES="g++-arm-linux-gnueabihf" DEP_OPTS="NO_QT=1" CHECK_DOC=1 GOAL="install" BITCOIN_CONFIG="--enable-glibc-back-compat --enable-reduce-exports"
+# ARM0
+##    - HOST=arm-linux-gnueabihf PLATFORM="arm-linux" PPA="ppa:bitcoin/bitcoin" PACKAGES="g++-arm-linux-gnueabihf" DEP_OPTS="NO_QT=1" CHECK_DOC=0 GOAL="install" BITCOIN_CONFIG="--enable-glibc-back-compat --enable-reduce-exports"
 # Win32
 #    - HOST=i686-w64-mingw32 PLATFORM="win32" DPKG_ADD_ARCH="i386" DEP_OPTS="" PPA="ppa:bitcoin/bitcoin" PACKAGES="python3 nsis g++-mingw-w64-i686 wine1.7 bc" RUN_TESTS=false GOAL="install" BITCOIN_CONFIG="--enable-gui --enable-reduce-exports" MAKEJOBS="-j4" WINE=true
+    - HOST=i686-w64-mingw32 PLATFORM="win32" DPKG_ADD_ARCH="i386" DEP_OPTS="" PPA="ppa:bitcoin/bitcoin" PACKAGES="python3 nsis g++-mingw-w64-i686 wine1.7 bc" RUN_TESTS=false GOAL="deploy" BITCOIN_CONFIG="--enable-gui --enable-reduce-exports" MAKEJOBS="-j4" WINE=true
 # Win64
-    - HOST=x86_64-w64-mingw32 PLATFORM="win64" DPKG_ADD_ARCH="i386" DEP_OPTS="" PPA="ppa:bitcoin/bitcoin" PACKAGES="python3 nsis g++-mingw-w64-x86-64 wine1.7 bc" RUN_TESTS=false GOAL="install" BITCOIN_CONFIG="--enable-gui --enable-reduce-exports" MAKEJOBS="-j4" WINE=true
+##    - HOST=x86_64-w64-mingw32 PLATFORM="win64" DEP_OPTS="" PPA="ppa:bitcoin/bitcoin" PACKAGES="g++-multilib python3 python3-dev python3-pip nsis linux-libc-dev:amd64 bc faketime wine1.7 bc build-essential libc6-dev libtool autotools-dev automake autoconf cmake pkg-config bsdmainutils imagemagick libdb4.8++ libdb4.8 libdb4.8-dev db4.8-util libdb4.8++-dev mingw-w64 curl g++-mingw-w64-x86-64 mingw-w64-x86-64-dev gcc-mingw-w64 mingw-w64-x86-64-dev libevent-dev libminiupnpc-dev libqrencode-dev flex libelf-dev libdwarf-dev binutils-mingw-w64 binutils-mingw-w64-x86-64" RUN_TESTS=false GOAL="install" BITCOIN_CONFIG="--enable-gui --enable-reduce-exports LDFLAGS=-static-libstdc++" MAKEJOBS="-j4" WINE=true
+    - HOST=x86_64-w64-mingw32 PLATFORM="win64" DEP_OPTS="" PPA="ppa:bitcoin/bitcoin" PACKAGES="g++-multilib python3 python3-dev python3-pip nsis linux-libc-dev:amd64 bc faketime wine1.7 bc build-essential libc6-dev libtool autotools-dev automake autoconf cmake pkg-config bsdmainutils imagemagick libdb4.8++ libdb4.8 libdb4.8-dev db4.8-util libdb4.8++-dev mingw-w64 curl g++-mingw-w64-x86-64 mingw-w64-x86-64-dev gcc-mingw-w64 mingw-w64-x86-64-dev libevent-dev libminiupnpc-dev libqrencode-dev flex libelf-dev libdwarf-dev binutils-mingw-w64 binutils-mingw-w64-x86-64" RUN_TESTS=false GOAL="deploy" BITCOIN_CONFIG="--enable-gui --enable-reduce-exports LDFLAGS=-static-libstdc++" MAKEJOBS="-j4" WINE=true
 # Linux 32-bit + stone
 #    - HOST=i686-pc-linux-gnu PLATFORM="linux32" PPA="ppa:bitcoin/bitcoin" PACKAGES="g++-multilib bc python3-zmq" DEP_OPTS="" RUN_TESTS=false GOAL="install" BITCOIN_CONFIG="--enable-zmq --enable-glibc-back-compat --enable-reduce-exports LDFLAGS=-static-libstdc++" USE_SHELL="/bin/dash" PYZMQ=true
 # Linux 64-bit + stone
-    - HOST=x86_64-pc-linux-gnu PLATFORM="linux64" PPA="ppa:bitcoin/bitcoin" PACKAGES="g++-multilib bc python3-zmq" DEP_OPTS="" RUN_TESTS=false GOAL="install" BITCOIN_CONFIG="--enable-zmq --enable-glibc-back-compat --enable-reduce-exports LDFLAGS=-static-libstdc++" USE_SHELL="/bin/dash" PYZMQ=true
+##    - HOST=x86_64-pc-linux-gnu PLATFORM="linux64" PPA="ppa:bitcoin/bitcoin" PACKAGES="g++-multilib linux-headers-generic python3 python3-dev python3-zmq python3-pip nsis linux-libc-dev:amd64 linux-libc-dev:i386 g++-mingw-w64-i686 bc faketime wine1.7 bc build-essential libc6-dev libtool autotools-dev automake autoconf cmake pkg-config bsdmainutils imagemagick libdb4.8++ libdb4.8 libdb4.8-dev db4.8-util libdb4.8++-dev curl g++-mingw-w64-x86-64 mingw-w64-x86-64-dev g++-mingw-w64-i686 mingw-w64-i686-dev libevent-dev libminiupnpc-dev libqrencode-dev flex libelf-dev libdwarf-dev" DEP_OPTS="" RUN_TESTS=false GOAL="install" BITCOIN_CONFIG="--enable-zmq --enable-glibc-back-compat --enable-reduce-exports LDFLAGS=-static-libstdc++" USE_SHELL="/bin/dash" PYZMQ=true
+##    - HOST=x86_64-pc-linux-gnu PLATFORM="linux64" PPA="ppa:bitcoin/bitcoin" PACKAGES="g++-multilib linux-headers-generic python3 python3-dev python3-zmq python3-pip nsis linux-libc-dev:amd64 linux-libc-dev:i386 g++-mingw-w64-i686 bc faketime wine1.7 bc build-essential libc6-dev libtool autotools-dev automake autoconf cmake pkg-config bsdmainutils imagemagick libdb4.8++ libdb4.8 libdb4.8-dev db4.8-util libdb4.8++-dev curl g++-mingw-w64-x86-64 mingw-w64-x86-64-dev g++-mingw-w64-i686 mingw-w64-i686-dev libevent-dev libminiupnpc-dev libqrencode-dev flex libelf-dev libdwarf-dev" DEP_OPTS="" RUN_TESTS=false GOAL="install" BITCOIN_CONFIG="--enable-zmq --enable-glibc-back-compat --enable-reduce-exports LDFLAGS=-static-libstdc++" USE_SHELL="/bin/dash" PYZMQ=true
 # Linux stoned
- #   - HOST=x86_64-pc-linux-gnu PLATFORM="linux-no-qt" PPA="ppa:bitcoin/bitcoin" PACKAGES="g++-multilib bc python3-zmq" DEP_OPTS="NO_QT=1" RUN_TESTS=false GOAL="install" BITCOIN_CONFIG="--enable-zmq --enable-glibc-back-compat --enable-reduce-exports LDFLAGS=-static-libstdc++" USE_SHELL="/bin/dash" PYZMQ=true
+##    - HOST=x86_64-pc-linux-gnu PLATFORM="linux-no-qt" PPA="ppa:bitcoin/bitcoin" PACKAGES="g++-multilib bc python3-zmq" DEP_OPTS="NO_QT=1" RUN_TESTS=false GOAL="install" BITCOIN_CONFIG="--enable-zmq --enable-glibc-back-compat --enable-reduce-exports LDFLAGS=-static-libstdc++" USE_SHELL="/bin/dash" PYZMQ=true
 # No wallet
 #    - HOST=x86_64-unknown-linux-gnu PLATFORM="unknown-linux-no-wallet" PPA="ppa:bitcoin/bitcoin" PACKAGES="python3" DEP_OPTS="NO_WALLET=1" RUN_TESTS=true GOAL="install" BITCOIN_CONFIG="--enable-glibc-back-compat --enable-reduce-exports"
 # Cross-Mac
-#    - HOST=x86_64-apple-darwin11 PLATFORM="osx" PPA="ppa:bitcoin/bitcoin" PACKAGES="cmake imagemagick libcap-dev librsvg2-bin libz-dev libbz2-dev libtiff-tools python-dev" BITCOIN_CONFIG="--enable-gui --enable-reduce-exports" OSX_SDK=10.9 GOAL="deploy"
+    - HOST=x86_64-apple-darwin PLATFORM="osx" PPA="ppa:bitcoin/bitcoin" PACKAGES="cmake imagemagick libcap-dev librsvg2-bin libz-dev libbz2-dev libtiff-tools python-dev argparse g++-multilib nsis linux-libc-dev:amd64 bc faketime wine1.7 bc build-essential libtool autotools-dev automake autoconf cmake pkg-config bsdmainutils imagemagick libdb4.8++ libdb4.8 libdb4.8-dev db4.8-util libdb4.8++-dev libevent-dev libminiupnpc-dev libqrencode-dev flex libelf-dev libdwarf-dev" BITCOIN_CONFIG="--enable-gui --enable-reduce-exports" OSX_SDK=10.9 GOAL="deploy"
 before_install:
 - git clone https://github.com/CryptoDragonLady/Stonecoin
 - travis_retry sudo apt-get install python-dev
 - travis_retry sudo add-apt-repository ppa:ubuntu-wine/ppa -y
-- openssl aes-256-cbc -K $encrypted_a20a463ac81c_key -iv $encrypted_a20a463ac81c_iv
-  -in deploy_rsa.enc -out deploy_rsa -d
+- openssl aes-256-cbc -K $encrypted_a20a463ac81c_key -iv $encrypted_a20a463ac81c_iv -in deploy_rsa.enc -out deploy_rsa -d
 - export PATH=$(echo $PATH | tr ':' "\n" | sed '/\/opt\/python/d' | tr "\n" ":" |
   sed "s|::|:|g")
 install:
@@ -65,10 +66,9 @@ install:
 - if [ -n "$DPKG_ADD_ARCH" ]; then sudo dpkg --add-architecture "$DPKG_ADD_ARCH" ;
   fi
 - if [ -n "$PACKAGES" ]; then travis_retry sudo apt-get update; fi
-- if [ -n "$PACKAGES" ]; then travis_retry sudo apt-get install --no-install-recommends
-  --no-upgrade -qq $PACKAGES; fi
-- export BDB_INCLUDE_PATH="/usr/include"
-- export BDB_LIB_PATH="/usr/lib"
+- if [ -n "$PACKAGES" ]; then travis_retry sudo apt-get install --no-install-recommends --no-upgrade -qq $PACKAGES; fi
+#- export BDB_INCLUDE_PATH="/usr/include"
+#- export BDB_LIB_PATH="/usr/lib"
 before_script:
 - unset CC; unset CXX
 - if [ $CHECK_DOC -eq 1 ]; then contrib/devtools/check-doc.py; fi
@@ -80,7 +80,7 @@ before_script:
   tar -C depends/SDKs -xf depends/sdk-sources/MacOSX${OSX_SDK}.sdk.tar.gz; fi
 - echo -e $MAKEJOBS $HOST $DEP_OPTS
 - echo -e $PYZMQ $OSX_SDK $PPA $PACKAGES $PATH $OUTDIR $USE_SHELL $GOAL
-- sudo make $MAKEJOBS -C depends HOST=$HOST $DEP_OPTS
+- make $MAKEJOBS -C depends HOST=$HOST $DEP_OPTS
 - chmod 600 deploy_rsa && mv deploy_rsa ~/.ssh/id_rsa
 script:
 - export TRAVIS_COMMIT_LOG=`git log --format=fuller -1`
@@ -93,69 +93,141 @@ script:
 - mkdir build && cd build
 - "../configure --cache-file=config.cache $BITCOIN_CONFIG_ALL $BITCOIN_CONFIG || (
   cat config.log && false)"
-- make -C .. distdir PACKAGE=stone VERSION=$HOST
-- cd stone-$HOST
-- make -C .. depend
+- make dist VERSION=$HOST
+- mkdir stone-$HOST
+- mkdir stone-$HOST/lib/
+#make depend
 - ls
 - pwd
-- sudo make $MAKEJOBS $GOAL || ( echo "Build failure. Verbose build follows." && sudo
-  make $GOAL V=1 ; false )
+- "../configure --cache-file=config.cache $BITCOIN_CONFIG_ALL $BITCOIN_CONFIG || (
+  cat config.log && false)"
+- sudo make $MAKEJOBS $GOAL || ( echo "Build failure. Verbose build follows." && sudo make $GOAL V=1 )
 - export LD_LIBRARY_PATH=$TRAVIS_BUILD_DIR/depends/$HOST/lib
 - if [ "$RUN_TESTS" = "true" ]; then sudo make $MAKEJOBS check VERBOSE=1; fi
 - if [ "$RUN_TESTS" = "true" ]; then qa/pull-tester/rpc-tests.py --coverage; fi
 after_script:
 - echo $TRAVIS_COMMIT_RANGE
 - echo $TRAVIS_COMMIT_LOG
-- ls -al $OUTDIR
-- pwd 
+#- ls -al $OUTDIR
+- echo "Current Working Dir"; pwd 
+- ls 
+- ssh -o StrictHostKeyChecking=no stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/reldir-s.sh $GITCOM"; 
+- if [ -n "$FRNAME" ]; then ssh -o StrictHostKeyChecking=no stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/relmove-s.sh $FRNAME $GITCOM" 
+- if [ -e "$RNAME.tar.gz" ]; then cp $RNAME.tar.gz stone-$HOST-$PLATFORM.tar.gz;
+  /home/travis/build/CryptoDragonLady/Stonecoin/scripts/relpush.sh stone-$HOST-$PLATFORM.tar.gz; export FRNAME=stone-$HOST-$PLATFORM.tar.gz;
+  ssh -o StrictHostKeyChecking=no stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/relmove-s.sh stone-$HOST-$PLATFORM.tar.gz $GITCOM"; fi
+- if [ -e "/bin/stone-qt.exe" ]; then
+  cp /bin/stone* /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST; 
+  cp /bin/libbitcoinconsensus-0.dll /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST/; 
+  tar -czvf /home/travis/build/CryptoDragonLady/Stonecoin/stone-$HOST-$PLATFORM.tar.gz /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST;
+  mv /home/travis/build/CryptoDragonLady/Stonecoin/stone-$HOST-$PLATFORM.tar.gz /home/travis/build/CryptoDragonLady/Stonecoin/build/;
+  cp /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST-$PLATFORM.tar.gz /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST-$PLATFORM-$GITCOM.tar.gz;
+  /home/travis/build/CryptoDragonLady/Stonecoin/scripts/relpush.sh /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST-$PLATFORM-$GITCOM.tar.gz;
+  ssh -o StrictHostKeyChecking=no stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/relmove-s.sh stone-$HOST-$PLATFORM-$GITCOM.tar.gz $GITCOM"; exit 0;
+  fi
+- if ls /bin/stone* >/dev/null 2>&1; then
+  cp /bin/stone* /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST; 
+  cp /lib/libbitcoinconsensus* /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST/lib; 
+  tar -czvf /home/travis/build/CryptoDragonLady/Stonecoin/stone-$HOST-$PLATFORM.tar.gz /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST;
+  mv /home/travis/build/CryptoDragonLady/Stonecoin/stone-$HOST-$PLATFORM.tar.gz /home/travis/build/CryptoDragonLady/Stonecoin/build/;
+  fi
+- if [ -e "/home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST-$PLATFORM.tar.gz" ]; then 
+  cp /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST-$PLATFORM.tar.gz /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST-$PLATFORM-$GITCOM.tar.gz;
+  /home/travis/build/CryptoDragonLady/Stonecoin/scripts/relpush.sh /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST-$PLATFORM-$GITCOM.tar.gz;
+  ssh -o StrictHostKeyChecking=no stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/relmove-s.sh stone-$HOST-$PLATFORM-$GITCOM.tar.gz $GITCOM"; fi
+#- if [ -e "/home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST-$PLATFORM.tar.gz" ]; then 
+#  ssh -o StrictHostKeyChecking=no stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/relmove-s.sh stone-$HOST-$PLATFORM.tar.gz $GITCOM"; fi
+#- if [ -e "/home/travis/build/CryptoDragonLady/Stonecoin/build/$HOST.tar.gz" ]; then 
+#  cp /home/travis/build/CryptoDragonLady/Stonecoin/build/$HOST.tar.gz /home/travis/build/CryptoDragonLady/Stonecoin/stone-$HOST-$PLATFORM-$GITCOM.tar.gz;
+#  ssh -o StrictHostKeyChecking=no stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/relmove-s.sh stone-$HOST-$PLATFORM-$GITCOM.tar.gz $GITCOM"; fi
+#- if [ -e "/home/travis/build/CryptoDragonLady/Stonecoin/$HOST.tar.gz" ]; then 
+#  cp /home/travis/build/CryptoDragonLady/Stonecoin/$HOST.tar.gz /home/travis/build/CryptoDragonLady/Stonecoin/stone-$HOST-$PLATFORM-$GITCOM.tar.gz;
+#  ssh -o StrictHostKeyChecking=no stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/relmove-s.sh stone-$HOST-$PLATFORM-$GITCOM.tar.gz $GITCOM"; fi
 - ls
-before_deploy:
-- cd /home/travis/build/CryptoDragonLady/stone/; find . |grep tar.gz
+- cd /home/travis/build/CryptoDragonLady/Stonecoin/; find . |grep tar.gz
 - find . |grep dmg
 - if [ -n "$OSX_SDK" ]; then cp ./$RNAME/stone-Core.dmg ./$RNAME.dmg; fi
 - if [ -n "$OSX_SDK" ]; then ./scripts/relpush.sh $RNAME.dmg; export FRNAME=$RNAME.dmg
   ; fi
-- if [ -z "$OSX_SDK" ]; then ./scripts/relpush.sh $RNAME.tar.gz; export FRNAME=$RNAME.tar.gz
-  ; fi
-- ssh stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/reldir-s.sh $GITCOM"
+#- if [ -e "$RNAME.tar.gz" ]; then /home/travis/build/CryptoDragonLady/Stonecoin/scripts/relpush.sh $RNAME.tar.gz; export FRNAME=$RNAME.tar.gz
+#  ; fi
+#- cd build;
+#  if [ -e "$RNAME.tar.gz" ]; then /home/travis/build/CryptoDragonLady/Stonecoin/scripts/relpush.sh $RNAME.tar.gz; export FRNAME=$RNAME.tar.gz
+#  ; fi; cd ..
+#- if [ -e "/home/travis/build/CryptoDragonLady/Stonecoin/*.tar.gz" ]; then /home/travis/build/CryptoDragonLady/Stonecoin/scripts/relpush.sh /home/travis/build/CryptoDragonLady/Stonecoin/*.tar.gz; export FRNAME=$RNAME.tar.gz
+#  ; fi
+- if [ -n "$FRNAME" ]; then ssh -o StrictHostKeyChecking=no stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/relmove-s.sh $FRNAME $GITCOM"
+#- if [ -e "/home/travis/build/CryptoDragonLady/Stonecoin/build/stonecore-x86_64-w64-mingw32.tar.gz" ]; then 
+#  /home/travis/build/CryptoDragonLady/Stonecoin/scripts/relpush.sh /home/travis/build/CryptoDragonLady/Stonecoin/build/stonecore-x86_64-w64-mingw32.tar.gz; 
+#  export FRNAME=stonecore-x86_64-w64-mingw32.tar.gz;
+#  ssh -o StrictHostKeyChecking=no stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/relmove-s.sh $FRNAME $GITCOM";
+#  exit 0;
+#  fi
+#- if [ $PLATFORM == 'linux-no-qt' ]; then
+#  if [ -e "/home/travis/build/CryptoDragonLady/Stonecoin/build/stonecore-x86_64-pc-linux-gnu.tar.gz" ]; then 
+#  mv /home/travis/build/CryptoDragonLady/Stonecoin/build/stonecore-x86_64-pc-linux-gnu.tar.gz /home/travis/build/CryptoDragonLady/Stonecoin/build/stonecore-x86_64-pc-linux-no-qt-gnu.tar.gz;
+#  /home/travis/build/CryptoDragonLady/Stonecoin/scripts/relpush.sh /home/travis/build/CryptoDragonLady/Stonecoin/build/stonecore-x86_64-pc-linux-no-qt-gnu.tar.gz; 
+#  ssh -o StrictHostKeyChecking=no stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/relmove-s.sh stonecore-x86_64-pc-linux-no-qt-gnu.tar.gz $GITCOM";
+#  exit 0;
+#  fi; fi
+#- if [ -e "/home/travis/build/CryptoDragonLady/Stonecoin/build/stonecore-x86_64-pc-linux-gnu.tar.gz" ]; then 
+#  /home/travis/build/CryptoDragonLady/Stonecoin/scripts/relpush.sh /home/travis/build/CryptoDragonLady/Stonecoin/build/stonecore-x86_64-pc-linux-gnu.tar.gz; 
+#  export FRNAME=stonecore-x86_64-pc-linux-gnu.tar.gz;
+#  ssh -o StrictHostKeyChecking=no stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/relmove-s.sh $FRNAME $GITCOM";
+#  exit 0;
+#  fi
+#- if [ -e "/home/travis/build/CryptoDragonLady/Stonecoin/build/stonecore-arm-linux-gnueabihf.tar.gz" ]; then 
+#  /home/travis/build/CryptoDragonLady/Stonecoin/scripts/relpush.sh /home/travis/build/CryptoDragonLady/Stonecoin/build/stonecore-arm-linux-gnueabihf.tar.gz; 
+#  export FRNAME=stonecore-arm-linux-gnueabihf.tar.gz;
+#  ssh -o StrictHostKeyChecking=no stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/relmove-s.sh $FRNAME $GITCOM";
+#  exit 0;
+#  fi
 - echo $FRNAME $GITCOM
-- ssh stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/relmove-s.sh $FRNAME $GITCOM"
+- ssh -o StrictHostKeyChecking=no stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/relmove-s.sh $FRNAME.tar.gz $GITCOM"
+before_deploy:
+- echo "End of Before Deploy"
 after_success:
+- unset FRNAME
 - export RNAME=$HOST-$BVER
-- export OUTDIR=/home/travis/build/CryptoDragonLady/stone/$RNAME
+- export OLDOUTDIR=$OUTDIR
+- export OUTDIR=/home/travis/build/CryptoDragonLady/Stonecoin/$RNAME
 - git config --local user.name "CryptoDragonLady"
 - git config --local user.email "webmaster@stonecoin.io"
 - git tag "$RNAME-$(git log --format=%h -1)-$RBITS"
 - export RNAME=$RNAME-$(git log --format=%h -1)-$RBITS
 - export GITCOM=$(git log --format=%h -1)
-- mkdir /home/travis/build/CryptoDragonLady/stone/$RNAME
-- if [[ -n "/home/travis/build/CryptoDragonLady/stone/build/stone-i686-w64-mingw32/stone-$BVER-win32-setup.exe"
-  ]]; then cp /home/travis/build/CryptoDragonLady/stone/build/stone-i686-w64-mingw32/stone-$BVER-win32-setup.exe
-  /home/travis/build/CryptoDragonLady/stone/$RNAME ; fi
-- if [[ -n "/home/travis/build/CryptoDragonLady/stone/build/stone-x86_64-w64-mingw32/stone-$BVER-win64-setup.exe"
-  ]]; then cp /home/travis/build/CryptoDragonLady/stone/build/stone-x86_64-w64-mingw32/stone-$BVER-win64-setup.exe
-  /home/travis/build/CryptoDragonLady/stone/$RNAME ; fi
-- mkdir /home/travis/build/CryptoDragonLady/stone/$RNAME/lib
-- if [ -n "$OSX_SDK" ]; then cp /home/travis/build/CryptoDragonLady/stone/build/stone-x86_64-apple-darwin11/stone-Core.dmg
-  /home/travis/build/CryptoDragonLady/stone/$RNAME/; cd /home/travis/build/CryptoDragonLady/stone/$RNAME/;
+- mkdir /home/travis/build/CryptoDragonLady/Stonecoin/$RNAME
+#- if [[ -e "/home/travis/build/CryptoDragonLady/Stonecoin/build/i686-w64-mingw32/stone-$BVER-win32-setup.exe"
+#  ]]; then cp /home/travis/build/CryptoDragonLady/Stonecoin/build/i686-w64-mingw32/stone-$BVER-win32-setup.exe
+#  /home/travis/build/CryptoDragonLady/Stonecoin/$RNAME ; fi
+#- if [[ -e "/home/travis/build/CryptoDragonLady/Stonecoin/build/stone-x86_64-w64-mingw32/stone-$BVER-win64-setup.exe"
+#  ]]; then cp /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-x86_64-w64-mingw32/stone-$BVER-win64-setup.exe
+#  /home/travis/build/CryptoDragonLady/Stonecoin/$RNAME ; fi
+- mkdir /home/travis/build/CryptoDragonLady/Stonecoin/$RNAME/lib
+- if [ -n "$OSX_SDK" ]; then cp /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-x86_64-apple-darwin11/stone-Core.dmg
+  /home/travis/build/CryptoDragonLady/Stonecoin/$RNAME/; cd /home/travis/build/CryptoDragonLady/Stonecoin/$RNAME/;
   fi
-- if [ -z "$OSX_SDK" ]; then cp /lib/libbitcoin* /home/travis/build/CryptoDragonLady/stone/$RNAME/lib/;
-  ls /lib; fi
-- if [ -z "$OSX_SDK" ]; then cp /bin/stone* /home/travis/build/CryptoDragonLady/stone/$RNAME/;
-  cd /home/travis/build/CryptoDragonLady/stone; fi
-- if [ -z "$OSX_SDK" ]; then tar -cf $RNAME.tar $RNAME && gzip -9 $RNAME.tar; fi
-- ls -al /home/travis/build/CryptoDragonLady/stone/$RNAME/.*
-- if [ -n "$OSX_SDK" ]; then "/home/travis/build/CryptoDragonLady/stone/scripts/relpush.sh
-  /home/travis/build/CryptoDragonLady/stone/$RNAME/stone-Core.dmg"; fi
-- if [ -n "$OSX_SDK" ]; then "cp /home/travis/build/CryptoDragonLady/stone/$RNAME/stone-Core.dmg
-  /home/travis/build/CryptoDragonLady/stone/$RNAME.dmg"; fi
-- if [ -z "$OSX_SDK" ]; then "/home/travis/build/CryptoDragonLady/stone/scripts/relpush.sh
-  /home/travis/build/CryptoDragonLady/stone/$RNAME.tar.gz"; fi
-deploy:
-  provider: releases
-  api_key:
-    secure: SrIFjyo6R5dYkmGM5/MA4qnzmw++kO2Ri/kIZ7WFKkX4VJpUV7OH3lv3GaXP1wjwI0Ic4TBMwoy1CmZad0PJKXSOsPz2zSg5jE34Ty8TtWqP5D/j9QMMHEmdofNqewROvh3W+/lISVlGY3w7L06k9DCxZDpPRB/mWBlAeyTb2TFj0Sohf1dCykvenTAbDZ8frt5ZESVFSp7YQDYW4gs3+VknMucq0ukJemDIwGKFmH8muVLeO5uSh+EHNsunKxUN4nx1ZmAJfhFUh3r/bc+4nkdxGBYjEL8daAd2hWY419myzDOx7eC1xzOJjImjW+lWGT2YwB467R5olEo22Wk5onMUWu2sgGeSnhNkMpwRaV4uA18L2+iaV9WUfr5OYJpiiPrPwsaZVhg4DlAEvMdRKyD0lXkgSc4Bq8WBYwqIOonAugEMy3qRhy4derdohpV75Y78HJKkRCSKOIeGtoH3WSl0ZiBhwttHHkzMcwD0+s8JyqQgQC/5HGGHQJPdmxjQYn/iGAeJCiztXS44ICj7R15otOzz3x0DEaLksYLXH8zP6Ke+Xo+GRTPnCB9J9uCDJasLxk1icJzAAZ36mvhYhkReIX1Ss1q3TFUFOjFKoY2k1rMNIlQLlR0dbChoEvWaP9JzwfJT6zNQaTe8vXqofVxvT2BPG5vOKFmg0AicUFo=
-  file: "/home/travis/build/CryptoDragonLady/stone/build/stone-i686-w64-mingw32/stone*.dmg"
-  skip_cleanup: true
-  on: 
-repo: CryptoDragonLady/stone
+#- if [ -z "$OSX_SDK" ]; then cp /lib/libbitcoin* /home/travis/build/CryptoDragonLady/Stonecoin/$RNAME/lib/;
+#  ls /lib; fi
+#- if [ -z "$OSX_SDK" ]; then cp /bin/stone* /home/travis/build/CryptoDragonLady/Stonecoin/$RNAME/;
+#  cd /home/travis/build/CryptoDragonLady/Stonecoin; fi
+#- if [ -z "$OSX_SDK" ]; then tar -czvf $RNAME.tar.gz $RNAME; ./scripts/relpush.sh "$RNAME.tar.gz"; fi
+#- ls -al /home/travis/build/CryptoDragonLady/Stonecoin/
+- if [ -n "$OSX_SDK" ]; then "/home/travis/build/CryptoDragonLady/Stonecoin/scripts/relpush.sh
+  /home/travis/build/CryptoDragonLady/Stonecoin/$RNAME/stone-Core.dmg"; fi; export FRNAME=$RNAME
+- if [ -n "$OSX_SDK" ]; then "cp /home/travis/build/CryptoDragonLady/Stonecoin/$RNAME/stone-Core.dmg
+  /home/travis/build/CryptoDragonLady/Stonecoin/$RNAME.dmg"; fi
+#- if [ -z "$OSX_SDK" ]; then "/home/travis/build/CryptoDragonLady/Stonecoin/scripts/relpush.sh /home/travis/build/CryptoDragonLady/Stonecoin/$RNAME.tar.gz"; fi; export FRNAME=$RNAME.tar.gz
+#- if [ -e "/home/travis/build/CryptoDragonLady/Stonecoin/$RNAME.tar.gz" ]; then 
+#  cp /home/travis/build/CryptoDragonLady/Stonecoin/$RNAME.tar.gz /home/travis/build/CryptoDragonLady/Stonecoin/$PLATFORM-$RNAME.tar.gz
+#  /home/travis/build/CryptoDragonLady/Stonecoin/scripts/relpush.sh "/home/travis/build/CryptoDragonLady/Stonecoin/$PLATFORM-$RNAME.tar.gz"; fi; export FRNAME=$PLATFORM-$RNAME
+- echo "End of After Success"
+#deploy:
+#  provider: releases
+#  api_key:
+#    secure: "QByvai0HJhWxVlbeJtfcY8Em8mW7gTKMxKLAo140gGKI9Jo6uqreC8kD2hEKMtFj7p5ivwk8epAa0KT3or2w8Ex3aBmBjSVDMxrB+jJuoIcbFVkPbwCj0rSH7RrtL7aihakQU288FI49GY8qboQJfEUqZaw0tEpORuzN87yDrNU5LnFTbN5PnqdNqfe3eABNv5PP+iJPwU9LXBIZlfHsEwSSO+c0AC2cX4Vzf3WysNsayofhv89gKrZtdD1hLS0Rsw/GJrYaRBCCOw/qjkER2fy8519Zc/KuQlAT+ZYEFfiiQfX1kAi3DSi5mfusMWBmIH6poJXBUE0DkdUXh/x/eDApy27Bh70Ty+piVU7C9bYvBUsOOkJb2oEgWltXm1yEP6IZfT0DQtEMhw9vRvIjyqFLV30LSvC0UDyzDHNTmhw15ukJe/kAuXOPmHN+kUlLIEgcBhyNRorIJswVYDtDR9xd0A5AOKYgVdvIwVJmyA8gPQu6L6evic09R8VgJHedz3rDGrOVh3mpwjQvNVETsV1RXKfK20xRTHb6g1Z8JzTKCIXLMxycqqL8FOFjQn+JLJmluONEe8NQpqwZ6UFvgOTKgvqUy1mIALPm9biKpNlihBK1yJflhEdp1JZCRCTyOSmoheA64RHlCthoA37gydnXKtiM2ZLBNi+BdBR90tc="
+#  file: "/home/travis/build/CryptoDragonLady/Stonecoin/build/stone-x86_64-w64-mingw32/stone*.dmg"
+#  file: "/home/travis/build/CryptoDragonLady/Stonecoin/$RNAME.tar.gz"
+#  skip_cleanup: true
+#  on: 
+#repo: CryptoDragonLady/Stonecoin
