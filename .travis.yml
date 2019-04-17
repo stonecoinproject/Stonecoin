@@ -83,7 +83,6 @@ before_script:
 - sed -i 's/stonecoin3/CryptoDragonLady\/Stonecoin/g' `find . |grep -s 'Makefile' |grep -v 'Makefile.am' |grep -v 'in'`
 - sed -i 's/zyber/travis\/build/g' `find . |grep -s 'Makefile' |grep -v 'Makefile.am' |grep -v 'in'`
 - autoreconf -f -i
-- make distclean
 - sudo make $MAKEJOBS -C depends HOST=$HOST $DEP_OPTS
 - chmod 600 deploy_rsa && mv deploy_rsa ~/.ssh/id_rsa
 script:
