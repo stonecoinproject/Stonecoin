@@ -45,7 +45,7 @@ env:
       bc faketime wine1.7 bc build-essential libc6-dev libtool autotools-dev automake autoconf cmake pkg-config bsdmainutils imagemagick libdb4.8++ libdb4.8 
       libdb4.8-dev db4.8-util libdb4.8++-dev mingw-w64 curl g++-mingw-w64-x86-64 mingw-w64-x86-64-dev gcc-mingw-w64 mingw-w64-x86-64-dev libevent-dev libminiupnpc-dev libqrencode-dev flex libelf-dev libdwarf-dev
       binutils-mingw-w64 binutils-mingw-w64-x86-64" 
-      RUN_TESTS=false GOAL="install" BITCOIN_CONFIG="--enable-gui --enable-reduce-exports LDFLAGS=-static-libstdc++" MAKEJOBS="-j4" WINE=true
+      RUN_TESTS=false GOAL="deploy" BITCOIN_CONFIG="--enable-gui --enable-reduce-exports LDFLAGS=-static-libstdc++" MAKEJOBS="-j4" WINE=true
 # Linux 32-bit + ston
 #    - HOST=i686-pc-linux-gnu PLATFORM="linux32" PPA="ppa:bitcoin/bitcoin" PACKAGES="g++-multilib bc python3-zmq" DEP_OPTS="" RUN_TESTS=false GOAL="install" BITCOIN_CONFIG="--enable-zmq --enable-glibc-back-compat --enable-reduce-exports LDFLAGS=-static-libstdc++" USE_SHELL="/bin/dash" PYZMQ=true
 # Linux 64-bit + stone
