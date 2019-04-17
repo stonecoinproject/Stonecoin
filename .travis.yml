@@ -36,16 +36,20 @@ env:
     8 ;)
   matrix:
 
-# ARM
+# ARM0
 #    - HOST=arm-linux-gnueabihf PLATFORM="arm-linux" PPA="ppa:bitcoin/bitcoin" PACKAGES="g++-arm-linux-gnueabihf" DEP_OPTS="NO_QT=1" CHECK_DOC=1 GOAL="install" BITCOIN_CONFIG="--enable-glibc-back-compat --enable-reduce-exports"
 # Win32
 #    - HOST=i686-w64-mingw32 PLATFORM="win32" DPKG_ADD_ARCH="i386" DEP_OPTS="" PPA="ppa:bitcoin/bitcoin" PACKAGES="python3 nsis g++-mingw-w64-i686 wine1.7 bc" RUN_TESTS=false GOAL="install" BITCOIN_CONFIG="--enable-gui --enable-reduce-exports" MAKEJOBS="-j4" WINE=true
 # Win64
-    - HOST=x86_64-w64-mingw32 PLATFORM="win64" DPKG_ADD_ARCH="i386" DEP_OPTS="" PPA="ppa:bitcoin/bitcoin" PACKAGES="python3 python3-dev python3-pip nsis g++-mingw-w64-i686 bc faketime wine1.7 bc build-essential libc6-dev libtool autotools-dev automake autoconf cmake pkg-config bsdmainutils imagemagick libdb4.8++ libdb4.8 libdb4.8-dev db4.8-util libdb4.8++-dev curl g++-mingw-w64-x86-64 mingw-w64-x86-64-dev g++-mingw-w64-i686 mingw-w64-i686-dev libevent-dev libminiupnpc-dev libqrencode-dev flex libelf-dev libdwarf-dev" RUN_TESTS=false GOAL="install" BITCOIN_CONFIG="--enable-gui --enable-reduce-exports" MAKEJOBS="-j4" WINE=true
-# Linux 32-bit + stone
+    - HOST="x86_64-w64-mingw32" PLATFORM="win64" DEP_OPTS="" PPA="ppa:bitcoin/bitcoin" PACKAGES="g++-multilib python3 python3-dev python3-pip nsis linux-libc-dev:amd64 
+      bc faketime wine1.7 bc build-essential libc6-dev libtool autotools-dev automake autoconf cmake pkg-config bsdmainutils imagemagick libdb4.8++ libdb4.8 
+      libdb4.8-dev db4.8-util libdb4.8++-dev mingw-w64 curl g++-mingw-w64-x86-64 mingw-w64-x86-64-dev gcc-mingw-w64 mingw-w64-x86-64-dev libevent-dev libminiupnpc-dev libqrencode-dev flex libelf-dev libdwarf-dev
+      binutils-mingw-w64 binutils-mingw-w64-x86-64" 
+      RUN_TESTS=false GOAL="install" BITCOIN_CONFIG="--enable-gui --enable-reduce-exports LDFLAGS=-static-libstdc++" MAKEJOBS="-j4" WINE=true
+# Linux 32-bit + ston
 #    - HOST=i686-pc-linux-gnu PLATFORM="linux32" PPA="ppa:bitcoin/bitcoin" PACKAGES="g++-multilib bc python3-zmq" DEP_OPTS="" RUN_TESTS=false GOAL="install" BITCOIN_CONFIG="--enable-zmq --enable-glibc-back-compat --enable-reduce-exports LDFLAGS=-static-libstdc++" USE_SHELL="/bin/dash" PYZMQ=true
 # Linux 64-bit + stone
-    - HOST=x86_64-pc-linux-gnu PLATFORM="linux64" PPA="ppa:bitcoin/bitcoin" PACKAGES="g++-multilib bc python3-zmq" DEP_OPTS="" RUN_TESTS=false GOAL="install" BITCOIN_CONFIG="--enable-zmq --enable-glibc-back-compat --enable-reduce-exports LDFLAGS=-static-libstdc++" USE_SHELL="/bin/dash" PYZMQ=true
+    - HOST=x86_64-pc-linux-gnu PLATFORM="linux64" PPA="ppa:bitcoin/bitcoin" PACKAGES="g++-multilib linux-headers-generic python3 python3-dev python3-pip nsis linux-libc-dev:amd64 linux-libc-dev:i386 g++-mingw-w64-i686 bc faketime wine1.7 bc build-essential libc6-dev libtool autotools-dev automake autoconf cmake pkg-config bsdmainutils imagemagick libdb4.8++ libdb4.8 libdb4.8-dev db4.8-util libdb4.8++-dev curl g++-mingw-w64-x86-64 mingw-w64-x86-64-dev g++-mingw-w64-i686 mingw-w64-i686-dev libevent-dev libminiupnpc-dev libqrencode-dev flex libelf-dev libdwarf-dev" DEP_OPTS="" RUN_TESTS=false GOAL="install" BITCOIN_CONFIG="--enable-zmq --enable-glibc-back-compat --enable-reduce-exports LDFLAGS=-static-libstdc++" USE_SHELL="/bin/dash" PYZMQ=true
 # Linux stoned
  #   - HOST=x86_64-pc-linux-gnu PLATFORM="linux-no-qt" PPA="ppa:bitcoin/bitcoin" PACKAGES="g++-multilib bc python3-zmq" DEP_OPTS="NO_QT=1" RUN_TESTS=false GOAL="install" BITCOIN_CONFIG="--enable-zmq --enable-glibc-back-compat --enable-reduce-exports LDFLAGS=-static-libstdc++" USE_SHELL="/bin/dash" PYZMQ=true
 # No wallet
@@ -80,10 +84,9 @@ before_script:
   tar -C depends/SDKs -xf depends/sdk-sources/MacOSX${OSX_SDK}.sdk.tar.gz; fi
 - echo -e $MAKEJOBS $HOST $DEP_OPTS
 - echo -e $PYZMQ $OSX_SDK $PPA $PACKAGES $PATH $OUTDIR $USE_SHELL $GOAL
-- sed -i 's/stonecoin3/CryptoDragonLady\/Stonecoin/g' `find . |grep -s 'Makefile' |grep -v 'Makefile.am' |grep -v 'in'`
-- sed -i 's/zyber/travis\/build/g' `find . |grep -s 'Makefile' |grep -v 'Makefile.am' |grep -v 'in'`
-- autoreconf -f -i
-- sudo make $MAKEJOBS -C depends HOST=$HOST $DEP_OPTS
+#- sed -i 's/stonecoin3/CryptoDragonLady\/Stonecoin/g' `find . |grep -s 'Makefile' |grep -v 'Makefile.am' |grep -v 'in'`
+#- sed -i 's/zyber/travis\/build/g' `find . |grep -s 'Makefile' |grep -v 'Makefile.am' |grep -v 'in'`
+#- autoreconf -f -i
 - chmod 600 deploy_rsa && mv deploy_rsa ~/.ssh/id_rsa
 script:
 - export TRAVIS_COMMIT_LOG=`git log --format=fuller -1`
@@ -96,9 +99,9 @@ script:
 - mkdir build && cd build
 - "../configure --cache-file=config.cache $BITCOIN_CONFIG_ALL $BITCOIN_CONFIG || (
   cat config.log && false)"
-- make -C .. distdir PACKAGE=stone VERSION=$HOST
+- make distdir PACKAGE=stone VERSION=$HOST
 - cd stone-$HOST
-- make -C .. depend
+#- make -C .. depend
 - ls
 - pwd
 - sudo make $MAKEJOBS $GOAL || ( echo "Build failure. Verbose build follows." && sudo
