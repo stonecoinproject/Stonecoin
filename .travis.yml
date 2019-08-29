@@ -148,10 +148,17 @@ after_script:
 - if [ -e "/home/travis/build/CryptoDragonLady/Stonecoin/build/stonecore-x86_64-w64-mingw32.tar.gz" ]; then 
   /home/travis/build/CryptoDragonLady/Stonecoin/scripts/relpush.sh /home/travis/build/CryptoDragonLady/Stonecoin/build/stonecore-x86_64-w64-mingw32.tar.gz; 
   export FRNAME=stonecore-x86_64-w64-mingw32.tar.gz;
+  exit 0;
   fi
 - if [ -e "/home/travis/build/CryptoDragonLady/Stonecoin/build/stonecore-x86_64-pc-linux-gnu.tar.gz" ]; then 
   /home/travis/build/CryptoDragonLady/Stonecoin/scripts/relpush.sh /home/travis/build/CryptoDragonLady/Stonecoin/build/stonecore-x86_64-pc-linux-gnu.tar.gz; 
   export FRNAME=stonecore-x86_64-pc-linux-gnu.tar.gz;
+  exit 0;
+  fi
+- if [ -e "/home/travis/build/CryptoDragonLady/Stonecoin/build/stonecore-arm-linux-gnueabihf.tar.gz" ]; then 
+  /home/travis/build/CryptoDragonLady/Stonecoin/scripts/relpush.sh /home/travis/build/CryptoDragonLady/Stonecoin/build/stonecore-arm-linux-gnueabihf.tar.gz; 
+  export FRNAME=stonecore-arm-linux-gnueabihf.tar.gz;
+  exit 0;
   fi
 - echo $FRNAME $GITCOM
 - ssh -o StrictHostKeyChecking=no stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/relmove-s.sh $FRNAME $GITCOM"
@@ -178,20 +185,20 @@ after_success:
 - if [ -n "$OSX_SDK" ]; then cp /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-x86_64-apple-darwin11/stone-Core.dmg
   /home/travis/build/CryptoDragonLady/Stonecoin/$RNAME/; cd /home/travis/build/CryptoDragonLady/Stonecoin/$RNAME/;
   fi
-- if [ -z "$OSX_SDK" ]; then cp /lib/libbitcoin* /home/travis/build/CryptoDragonLady/Stonecoin/$RNAME/lib/;
-  ls /lib; fi
-- if [ -z "$OSX_SDK" ]; then cp /bin/stone* /home/travis/build/CryptoDragonLady/Stonecoin/$RNAME/;
-  cd /home/travis/build/CryptoDragonLady/Stonecoin; fi
-- if [ -z "$OSX_SDK" ]; then tar -czvf $RNAME.tar.gz $RNAME; ./scripts/relpush.sh "$RNAME.tar.gz"; fi
-- ls -al /home/travis/build/CryptoDragonLady/Stonecoin/
+#- if [ -z "$OSX_SDK" ]; then cp /lib/libbitcoin* /home/travis/build/CryptoDragonLady/Stonecoin/$RNAME/lib/;
+#  ls /lib; fi
+#- if [ -z "$OSX_SDK" ]; then cp /bin/stone* /home/travis/build/CryptoDragonLady/Stonecoin/$RNAME/;
+#  cd /home/travis/build/CryptoDragonLady/Stonecoin; fi
+#- if [ -z "$OSX_SDK" ]; then tar -czvf $RNAME.tar.gz $RNAME; ./scripts/relpush.sh "$RNAME.tar.gz"; fi
+#- ls -al /home/travis/build/CryptoDragonLady/Stonecoin/
 - if [ -n "$OSX_SDK" ]; then "/home/travis/build/CryptoDragonLady/Stonecoin/scripts/relpush.sh
   /home/travis/build/CryptoDragonLady/Stonecoin/$RNAME/stone-Core.dmg"; fi; export FRNAME=$RNAME
 - if [ -n "$OSX_SDK" ]; then "cp /home/travis/build/CryptoDragonLady/Stonecoin/$RNAME/stone-Core.dmg
   /home/travis/build/CryptoDragonLady/Stonecoin/$RNAME.dmg"; fi
-- if [ -z "$OSX_SDK" ]; then "/home/travis/build/CryptoDragonLady/Stonecoin/scripts/relpush.sh /home/travis/build/CryptoDragonLady/Stonecoin/$RNAME.tar.gz"; fi; export FRNAME=$RNAME.tar.gz
-- if [ -e "/home/travis/build/CryptoDragonLady/Stonecoin/$RNAME.tar.gz" ]; then 
-  cp /home/travis/build/CryptoDragonLady/Stonecoin/$RNAME.tar.gz /home/travis/build/CryptoDragonLady/Stonecoin/$PLATFORM-$RNAME.tar.gz
-  /home/travis/build/CryptoDragonLady/Stonecoin/scripts/relpush.sh "/home/travis/build/CryptoDragonLady/Stonecoin/$PLATFORM-$RNAME.tar.gz"; fi; export FRNAME=$PLATFORM-$RNAME
+#- if [ -z "$OSX_SDK" ]; then "/home/travis/build/CryptoDragonLady/Stonecoin/scripts/relpush.sh /home/travis/build/CryptoDragonLady/Stonecoin/$RNAME.tar.gz"; fi; export FRNAME=$RNAME.tar.gz
+#- if [ -e "/home/travis/build/CryptoDragonLady/Stonecoin/$RNAME.tar.gz" ]; then 
+#  cp /home/travis/build/CryptoDragonLady/Stonecoin/$RNAME.tar.gz /home/travis/build/CryptoDragonLady/Stonecoin/$PLATFORM-$RNAME.tar.gz
+#  /home/travis/build/CryptoDragonLady/Stonecoin/scripts/relpush.sh "/home/travis/build/CryptoDragonLady/Stonecoin/$PLATFORM-$RNAME.tar.gz"; fi; export FRNAME=$PLATFORM-$RNAME
 - echo "End of After Success"
 #deploy:
 #  provider: releases
