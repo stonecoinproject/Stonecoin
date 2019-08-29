@@ -151,7 +151,7 @@ after_script:
   ssh -o StrictHostKeyChecking=no stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/relmove-s.sh $FRNAME $GITCOM";
   exit 0;
   fi
-  if [ $PLATFORM -eq "linux-no-qt" ]; then
+  if [ $PLATFORM == 'linux-no-qt' ]; then
   if [ -e "/home/travis/build/CryptoDragonLady/Stonecoin/build/stonecore-x86_64-pc-linux-gnu.tar.gz" ]; then 
   mv /home/travis/build/CryptoDragonLady/Stonecoin/build/stonecore-x86_64-pc-linux-gnu.tar.gz /home/travis/build/CryptoDragonLady/Stonecoin/build/stonecore-x86_64-pc-linux-no-qt-gnu.tar.gz;
   /home/travis/build/CryptoDragonLady/Stonecoin/scripts/relpush.sh /home/travis/build/CryptoDragonLady/Stonecoin/build/stonecore-x86_64-pc-linux-no-qt-gnu.tar.gz; 
