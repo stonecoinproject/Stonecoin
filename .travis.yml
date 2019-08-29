@@ -113,15 +113,18 @@ after_script:
 - if [ -e "$RNAME.tar.gz" ]; then cp $RNAME.tar.gz stone-$HOST-$PLATFORM.tar.gz;
   /home/travis/build/CryptoDragonLady/Stonecoin/scripts/relpush.sh stone-$HOST-$PLATFORM.tar.gz; export FRNAME=stone-$HOST-$PLATFORM.tar.gz;
   ssh -o StrictHostKeyChecking=no stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/relmove-s.sh stone-$HOST-$PLATFORM.tar.gz $GITCOM"; fi
-#- if [ -e "/bin/stone-qt.exe" ]; then
-#  cp /bin/stone* /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST; 
-#  cp /bin/libbitcoinconsensus-0.dll /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST/; 
-#  tar -czvf /home/travis/build/CryptoDragonLady/Stonecoin/stone-$HOST-$PLATFORM.tar.gz /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST;
-#  mv /home/travis/build/CryptoDragonLady/Stonecoin/stone-$HOST-$PLATFORM.tar.gz /home/travis/build/CryptoDragonLady/Stonecoin/build/;
-#  fi
+- if [ -e "/bin/stone-qt.exe" ]; then
+  cp /bin/stone* /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST; 
+  cp /bin/libbitcoinconsensus-0.dll /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST/; 
+  tar -czvf /home/travis/build/CryptoDragonLady/Stonecoin/stone-$HOST-$PLATFORM.tar.gz /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST;
+  mv /home/travis/build/CryptoDragonLady/Stonecoin/stone-$HOST-$PLATFORM.tar.gz /home/travis/build/CryptoDragonLady/Stonecoin/build/;
+  cp /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST-$PLATFORM.tar.gz /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST-$PLATFORM-$GITCOM.tar.gz;
+  /home/travis/build/CryptoDragonLady/Stonecoin/scripts/relpush.sh /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST-$PLATFORM-$GITCOM.tar.gz;
+  ssh -o StrictHostKeyChecking=no stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/relmove-s.sh stone-$HOST-$PLATFORM-$GITCOM.tar.gz $GITCOM"; exit 0;
+  fi
 - if ls /bin/stone* >/dev/null 2>&1; then
   cp /bin/stone* /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST; 
-  cp /bin/libbitcoinconsensus-0* /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST/lib; 
+  cp /lib/libbitcoinconsensus* /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST/lib; 
   tar -czvf /home/travis/build/CryptoDragonLady/Stonecoin/stone-$HOST-$PLATFORM.tar.gz /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST;
   mv /home/travis/build/CryptoDragonLady/Stonecoin/stone-$HOST-$PLATFORM.tar.gz /home/travis/build/CryptoDragonLady/Stonecoin/build/;
   fi
