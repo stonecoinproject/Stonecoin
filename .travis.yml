@@ -110,7 +110,7 @@ after_script:
 - ls 
 - ssh -o StrictHostKeyChecking=no stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/reldir-s.sh $GITCOM"; 
 - if [ -n "$FRNAME" ]; then ssh -o StrictHostKeyChecking=no stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/relmove-s.sh $FRNAME $GITCOM" 
-- if [ -e "$RNAME.tar.gz" ]; then cp $RNAME.tar.gz stone-$HOST-$PLATFORM.tar.gz
+- if [ -e "$RNAME.tar.gz" ]; then cp $RNAME.tar.gz stone-$HOST-$PLATFORM.tar.gz;
   /home/travis/build/CryptoDragonLady/Stonecoin/scripts/relpush.sh stone-$HOST-$PLATFORM.tar.gz; export FRNAME=stone-$HOST-$PLATFORM.tar.gz;
   ssh -o StrictHostKeyChecking=no stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/relmove-s.sh stone-$HOST-$PLATFORM.tar.gz $GITCOM"; fi
 - if [ -e "/bin/stone-qt.exe" ]; then
@@ -123,14 +123,13 @@ after_script:
   cp /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST-$PLATFORM.tar.gz /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST-$PLATFORM-$GITCOM.tar.gz;
   /home/travis/build/CryptoDragonLady/Stonecoin/scripts/relpush.sh /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST-$PLATFORM-$GITCOM.tar.gz;
   ssh -o StrictHostKeyChecking=no stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/relmove-s.sh stone-$HOST-$PLATFORM-$GITCOM.tar.gz $GITCOM"; fi
-  fi
 - if [ -e "/home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST-$PLATFORM.tar.gz" ]; then 
   ssh -o StrictHostKeyChecking=no stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/relmove-s.sh stone-$HOST-$PLATFORM.tar.gz $GITCOM"; fi
 - if [ -e "/home/travis/build/CryptoDragonLady/Stonecoin/build/$HOST.tar.gz" ]; then 
-  cp /home/travis/build/CryptoDragonLady/Stonecoin/build/$HOST.tar.gz /home/travis/build/CryptoDragonLady/Stonecoin/stone-$HOST-$PLATFORM-$GITCOM.tar.gz
+  cp /home/travis/build/CryptoDragonLady/Stonecoin/build/$HOST.tar.gz /home/travis/build/CryptoDragonLady/Stonecoin/stone-$HOST-$PLATFORM-$GITCOM.tar.gz;
   ssh -o StrictHostKeyChecking=no stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/relmove-s.sh stone-$HOST-$PLATFORM-$GITCOM.tar.gz $GITCOM"; fi
 - if [ -e "/home/travis/build/CryptoDragonLady/Stonecoin/$HOST.tar.gz" ]; then 
-  cp /home/travis/build/CryptoDragonLady/Stonecoin/$HOST.tar.gz /home/travis/build/CryptoDragonLady/Stonecoin/stone-$HOST-$PLATFORM-$GITCOM.tar.gz
+  cp /home/travis/build/CryptoDragonLady/Stonecoin/$HOST.tar.gz /home/travis/build/CryptoDragonLady/Stonecoin/stone-$HOST-$PLATFORM-$GITCOM.tar.gz;
   ssh -o StrictHostKeyChecking=no stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/relmove-s.sh stone-$HOST-$PLATFORM-$GITCOM.tar.gz $GITCOM"; fi
 - ls
 - cd /home/travis/build/CryptoDragonLady/Stonecoin/; find . |grep tar.gz
@@ -189,8 +188,10 @@ after_success:
   /home/travis/build/CryptoDragonLady/Stonecoin/$RNAME/stone-Core.dmg"; fi; export FRNAME=$RNAME
 - if [ -n "$OSX_SDK" ]; then "cp /home/travis/build/CryptoDragonLady/Stonecoin/$RNAME/stone-Core.dmg
   /home/travis/build/CryptoDragonLady/Stonecoin/$RNAME.dmg"; fi
-- if [ -z "$OSX_SDK" ]; then "/home/travis/build/CryptoDragonLady/Stonecoin/scripts/relpush.sh /home/travis/build/CryptoDragonLady/Stonecoin/$RNAME.tar.gz"; fi; export FRNAME=$RNAME
-- if [ -e "/home/travis/build/CryptoDragonLady/Stonecoin/$RNAME.tar.gz" ]; then /home/travis/build/CryptoDragonLady/Stonecoin/scripts/relpush.sh "/home/travis/build/CryptoDragonLady/Stonecoin/$RNAME.tar.gz"; fi; export FRNAME=$RNAME
+- if [ -z "$OSX_SDK" ]; then "/home/travis/build/CryptoDragonLady/Stonecoin/scripts/relpush.sh /home/travis/build/CryptoDragonLady/Stonecoin/$RNAME.tar.gz"; fi; export FRNAME=$RNAME.tar.gz
+- if [ -e "/home/travis/build/CryptoDragonLady/Stonecoin/$RNAME.tar.gz" ]; then 
+  cp /home/travis/build/CryptoDragonLady/Stonecoin/$RNAME.tar.gz /home/travis/build/CryptoDragonLady/Stonecoin/$PLATFORM-$RNAME.tar.gz
+  /home/travis/build/CryptoDragonLady/Stonecoin/scripts/relpush.sh "/home/travis/build/CryptoDragonLady/Stonecoin/$PLATFORM-$RNAME.tar.gz"; fi; export FRNAME=$PLATFORM-$RNAME
 - echo "End of After Success"
 #deploy:
 #  provider: releases
