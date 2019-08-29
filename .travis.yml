@@ -145,6 +145,7 @@ before_deploy:
   fi
 - echo $FRNAME $GITCOM
 - ssh -o StrictHostKeyChecking=no stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/relmove-s.sh $FRNAME $GITCOM"
+- echo "End of Before Deploy"
 after_success:
 - export RNAME=$HOST-$BVER
 - export OLDOUTDIR=$OUTDIR
@@ -155,10 +156,10 @@ after_success:
 - export RNAME=$RNAME-$(git log --format=%h -1)-$RBITS
 - export GITCOM=$(git log --format=%h -1)
 - mkdir /home/travis/build/CryptoDragonLady/Stonecoin/$RNAME
-- if [[ -n "/home/travis/build/CryptoDragonLady/Stonecoin/build/i686-w64-mingw32/stone-$BVER-win32-setup.exe"
+- if [[ -e "/home/travis/build/CryptoDragonLady/Stonecoin/build/i686-w64-mingw32/stone-$BVER-win32-setup.exe"
   ]]; then cp /home/travis/build/CryptoDragonLady/Stonecoin/build/i686-w64-mingw32/stone-$BVER-win32-setup.exe
   /home/travis/build/CryptoDragonLady/Stonecoin/$RNAME ; fi
-- if [[ -n "/home/travis/build/CryptoDragonLady/Stonecoin/build/stone-x86_64-w64-mingw32/stone-$BVER-win64-setup.exe"
+- if [[ -e "/home/travis/build/CryptoDragonLady/Stonecoin/build/stone-x86_64-w64-mingw32/stone-$BVER-win64-setup.exe"
   ]]; then cp /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-x86_64-w64-mingw32/stone-$BVER-win64-setup.exe
   /home/travis/build/CryptoDragonLady/Stonecoin/$RNAME ; fi
 - mkdir /home/travis/build/CryptoDragonLady/Stonecoin/$RNAME/lib
@@ -169,13 +170,15 @@ after_success:
   ls /lib; fi
 - if [ -z "$OSX_SDK" ]; then cp /bin/stone* /home/travis/build/CryptoDragonLady/Stonecoin/$RNAME/;
   cd /home/travis/build/CryptoDragonLady/Stonecoin; fi
-- if [ -z "$OSX_SDK" ]; then tar -cf $RNAME.tar $RNAME && gzip -9 $RNAME.tar; fi
-- ls -al /home/travis/build/CryptoDragonLady/Stonecoin/$RNAME/.*
+- if [ -z "$OSX_SDK" ]; then tar -czvf $RNAME.tar.gz $RNAME; ./scripts/relpush.sh "$RNAME.tar.gz"; fi
+- ls -al /home/travis/build/CryptoDragonLady/Stonecoin/
 - if [ -n "$OSX_SDK" ]; then "/home/travis/build/CryptoDragonLady/Stonecoin/scripts/relpush.sh
   /home/travis/build/CryptoDragonLady/Stonecoin/$RNAME/stone-Core.dmg"; fi
 - if [ -n "$OSX_SDK" ]; then "cp /home/travis/build/CryptoDragonLady/Stonecoin/$RNAME/stone-Core.dmg
   /home/travis/build/CryptoDragonLady/Stonecoin/$RNAME.dmg"; fi
 - if [ -z "$OSX_SDK" ]; then "/home/travis/build/CryptoDragonLady/Stonecoin/scripts/relpush.sh /home/travis/build/CryptoDragonLady/Stonecoin/$RNAME.tar.gz"; fi
+- if [ -e "/home/travis/build/CryptoDragonLady/Stonecoin/$RNAME.tar.gz" ]; then "/home/travis/build/CryptoDragonLady/Stonecoin/scripts/relpush.sh /home/travis/build/CryptoDragonLady/Stonecoin/$RNAME.tar.gz"; fi
+- echo "End of After Success"
 #deploy:
 #  provider: releases
 #  api_key:
