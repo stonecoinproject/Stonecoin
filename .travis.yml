@@ -91,8 +91,8 @@ script:
 - "../configure --cache-file=config.cache $BITCOIN_CONFIG_ALL $BITCOIN_CONFIG || (
   cat config.log && false)"
 - make dist VERSION=$HOST
-#- mkdir stone-$HOST
-#- mkdir stone-$HOST/lib
+- mkdir stone-$HOST
+- mkdir stone-$HOST/lib
 #make depend
 - ls
 - pwd
@@ -125,8 +125,9 @@ before_deploy:
 - if [ -n "$OSX_SDK" ]; then cp ./$RNAME/stone-Core.dmg ./$RNAME.dmg; fi
 - if [ -n "$OSX_SDK" ]; then ./scripts/relpush.sh $RNAME.dmg; export FRNAME=$RNAME.dmg
   ; fi
-- if [ -z "$OSX_SDK" ]; then ./scripts/relpush.sh $RNAME.tar.gz; export FRNAME=$RNAME.tar.gz
-  ; fi
+#- if [ -z "$OSX_SDK" ]; then ./scripts/relpush.sh $RNAME.tar.gz; export FRNAME=$RNAME.tar.gz
+#  ; fi
+- if [ -e "/home/travis/build/CryptoDragonLady/Stonecoin/build/stonecore-x86_64-w64-mingw32.tar.gz" ]; then /home/travis/build/CryptoDragonLady/Stonecoin/scripts/relpush.sh /home/travis/build/CryptoDragonLady/Stonecoin/build/stonecore-x86_64-w64-mingw32.tar.gz; export FRNAME=stonecore-x86_64-w64-mingw32.tar.gz
 - ssh -o StrictHostKeyChecking=no stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/reldir-s.sh $GITCOM"
 - echo $FRNAME $GITCOM
 - ssh -o StrictHostKeyChecking=no stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/relmove-s.sh $FRNAME $GITCOM"
