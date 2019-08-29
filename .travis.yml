@@ -93,12 +93,14 @@ script:
 - mkdir build && cd build
 - "../configure --cache-file=config.cache $BITCOIN_CONFIG_ALL $BITCOIN_CONFIG || (
   cat config.log && false)"
-#- make distdir PACKAGE=stone VERSION=$HOST
-- mkdir stone-$HOST
-- mkdir stone-$HOST/lib
+- make distdir VERSION=$HOST
+#- mkdir stone-$HOST
+#- mkdir stone-$HOST/lib
 #make depend
 - ls
 - pwd
+- "../configure --cache-file=config.cache $BITCOIN_CONFIG_ALL $BITCOIN_CONFIG || (
+  cat config.log && false)"
 - sudo make $MAKEJOBS $GOAL || ( echo "Build failure. Verbose build follows." && sudo make $GOAL V=1 )
 - if [ -e "/bin/stone-qt.exe" ]; then; cp /bin/stone* /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST; 
   cp /bin/libbitcoinconsensus-0.dll /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST/; 
