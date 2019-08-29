@@ -117,8 +117,8 @@ after_script:
   cp /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST.tar.gz /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST-$GITCOM.tar.gz;
   /home/travis/build/CryptoDragonLady/Stonecoin/scripts/relpush.sh /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST-$GITCOM.tar.gz;
   fi
-- ssh stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/reldir-s.sh $GITCOM";
-- ssh stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/relmove-s.sh stone-$HOST-$GITCOM.tar.gz $GITCOM";
+#- ssh -o StrictHostKeyChecking=no stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/reldir-s.sh $GITCOM";
+#- ssh -o StrictHostKeyChecking=no stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/relmove-s.sh stone-$HOST-$GITCOM.tar.gz $GITCOM";
 before_deploy:
 - cd /home/travis/build/CryptoDragonLady/Stonecoin/; find . |grep tar.gz
 - find . |grep dmg
@@ -127,9 +127,9 @@ before_deploy:
   ; fi
 - if [ -z "$OSX_SDK" ]; then ./scripts/relpush.sh $RNAME.tar.gz; export FRNAME=$RNAME.tar.gz
   ; fi
-- ssh stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/reldir-s.sh $GITCOM"
+- ssh -o StrictHostKeyChecking=no stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/reldir-s.sh $GITCOM"
 - echo $FRNAME $GITCOM
-- ssh stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/relmove-s.sh $FRNAME $GITCOM"
+- ssh -o StrictHostKeyChecking=no stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/relmove-s.sh $FRNAME $GITCOM"
 after_success:
 - export RNAME=$HOST-$BVER
 - export OLDOUTDIR=$OUTDIR
