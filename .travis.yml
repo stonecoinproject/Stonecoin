@@ -119,7 +119,7 @@ after_script:
   tar -czvf /home/travis/build/CryptoDragonLady/Stonecoin/stone-$HOST-$PLATFORM.tar.gz /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST;
   mv /home/travis/build/CryptoDragonLady/Stonecoin/stone-$HOST-$PLATFORM.tar.gz /home/travis/build/CryptoDragonLady/Stonecoin/build/;
   fi
-- if [ -e "/bin/stone-qt" ]; then
+- if [ -e "/bin/stone*" ]; then
   cp /bin/stone* /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST; 
   cp /bin/libbitcoinconsensus-0* /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST/lib; 
   tar -czvf /home/travis/build/CryptoDragonLady/Stonecoin/stone-$HOST-$PLATFORM.tar.gz /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST;
