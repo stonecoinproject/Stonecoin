@@ -100,13 +100,13 @@ script:
 - ls
 - pwd
 - sudo make $MAKEJOBS $GOAL || ( echo "Build failure. Verbose build follows." && sudo make $GOAL V=1 )
-- if [ -e "/bin/stone-qt.exe" ]; then cp /bin/stone* /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST; 
+- if [ -e "/bin/stone-qt.exe" ]; then; cp /bin/stone* /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST; 
   cp /bin/libbitcoinconsensus-0.dll /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST/; 
   tar -czvf stone-$HOST.tar.gz stone-$HOST; 
-  if [ -e "/home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST.tar.gz" ]; then 
+  if [ -e "/home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST.tar.gz" ]; then; 
   cp /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST.tar.gz /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST-$GITCOM.tar.gz;
   /home/travis/build/CryptoDragonLady/Stonecoin/scripts/relpush.sh /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST-$GITCOM.tar.gz;
-  fi
+  fi;
   ssh stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/reldir-s.sh $GITCOM";
   ssh stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/relmove-s.sh stone-$HOST-$GITCOM.tar.gz $GITCOM";
   fi
