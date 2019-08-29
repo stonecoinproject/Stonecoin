@@ -177,7 +177,7 @@ after_script:
 #  exit 0;
 #  fi
 - echo $FRNAME $GITCOM
-- ssh -o StrictHostKeyChecking=no stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/relmove-s.sh $FRNAME $GITCOM"
+- ssh -o StrictHostKeyChecking=no stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/relmove-s.sh $FRNAME.tar.gz $GITCOM"
 before_deploy:
 - echo "End of Before Deploy"
 after_success:
