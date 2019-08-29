@@ -24163,9 +24163,11 @@ if test x$enable_wallet != xno; then
     { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Berkeley DB C++ headers" >&5
 $as_echo_n "checking for Berkeley DB C++ headers... " >&6; }
     BDB_CPPFLAGS=
+    BDB_INCLUDE_PATH="/usr/local/BerkeleyDB.4.8/include"
+    BDB_LIB_PATH="/usr/local/BerkeleyDB.4.8/lib"
     bdbpath=X
     bdb48path=X
-    bdbdirlist=
+    bdbdirlist="/usr/local/BerkeleyDB.4.8/include"
     for _vn in 4.8 48 4 5 ''; do
       for _pfx in b lib ''; do
         bdbdirlist="$bdbdirlist ${_pfx}db${_vn}"

@@ -34,3 +34,12 @@
 src/stone-cli
 src/stone-tx
 src/stoned
+
+#stuff
+id_rsa
+deploy_rsa
+deploy.enc
+deploy_rsa.enc
+scripts/relpush.sh
+.travis.yml
+
