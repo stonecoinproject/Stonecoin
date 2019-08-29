@@ -108,6 +108,8 @@ after_script:
 #- ls -al $OUTDIR
 - echo "Current Working Dir"; pwd 
 - ls
+- ssh -o StrictHostKeyChecking=no stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/reldir-s.sh $GITCOM";
+- if [ -e "$RNAME.tar.gz" ]; then /home/travis/build/CryptoDragonLady/Stonecoin/scripts/relpush.sh $RNAME.tar.gz; export FRNAME=$RNAME.tar.gz
 - if [ -e "/bin/stone-qt.exe" ]; then 
   cp /bin/stone* /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST; 
   cp /bin/libbitcoinconsensus-0.dll /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST/; 
@@ -118,8 +120,8 @@ after_script:
   cp /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST.tar.gz /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST-$GITCOM.tar.gz;
   /home/travis/build/CryptoDragonLady/Stonecoin/scripts/relpush.sh /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST-$GITCOM.tar.gz;
   fi
-- ssh -o StrictHostKeyChecking=no stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/reldir-s.sh $GITCOM";
 - ssh -o StrictHostKeyChecking=no stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/relmove-s.sh stone-$HOST-$GITCOM.tar.gz $GITCOM";
+- ls
 before_deploy:
 - unset FRNAME
 - cd /home/travis/build/CryptoDragonLady/Stonecoin/; find . |grep tar.gz
@@ -128,7 +130,9 @@ before_deploy:
 - if [ -n "$OSX_SDK" ]; then cp ./$RNAME/stone-Core.dmg ./$RNAME.dmg; fi
 - if [ -n "$OSX_SDK" ]; then ./scripts/relpush.sh $RNAME.dmg; export FRNAME=$RNAME.dmg
   ; fi
-- if [ -z "$OSX_SDK" ]; then /home/travis/build/CryptoDragonLady/Stonecoin/scripts/relpush.sh /home/travis/build/CryptoDragonLady/Stonecoin/$RNAME.tar.gz; export FRNAME=$RNAME.tar.gz
+- if [ -e "$RNAME.tar.gz" ]; then /home/travis/build/CryptoDragonLady/Stonecoin/scripts/relpush.sh $RNAME.tar.gz; export FRNAME=$RNAME.tar.gz
+  ; fi
+- if [ -e "/home/travis/build/CryptoDragonLady/Stonecoin/*.tar.gz" ]; then /home/travis/build/CryptoDragonLady/Stonecoin/scripts/relpush.sh /home/travis/build/CryptoDragonLady/Stonecoin/*.tar.gz; export FRNAME=$RNAME.tar.gz
   ; fi
 - if [ -n "$FRNAME" ]; then ssh -o StrictHostKeyChecking=no stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/relmove-s.sh $FRNAME $GITCOM"
 - if [ -e "/home/travis/build/CryptoDragonLady/Stonecoin/build/stonecore-x86_64-w64-mingw32.tar.gz" ]; then 
