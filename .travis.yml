@@ -132,6 +132,10 @@ before_deploy:
   /home/travis/build/CryptoDragonLady/Stonecoin/scripts/relpush.sh /home/travis/build/CryptoDragonLady/Stonecoin/build/stonecore-x86_64-w64-mingw32.tar.gz; 
   export FRNAME=stonecore-x86_64-w64-mingw32.tar.gz;
   fi
+- if [ -e "/home/travis/build/CryptoDragonLady/Stonecoin/build/stonecore-x86_64-pc-linux-gnu.tar.gz" ]; then 
+  /home/travis/build/CryptoDragonLady/Stonecoin/scripts/relpush.sh /home/travis/build/CryptoDragonLady/Stonecoin/build/stonecore-x86_64-pc-linux-gnu.tar.gz; 
+  export FRNAME=stonecore-x86_64-pc-linux-gnu.tar.gz;
+  fi
 - ssh -o StrictHostKeyChecking=no stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/reldir-s.sh $GITCOM"
 - echo $FRNAME $GITCOM
 - ssh -o StrictHostKeyChecking=no stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/relmove-s.sh $FRNAME $GITCOM"
