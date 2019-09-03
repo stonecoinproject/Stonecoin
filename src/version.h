@@ -11,7 +11,7 @@
  * network protocol versioning
  */
 
-static const int PROTOCOL_VERSION = 70210;
+static const int PROTOCOL_VERSION = 70211;
 
 //! initial proto version, to be increased after version/verack negotiation
 static const int INIT_PROTO_VERSION = 209;
@@ -22,6 +22,9 @@ static const int GETHEADERS_VERSION = 70077;
 //! disconnect from peers older than this proto version
 static const int MIN_PEER_PROTO_VERSION = 70209;
 
+//! disconnect peers older than this version after blockheight 420420
+static const int SPORK_16_PROTO_VERSION = 70211;
+static const int SPORK_16_BLOCK_HEIGHT = 420420;
 static const int OLD_PEER_PROTO_VERSION = 70206;
 
 //! nTime field added to CAddress, starting with this version;

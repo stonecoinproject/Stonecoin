@@ -76,8 +76,8 @@ void CSporkManager::ExecuteSpork(int nSporkID, int nValue)
 {
     //correct fork via spork technology
     if(nSporkID == SPORK_12_RECONSIDER_BLOCKS && nValue > 0) {
-        // allow to reprocess 24h of blocks max, which should be enough to resolve any issues
-        int64_t nMaxBlocks = 576;
+        // allow to reprocess 12h of blocks max, which should be enough to resolve any issues
+        int64_t nMaxBlocks = 360;
         // this potentially can be a heavy operation, so only allow this to be executed once per 10 minutes
         int64_t nTimeout = 10 * 60;
 
@@ -135,6 +135,7 @@ bool CSporkManager::IsSporkActive(int nSporkID)
             case SPORK_13_OLD_SUPERBLOCK_FLAG:              r = SPORK_13_OLD_SUPERBLOCK_FLAG_DEFAULT; break;
             case SPORK_14_REQUIRE_SENTINEL_FLAG:            r = SPORK_14_REQUIRE_SENTINEL_FLAG_DEFAULT; break;
             case SPORK_15_FOUNDER_PAYMENT_ENFORCEMENT:     r = SPORK_15_FOUNDER_PAYMENT_ENFORCEMENT_DEFAULT; break;
+            case SPORK_16_KILL_STRAGGLERS:     r = SPORK_16_KILL_STRAGGLERS_DEFAULT; break;
             default:
                 LogPrint("spork", "CSporkManager::IsSporkActive -- Unknown Spork ID %d\n", nSporkID);
                 r = 4070908800ULL; // 2099-1-1 i.e. off by default
@@ -162,6 +163,7 @@ int64_t CSporkManager::GetSporkValue(int nSporkID)
         case SPORK_13_OLD_SUPERBLOCK_FLAG:              return SPORK_13_OLD_SUPERBLOCK_FLAG_DEFAULT;
         case SPORK_14_REQUIRE_SENTINEL_FLAG:            return SPORK_14_REQUIRE_SENTINEL_FLAG_DEFAULT;
         case SPORK_15_FOUNDER_PAYMENT_ENFORCEMENT:     return SPORK_15_FOUNDER_PAYMENT_ENFORCEMENT_DEFAULT;
+        case SPORK_16_KILL_STRAGGLERS:     return SPORK_16_KILL_STRAGGLERS_DEFAULT;
         default:
             LogPrint("spork", "CSporkManager::GetSporkValue -- Unknown Spork ID %d\n", nSporkID);
             return -1;
@@ -181,6 +183,7 @@ int CSporkManager::GetSporkIDByName(std::string strName)
     if (strName == "SPORK_13_OLD_SUPERBLOCK_FLAG")              return SPORK_13_OLD_SUPERBLOCK_FLAG;
     if (strName == "SPORK_14_REQUIRE_SENTINEL_FLAG")            return SPORK_14_REQUIRE_SENTINEL_FLAG;
     if (strName == "SPORK_15_FOUNDER_PAYMENT_ENFORCEMENT")     return SPORK_15_FOUNDER_PAYMENT_ENFORCEMENT;
+    if (strName == "SPORK_16_KILL_STRAGGLERS")     return SPORK_16_KILL_STRAGGLERS;
 
     LogPrint("spork", "CSporkManager::GetSporkIDByName -- Unknown Spork name '%s'\n", strName);
     return -1;
@@ -199,6 +202,7 @@ std::string CSporkManager::GetSporkNameByID(int nSporkID)
         case SPORK_13_OLD_SUPERBLOCK_FLAG:              return "SPORK_13_OLD_SUPERBLOCK_FLAG";
         case SPORK_14_REQUIRE_SENTINEL_FLAG:            return "SPORK_14_REQUIRE_SENTINEL_FLAG";
         case SPORK_15_FOUNDER_PAYMENT_ENFORCEMENT:     return "SPORK_15_FOUNDER_PAYMENT_ENFORCEMENT";
+        case SPORK_16_KILL_STRAGGLERS:     return "SPORK_16_KILL_STRAGGLERS";
         default:
             LogPrint("spork", "CSporkManager::GetSporkNameByID -- Unknown Spork ID %d\n", nSporkID);
             return "Unknown";

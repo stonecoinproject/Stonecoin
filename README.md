@@ -1,4 +1,4 @@
-Stone Core 2.0.0
+Stone Core 2.1.1
 ===============================
 
 `master:` [![Build Status](https://travis-ci.org/stone/stone.svg?branch=master)](https://travis-ci.org/stone/stone)

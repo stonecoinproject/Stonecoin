@@ -211,7 +211,7 @@ void CActiveMasternode::ManageStateInitial()
     int height = chainActive.Height();
     CAmount collateral = getMinimumCollateral(height);
     if(pwalletMain->GetBalance() < collateral) {
-        LogPrintf("CActiveMasternode::ManageStateInitial -- %s: Wallet balance is < %"PRId64" STONE\n", GetStateString(), collateral);
+        LogPrintf("CActiveMasternode::ManageStateInitial -- %s: Wallet balance is < %" PRId64 " STONE\n", GetStateString(), collateral);
         return;
     }
 
