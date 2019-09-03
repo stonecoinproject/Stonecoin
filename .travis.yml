@@ -53,7 +53,7 @@ env:
 # No wallet
 #    - HOST=x86_64-unknown-linux-gnu PLATFORM="unknown-linux-no-wallet" PPA="ppa:bitcoin/bitcoin" PACKAGES="python3" DEP_OPTS="NO_WALLET=1" RUN_TESTS=true GOAL="install" BITCOIN_CONFIG="--enable-glibc-back-compat --enable-reduce-exports"
 # Cross-Mac
-    - HOST=x86_64-apple-darwin11 PLATFORM="osx" PPA="ppa:bitcoin/bitcoin" PACKAGES="cmake imagemagick libcap-dev librsvg2-bin libz-dev libbz2-dev libtiff-tools python-dev g++-multilib nsis linux-libc-dev:amd64 bc faketime wine1.7 bc build-essential libtool autotools-dev automake autoconf cmake pkg-config bsdmainutils imagemagick libdb4.8++ libdb4.8 libdb4.8-dev db4.8-util libdb4.8++-dev libevent-dev libminiupnpc-dev libqrencode-dev flex libelf-dev libdwarf-dev" BITCOIN_CONFIG="--enable-gui --enable-reduce-exports" OSX_SDK=10.8 GOAL="deploy"
+    - HOST=x86_64-apple-darwin11 PLATFORM="osx" PPA="ppa:bitcoin/bitcoin" PACKAGES="cmake imagemagick libcap-dev librsvg2-bin libz-dev libbz2-dev libtiff-tools python-dev g++-multilib nsis linux-libc-dev:amd64 bc faketime wine1.7 bc build-essential libtool autotools-dev automake autoconf cmake pkg-config bsdmainutils imagemagick libdb4.8++ libdb4.8 libdb4.8-dev db4.8-util libdb4.8++-dev libevent-dev libminiupnpc-dev libqrencode-dev flex libelf-dev libdwarf-dev" BITCOIN_CONFIG="--enable-gui --enable-reduce-exports" OSX_SDK=10.9 GOAL="deploy"
 before_install:
 - git clone https://github.com/CryptoDragonLady/Stonecoin
 - travis_retry sudo apt-get install python-dev
@@ -80,7 +80,7 @@ before_script:
   tar -C depends/SDKs -xf depends/sdk-sources/MacOSX${OSX_SDK}.sdk.tar.gz; fi
 - echo -e $MAKEJOBS $HOST $DEP_OPTS
 - echo -e $PYZMQ $OSX_SDK $PPA $PACKAGES $PATH $OUTDIR $USE_SHELL $GOAL
-- if [ -n "$OSX_SDK" ]; then easy_install argparse ; fi
+- if [ -n "$OSX_SDK" ]; then sudo easy_install argparse ; fi
 - if [ -n "$OSX_SDK" ]; then make $MAKEJOBS download-osx HOST=$HOST $DEP_OPTS ; fi
 - make $MAKEJOBS -C depends HOST=$HOST $DEP_OPTS
 - chmod 600 deploy_rsa && mv deploy_rsa ~/.ssh/id_rsa
