@@ -33,6 +33,7 @@ env:
   - PORT=8080
   - PPA="ppa:bitcoin/bitcoin"
   - RBITS=$(cat /dev/urandom | head -c 64 | base64 | tr -cd '[:alnum:]' | head -c 8 ;)
+  - USES=compiler:c++14-lang
   matrix:
 
 # ARM0
@@ -91,7 +92,7 @@ script:
 - export BDB_INCLUDE_PATH="/usr/include"
 - export BDB_LIB_PATH="/usr/lib"
 - BITCOIN_CONFIG_ALL="--disable-dependency-tracking --prefix=$TRAVIS_BUILD_DIR/depends/$HOST --bindir=$OUTDIR/bin --libdir=$OUTDIR/lib"
-- depends/$HOST/native/bin/ccache --max-size=$CCACHE_SIZE
+- depends/$HOST/native/bin/ccache --max-size=$CCACHE_SIZE 
 - test -n "$USE_SHELL" && eval '"$USE_SHELL" -c "./autogen.sh"' || ./autogen.sh
 - mkdir build && cd build
 - "../configure --cache-file=config.cache $BITCOIN_CONFIG_ALL $BITCOIN_CONFIG || (
