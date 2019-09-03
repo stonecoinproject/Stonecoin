@@ -36,21 +36,24 @@ env:
   matrix:
 
 # ARM0
-    - HOST=arm-linux-gnueabihf PLATFORM="arm-linux" PPA="ppa:bitcoin/bitcoin" PACKAGES="g++-arm-linux-gnueabihf" DEP_OPTS="NO_QT=1" CHECK_DOC=0 GOAL="install" BITCOIN_CONFIG="--enable-glibc-back-compat --enable-reduce-exports"
+##    - HOST=arm-linux-gnueabihf PLATFORM="arm-linux" PPA="ppa:bitcoin/bitcoin" PACKAGES="g++-arm-linux-gnueabihf" DEP_OPTS="NO_QT=1" CHECK_DOC=0 GOAL="install" BITCOIN_CONFIG="--enable-glibc-back-compat --enable-reduce-exports"
 # Win32
 #    - HOST=i686-w64-mingw32 PLATFORM="win32" DPKG_ADD_ARCH="i386" DEP_OPTS="" PPA="ppa:bitcoin/bitcoin" PACKAGES="python3 nsis g++-mingw-w64-i686 wine1.7 bc" RUN_TESTS=false GOAL="install" BITCOIN_CONFIG="--enable-gui --enable-reduce-exports" MAKEJOBS="-j4" WINE=true
+    - HOST=i686-w64-mingw32 PLATFORM="win32" DPKG_ADD_ARCH="i386" DEP_OPTS="" PPA="ppa:bitcoin/bitcoin" PACKAGES="python3 nsis g++-mingw-w64-i686 wine1.7 bc" RUN_TESTS=false GOAL="deploy" BITCOIN_CONFIG="--enable-gui --enable-reduce-exports" MAKEJOBS="-j4" WINE=true
 # Win64
-    - HOST=x86_64-w64-mingw32 PLATFORM="win64" DEP_OPTS="" PPA="ppa:bitcoin/bitcoin" PACKAGES="g++-multilib python3 python3-dev python3-pip nsis linux-libc-dev:amd64 bc faketime wine1.7 bc build-essential libc6-dev libtool autotools-dev automake autoconf cmake pkg-config bsdmainutils imagemagick libdb4.8++ libdb4.8 libdb4.8-dev db4.8-util libdb4.8++-dev mingw-w64 curl g++-mingw-w64-x86-64 mingw-w64-x86-64-dev gcc-mingw-w64 mingw-w64-x86-64-dev libevent-dev libminiupnpc-dev libqrencode-dev flex libelf-dev libdwarf-dev binutils-mingw-w64 binutils-mingw-w64-x86-64" RUN_TESTS=false GOAL="install" BITCOIN_CONFIG="--enable-gui --enable-reduce-exports LDFLAGS=-static-libstdc++" MAKEJOBS="-j4" WINE=true
-# Linux 32-bit + ston
+##    - HOST=x86_64-w64-mingw32 PLATFORM="win64" DEP_OPTS="" PPA="ppa:bitcoin/bitcoin" PACKAGES="g++-multilib python3 python3-dev python3-pip nsis linux-libc-dev:amd64 bc faketime wine1.7 bc build-essential libc6-dev libtool autotools-dev automake autoconf cmake pkg-config bsdmainutils imagemagick libdb4.8++ libdb4.8 libdb4.8-dev db4.8-util libdb4.8++-dev mingw-w64 curl g++-mingw-w64-x86-64 mingw-w64-x86-64-dev gcc-mingw-w64 mingw-w64-x86-64-dev libevent-dev libminiupnpc-dev libqrencode-dev flex libelf-dev libdwarf-dev binutils-mingw-w64 binutils-mingw-w64-x86-64" RUN_TESTS=false GOAL="install" BITCOIN_CONFIG="--enable-gui --enable-reduce-exports LDFLAGS=-static-libstdc++" MAKEJOBS="-j4" WINE=true
+    - HOST=x86_64-w64-mingw32 PLATFORM="win64" DEP_OPTS="" PPA="ppa:bitcoin/bitcoin" PACKAGES="g++-multilib python3 python3-dev python3-pip nsis linux-libc-dev:amd64 bc faketime wine1.7 bc build-essential libc6-dev libtool autotools-dev automake autoconf cmake pkg-config bsdmainutils imagemagick libdb4.8++ libdb4.8 libdb4.8-dev db4.8-util libdb4.8++-dev mingw-w64 curl g++-mingw-w64-x86-64 mingw-w64-x86-64-dev gcc-mingw-w64 mingw-w64-x86-64-dev libevent-dev libminiupnpc-dev libqrencode-dev flex libelf-dev libdwarf-dev binutils-mingw-w64 binutils-mingw-w64-x86-64" RUN_TESTS=false GOAL="deploy" BITCOIN_CONFIG="--enable-gui --enable-reduce-exports LDFLAGS=-static-libstdc++" MAKEJOBS="-j4" WINE=true
+# Linux 32-bit + stone
 #    - HOST=i686-pc-linux-gnu PLATFORM="linux32" PPA="ppa:bitcoin/bitcoin" PACKAGES="g++-multilib bc python3-zmq" DEP_OPTS="" RUN_TESTS=false GOAL="install" BITCOIN_CONFIG="--enable-zmq --enable-glibc-back-compat --enable-reduce-exports LDFLAGS=-static-libstdc++" USE_SHELL="/bin/dash" PYZMQ=true
 # Linux 64-bit + stone
-    - HOST=x86_64-pc-linux-gnu PLATFORM="linux64" PPA="ppa:bitcoin/bitcoin" PACKAGES="g++-multilib linux-headers-generic python3 python3-dev python3-zmq python3-pip nsis linux-libc-dev:amd64 linux-libc-dev:i386 g++-mingw-w64-i686 bc faketime wine1.7 bc build-essential libc6-dev libtool autotools-dev automake autoconf cmake pkg-config bsdmainutils imagemagick libdb4.8++ libdb4.8 libdb4.8-dev db4.8-util libdb4.8++-dev curl g++-mingw-w64-x86-64 mingw-w64-x86-64-dev g++-mingw-w64-i686 mingw-w64-i686-dev libevent-dev libminiupnpc-dev libqrencode-dev flex libelf-dev libdwarf-dev" DEP_OPTS="" RUN_TESTS=false GOAL="install" BITCOIN_CONFIG="--enable-zmq --enable-glibc-back-compat --enable-reduce-exports LDFLAGS=-static-libstdc++" USE_SHELL="/bin/dash" PYZMQ=true
+##    - HOST=x86_64-pc-linux-gnu PLATFORM="linux64" PPA="ppa:bitcoin/bitcoin" PACKAGES="g++-multilib linux-headers-generic python3 python3-dev python3-zmq python3-pip nsis linux-libc-dev:amd64 linux-libc-dev:i386 g++-mingw-w64-i686 bc faketime wine1.7 bc build-essential libc6-dev libtool autotools-dev automake autoconf cmake pkg-config bsdmainutils imagemagick libdb4.8++ libdb4.8 libdb4.8-dev db4.8-util libdb4.8++-dev curl g++-mingw-w64-x86-64 mingw-w64-x86-64-dev g++-mingw-w64-i686 mingw-w64-i686-dev libevent-dev libminiupnpc-dev libqrencode-dev flex libelf-dev libdwarf-dev" DEP_OPTS="" RUN_TESTS=false GOAL="install" BITCOIN_CONFIG="--enable-zmq --enable-glibc-back-compat --enable-reduce-exports LDFLAGS=-static-libstdc++" USE_SHELL="/bin/dash" PYZMQ=true
+##    - HOST=x86_64-pc-linux-gnu PLATFORM="linux64" PPA="ppa:bitcoin/bitcoin" PACKAGES="g++-multilib linux-headers-generic python3 python3-dev python3-zmq python3-pip nsis linux-libc-dev:amd64 linux-libc-dev:i386 g++-mingw-w64-i686 bc faketime wine1.7 bc build-essential libc6-dev libtool autotools-dev automake autoconf cmake pkg-config bsdmainutils imagemagick libdb4.8++ libdb4.8 libdb4.8-dev db4.8-util libdb4.8++-dev curl g++-mingw-w64-x86-64 mingw-w64-x86-64-dev g++-mingw-w64-i686 mingw-w64-i686-dev libevent-dev libminiupnpc-dev libqrencode-dev flex libelf-dev libdwarf-dev" DEP_OPTS="" RUN_TESTS=false GOAL="install" BITCOIN_CONFIG="--enable-zmq --enable-glibc-back-compat --enable-reduce-exports LDFLAGS=-static-libstdc++" USE_SHELL="/bin/dash" PYZMQ=true
 # Linux stoned
-    - HOST=x86_64-pc-linux-gnu PLATFORM="linux-no-qt" PPA="ppa:bitcoin/bitcoin" PACKAGES="g++-multilib bc python3-zmq" DEP_OPTS="NO_QT=1" RUN_TESTS=false GOAL="install" BITCOIN_CONFIG="--enable-zmq --enable-glibc-back-compat --enable-reduce-exports LDFLAGS=-static-libstdc++" USE_SHELL="/bin/dash" PYZMQ=true
+##    - HOST=x86_64-pc-linux-gnu PLATFORM="linux-no-qt" PPA="ppa:bitcoin/bitcoin" PACKAGES="g++-multilib bc python3-zmq" DEP_OPTS="NO_QT=1" RUN_TESTS=false GOAL="install" BITCOIN_CONFIG="--enable-zmq --enable-glibc-back-compat --enable-reduce-exports LDFLAGS=-static-libstdc++" USE_SHELL="/bin/dash" PYZMQ=true
 # No wallet
 #    - HOST=x86_64-unknown-linux-gnu PLATFORM="unknown-linux-no-wallet" PPA="ppa:bitcoin/bitcoin" PACKAGES="python3" DEP_OPTS="NO_WALLET=1" RUN_TESTS=true GOAL="install" BITCOIN_CONFIG="--enable-glibc-back-compat --enable-reduce-exports"
 # Cross-Mac
-    - HOST=x86_64-apple-darwin11 PLATFORM="osx" PPA="ppa:bitcoin/bitcoin" PACKAGES="cmake imagemagick libcap-dev librsvg2-bin libz-dev libbz2-dev libtiff-tools python-dev" BITCOIN_CONFIG="--enable-gui --enable-reduce-exports" OSX_SDK=10.9 GOAL="deploy"
+    - HOST=x86_64-apple-darwin PLATFORM="osx" PPA="ppa:bitcoin/bitcoin" PACKAGES="cmake imagemagick libcap-dev librsvg2-bin libz-dev libbz2-dev libtiff-tools python-dev argparse g++-multilib nsis linux-libc-dev:amd64 bc faketime wine1.7 bc build-essential libtool autotools-dev automake autoconf cmake pkg-config bsdmainutils imagemagick libdb4.8++ libdb4.8 libdb4.8-dev db4.8-util libdb4.8++-dev libevent-dev libminiupnpc-dev libqrencode-dev flex libelf-dev libdwarf-dev" BITCOIN_CONFIG="--enable-gui --enable-reduce-exports" OSX_SDK=10.9 GOAL="deploy"
 before_install:
 - git clone https://github.com/CryptoDragonLady/Stonecoin
 - travis_retry sudo apt-get install python-dev
@@ -92,7 +95,7 @@ script:
   cat config.log && false)"
 - make dist VERSION=$HOST
 - mkdir stone-$HOST
-- mkdir stone-$HOST/lib
+- mkdir stone-$HOST/lib/
 #make depend
 - ls
 - pwd
