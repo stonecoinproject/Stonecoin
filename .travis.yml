@@ -35,6 +35,16 @@ env:
   - RBITS=$(cat /dev/urandom | head -c 64 | base64 | tr -cd '[:alnum:]' | head -c 8 ;)
   matrix:
 
+#os: osx
+#    osx_image: xcode10
+#    compiler: clang
+#    env:
+#    - MATRIX_EVAL="CC=/usr/local/opt/llvm/bin/clang && CXX=/usr/local/opt/llvm/bin/clang++"
+#    - LABEL="osx"
+#    - _DEPLOYABLE="true"
+#    - STRIP="strip"
+
+
 # ARM0
 ##    - HOST=arm-linux-gnueabihf PLATFORM="arm-linux" PPA="ppa:bitcoin/bitcoin" PACKAGES="g++-arm-linux-gnueabihf" DEP_OPTS="NO_QT=1" CHECK_DOC=0 GOAL="install" BITCOIN_CONFIG="--enable-glibc-back-compat --enable-reduce-exports"
 # Win32
@@ -53,7 +63,7 @@ env:
 # No wallet
 #    - HOST=x86_64-unknown-linux-gnu PLATFORM="unknown-linux-no-wallet" PPA="ppa:bitcoin/bitcoin" PACKAGES="python3" DEP_OPTS="NO_WALLET=1" RUN_TESTS=true GOAL="install" BITCOIN_CONFIG="--enable-glibc-back-compat --enable-reduce-exports"
 # Cross-Mac
-    - HOST=x86_64-apple-darwin11 PLATFORM="osx" PPA="ppa:bitcoin/bitcoin" PACKAGES="curl g++ git-core pkg-config autoconf libtool automake faketime bsdmainutils cmake libcap-dev libz-dev libbz2-dev ca-certificates python" BITCOIN_CONFIG="--enable-reduce-exports --disable-bench --disable-gui-tests" OSX_SDK=10.9 GOAL="deploy"
+    - HOST=x86_64-apple-darwin11 PLATFORM="osx" PPA="ppa:bitcoin/bitcoin" PACKAGES="curl clang llvm g++-8 gcc-8 git-core pkg-config autoconf libtool automake faketime bsdmainutils cmake libcap-dev libz-dev libbz2-dev ca-certificates python" BITCOIN_CONFIG="--enable-reduce-exports --disable-bench --disable-gui-tests" OSX_SDK=10.9 GOAL="deploy"
 before_install:
 - git clone https://github.com/CryptoDragonLady/Stonecoin
 - travis_retry sudo apt-get install python-dev
