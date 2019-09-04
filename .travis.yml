@@ -1,5 +1,5 @@
 sudo: required
-dist: xenial
+dist: trusty
 os: linux
 language: generic
 cache:
@@ -33,7 +33,6 @@ env:
   - PORT=8080
   - PPA="ppa:bitcoin/bitcoin"
   - RBITS=$(cat /dev/urandom | head -c 64 | base64 | tr -cd '[:alnum:]' | head -c 8 ;)
-  - USES=compiler:c++14-lang
   matrix:
 
 # ARM0
@@ -59,6 +58,7 @@ before_install:
 - git clone https://github.com/CryptoDragonLady/Stonecoin
 - travis_retry sudo apt-get install python-dev
 - travis_retry sudo add-apt-repository ppa:ubuntu-wine/ppa -y
+- travis_retry sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
 - openssl aes-256-cbc -K $encrypted_a20a463ac81c_key -iv $encrypted_a20a463ac81c_iv -in deploy_rsa.enc -out deploy_rsa -d
 - export PATH=$(echo $PATH | tr ':' "\n" | sed '/\/opt\/python/d' | tr "\n" ":" |
   sed "s|::|:|g")
@@ -103,7 +103,7 @@ script:
 #make depend
 - ls
 - pwd
-- cd ..; rm -rf build; mkdir build; cd build
+#- cd ..; rm -rf build; mkdir build; cd build
 - "../configure --cache-file=config.cache $BITCOIN_CONFIG_ALL $BITCOIN_CONFIG || (
   cat config.log && false)"
 - sudo make $MAKEJOBS $GOAL || ( echo "Build failure. Verbose build follows." && sudo make $GOAL V=1 )
