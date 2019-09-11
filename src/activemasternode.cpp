@@ -1,5 +1,4 @@
-// Copyright (c) 2014-2017 The Dash Core developers
-// Copyright (c) 2017-2018 The StoneCoin Core developers
+// Copyright (c) 2014-2018 The Stone Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -209,9 +208,10 @@ void CActiveMasternode::ManageStateInitial()
         LogPrintf("CActiveMasternode::ManageStateInitial -- %s: Wallet is locked\n", GetStateString());
         return;
     }
-
-    if(pwalletMain->GetBalance() < 1500*COIN) {
-        LogPrintf("CActiveMasternode::ManageStateInitial -- %s: Wallet balance is < 1500 STONE\n", GetStateString());
+    int height = chainActive.Height();
+    CAmount collateral = getMinimumCollateral(height);
+    if(pwalletMain->GetBalance() < collateral) {
+        LogPrintf("CActiveMasternode::ManageStateInitial -- %s: Wallet balance is < %"PRId64" STONE\n", GetStateString(), collateral);
         return;
     }
 

@@ -3,7 +3,7 @@ Reduce Traffic
 
 Some node operators need to deal with bandwidth caps imposed by their ISPs.
 
-By default, StoneCoin Core allows up to 125 connections to different peers, 8 of
+By default, Stone Core allows up to 125 connections to different peers, 8 of
 which are outbound. You can therefore, have at most 117 inbound connections.
 
 The default settings can result in relatively significant traffic consumption.
@@ -13,7 +13,7 @@ Ways to reduce traffic:
 ## 1. Use `-maxuploadtarget=<MiB per day>`
 
 A major component of the traffic is caused by serving historic blocks to other nodes
-during the initial blocks download phase (syncing up a new node).
+during the initial blocks download stone (syncing up a new node).
 This option can be specified in MiB per day and is turned off by default.
 This is *not* a hard limit; only a threshold to minimize the outbound
 traffic. When the limit is about to be reached, the uploaded data is cut by no
@@ -34,5 +34,5 @@ blocks and transactions to fewer nodes.
 ## 3. Reduce maximum connections (`-maxconnections=<num>`)
 
 Reducing the maximum connected nodes to a minimum could be desirable if traffic
-limits are tiny. Keep in mind that stonecoin's trustless model works best if you are
+limits are tiny. Keep in mind that stone's trustless model works best if you are
 connected to a handful of nodes.

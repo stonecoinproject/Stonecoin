@@ -137,7 +137,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../stonecoin.qrc"/>
+  <include location="../stone.qrc"/>
  </resources>
  <connections/>
 </ui>

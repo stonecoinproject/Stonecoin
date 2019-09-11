@@ -1,5 +1,4 @@
-// Copyright (c) 2014-2017 The Dash Core developers
-// Copyright (c) 2017-2018 The StoneCoin Core developers
+// Copyright (c) 2014-2018 The Stone Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -87,21 +86,18 @@ bool CMasternodeSync::IsBlockchainSynced(bool fBlockAccepted)
 
     if(fBlockchainSynced) return true;
 
-    if(fDebug) LogPrintf("Estimating %d blocks, currently loaded %d\n", Checkpoints::GetTotalBlocksEstimate(Params().Checkpoints()), pCurrentBlockIndex->nHeight);
     if(fCheckpointsEnabled && pCurrentBlockIndex->nHeight < Checkpoints::GetTotalBlocksEstimate(Params().Checkpoints()))
         return false;
 
     std::vector<CNode*> vNodesCopy = CopyNodeVector();
 
     // We have enough peers and assume most of them are synced
-    if(fDebug) LogPrintf("Currently %d peers, need %d\n", vNodesCopy.size(), MASTERNODE_SYNC_ENOUGH_PEERS);
     if(vNodesCopy.size() >= MASTERNODE_SYNC_ENOUGH_PEERS) {
         // Check to see how many of our peers are (almost) at the same height as we are
         int nNodesAtSameHeight = 0;
         BOOST_FOREACH(CNode* pnode, vNodesCopy)
         {
             // Make sure this peer is presumably at the same height
-            if(fDebug) LogPrintf("%d nodes at the same height\n", nNodesAtSameHeight);
             if(!CheckNodeHeight(pnode)) continue;
             nNodesAtSameHeight++;
             // if we have decent number of such peers, most likely we are synced now
@@ -114,8 +110,6 @@ bool CMasternodeSync::IsBlockchainSynced(bool fBlockAccepted)
         }
     }
     ReleaseNodeVector(vNodesCopy);
-
-    if(fDebug) LogPrintf("Waiting for new block, currently %daccepted\n", fFirstBlockAccepted ? "" : "not ");
 
     // wait for at least one new block to be accepted
     if(!fFirstBlockAccepted) return false;
@@ -269,7 +263,7 @@ void CMasternodeSync::ProcessTick()
             /*
                 Resync if we lost all masternodes from sleep/wake or failed to sync originally
             */
-            if((nMnCount == 0) && (pCurrentBlockIndex->nHeight >= Params().GetConsensus().nMasternodePaymentsStartBlock)) {
+            if(nMnCount == 0) {
                 LogPrintf("CMasternodeSync::ProcessTick -- WARNING: not enough data, restarting sync\n");
                 Reset();
             } else {

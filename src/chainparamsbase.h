@@ -9,8 +9,8 @@
 #include <vector>
 
 /**
- * CBaseChainParams defines the base parameters (shared between stonecoin-cli and stonecoind)
- * of a given instance of the StoneCoin system.
+ * CBaseChainParams defines the base parameters (shared between stone-cli and stoned)
+ * of a given instance of the Proton system.
  */
 class CBaseChainParams
 {

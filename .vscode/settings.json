@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "qcoreapplication": "cpp",
+        "qurl": "cpp",
+        "string": "cpp",
+        "xstring": "cpp",
+        "*.ipp": "cpp",
+        "xiosbase": "cpp",
+        "xlocale": "cpp"
+    }
+}

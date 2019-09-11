@@ -9,7 +9,7 @@
 #include "checkpoints.h"
 
 #include "uint256.h"
-#include "test/test_stonecoin.h"
+#include "test/test_stone.h"
 #include "chainparams.h"
 
 #include <boost/test/unit_test.hpp>

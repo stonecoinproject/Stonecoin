@@ -297,6 +297,7 @@ public:
     std::string ToString() const;
 };
 
+
 /** A mutable version of CTransaction. */
 struct CMutableTransaction
 {

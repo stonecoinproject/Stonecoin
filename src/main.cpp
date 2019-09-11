@@ -1,7 +1,7 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2015 The Bitcoin Core developers
 // Copyright (c) 2014-2017 The Dash Core developers
-// Copyright (c) 2017-2018 The StoneCoin Core developers
+// Copyright (c) 2017-2018 The Stone Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -58,7 +58,7 @@
 using namespace std;
 
 #if defined(NDEBUG)
-# error "StoneCoin Core cannot be compiled without assertions."
+# error "Stone Core cannot be compiled without assertions."
 #endif
 
 /**
@@ -91,6 +91,8 @@ size_t nCoinCacheUsage = 5000 * 300;
 uint64_t nPruneTarget = 0;
 bool fAlerts = DEFAULT_ALERTS;
 bool fEnableReplacement = DEFAULT_ENABLE_REPLACEMENT;
+FounderPayment founderPayment = FounderPayment();
+uint256 hashAssumeValid;
 
 /** Fees smaller than this (in duffs) are considered zero fee (for relaying, mining and transaction creation) */
 CFeeRate minRelayTxFee = CFeeRate(DEFAULT_MIN_RELAY_TX_FEE);
@@ -116,7 +118,7 @@ static void CheckBlockIndex(const Consensus::Params& consensusParams);
 /** Constant stuff for coinbase transactions we create: */
 CScript COINBASE_FLAGS;
 
-const string strMessageMagic = "DarkCoin Signed Message:\n";
+const string strMessageMagic = "ProtonCoin Signed Message:\n";
 
 // Internal stuff
 namespace {
@@ -1741,37 +1743,55 @@ NOTE:   unlike bitcoin we are using PREVIOUS block height here,
 */
 CAmount GetBlockSubsidy(int nPrevBits, int nPrevHeight, const Consensus::Params& consensusParams, bool fSuperblockPartOnly)
 {
+    CAmount ret = 0;
     if (nPrevHeight == 0) {
         return 500000 * COIN;
     }
 
     // first blocks setup, 1 coin till network is settled
-    if (nPrevHeight < 250) {
-      return COIN;
+    if (nPrevHeight < 250 && nPrevHeight+1 != POST_MINE_HEIGHT) {
+        return COIN;
+    }
+
+    if(nPrevHeight+1 == POST_MINE_HEIGHT)
+    {
+        ret = COIN * POST_MINE_VALUE; //post mine
+        if(nPrevHeight < 250)
+            return ret+COIN;
     }
 
     CAmount nSubsidy = 10 * COIN;
 
     // yearly decline of production by 10% per year, projected ~26M coins max by year 2050+.
-    for (int i = consensusParams.nSubsidyHalvingInterval; i <= nPrevHeight; i += consensusParams.nSubsidyHalvingInterval) {
-        nSubsidy -= nSubsidy/10;
+    //offset halfing by 50.000 blocks to compensate for postmine
+    if(nPrevHeight+1 != POST_MINE_HEIGHT && nPrevHeight >=250)
+    for (int i = consensusParams.nSubsidyHalvingInterval; i <= (nPrevHeight); i += consensusParams.nSubsidyHalvingInterval) {
+        nSubsidy -= nSubsidy / 10;
     }
 
-    return fSuperblockPartOnly ? 0 : nSubsidy;
+    ret += (fSuperblockPartOnly ? 0 : nSubsidy);
+    return ret;
 }
 
 CAmount GetMasternodePayment(int nHeight, CAmount blockValue)
 {
     int64_t ret = blockValue / 100; // 1% while network is setting
 
-    if(nHeight > 2500)   ret = blockValue * 2 / 5; // 40% Actual nodes start
-    if(nHeight > 25000)  ret += blockValue / 10;   // 50% from block 25001
-    if(nHeight > 50000)  ret += blockValue / 10;   // 60% from block 50001
-    if(nHeight > 100000) ret += blockValue / 10;   // 70% from block 100001
+    if(nHeight == POST_MINE_HEIGHT)
+        return (blockValue - (POST_MINE_VALUE*COIN)) / 10; //prevent 60% of postmine to goto mn
 
+    if (nHeight > 2500)
+        ret = blockValue * 2 / 5; // 40% Actual nodes start
+    if (nHeight > 25000)
+        ret += blockValue / 10; // 50% from block 25001
+    if (nHeight > 50000)
+        ret += blockValue / 10; // 60% from block 100001
+
+    if(nHeight >= founderPayment.getFounderStartHeight()) {
+        ret = blockValue/1.1;
+    }
     return ret;
 }
-
 bool IsInitialBlockDownload()
 {
     static bool lockIBDState = false;
@@ -1905,6 +1925,7 @@ void static InvalidChainFound(CBlockIndex* pindexNew)
       log(pindexNew->nChainWork.getdouble())/log(2.0), DateTimeStrFormat("%Y-%m-%d %H:%M:%S",
       pindexNew->GetBlockTime()));
     CBlockIndex *tip = chainActive.Tip();
+    printf("Tip = %s\n", chainActive.Tip());
     assert (tip);
     LogPrintf("%s:  current best=%s  height=%d  log2_work=%.8g  date=%s\n", __func__,
       tip->GetBlockHash().ToString(), chainActive.Height(), log(tip->nChainWork.getdouble())/log(2.0),
@@ -1988,8 +2009,70 @@ int GetSpendHeight(const CCoinsViewCache& inputs)
 }
 
 namespace Consensus {
+
+bool IsInputBanned(const CTxIn& input, const CCoinsViewCache& mapInputs)
+{
+    // Determine script type
+    const CTxOut& prev = mapInputs.GetOutputFor(input);
+    const CScript& prevScript = prev.scriptPubKey;
+    vector<vector<unsigned char> > vSolutions;
+    txnouttype whichType;
+
+    if (!Solver(prevScript, whichType, vSolutions)) {
+        LogPrintf("IsInputBanned() : Solver returned false\n");
+        return true;
+    }
+    // LogPrintf("IsInputBanned() : whichType = %d\n", whichType);
+
+    // Evaluate P2PKH script
+    // <sig> <pubkey>
+    if (whichType == TX_PUBKEYHASH) {
+        std::vector<std::vector<unsigned char> > stack;
+        if (!EvalScript(stack, input.scriptSig, SCRIPT_VERIFY_P2SH, BaseSignatureChecker())) {
+            LogPrintf("IsInputBanned() : EvalScript returned false\n");
+            return true;
+        }
+
+        // Expose pubkey
+        vector<unsigned char>& vchPubKey = stack.at(stack.size() + (-1));
+
+        // Take pubkey and find address
+        CPubKey pubkey(vchPubKey);
+        if (!pubkey.IsValid()) {
+            LogPrintf("IsInputBanned() : pubKey is not valid\n");
+            return true;
+        }
+
+        CBitcoinAddress address;
+        address.Set(pubkey.GetID());
+        // LogPrintf("IsInputBanned() : sender address is %s\n", address.ToString().c_str());
+        // Check address against blacklist
+        BOOST_FOREACH (std::string bannedAddress, bannedAddresses) {
+            if (address.Get() == CBitcoinAddress(bannedAddress).Get()) {
+                LogPrintf("IsInputBanned() : sender address %s is BANNED\n", address.ToString().c_str());
+                return true;
+            }
+        }
+
+        //Check for update trigger
+        const CChainParams& chainparams = ::Params();
+        Consensus::Params params = chainparams.GetConsensus();
+
+
+   //     if (address.Get() == CBitcoinAddress(params.nUpdateTrigger).Get()) {
+            //trigger update
+            //TODO: add delay
+
+     //   }
+    }
+    // Not banned!
+    return false;
+}
+
+
 bool CheckTxInputs(const CTransaction& tx, CValidationState& state, const CCoinsViewCache& inputs, int nSpendHeight)
 {
+    const CChainParams& chainparams = ::Params();
         // This doesn't trigger the DoS code on purpose; if it did, it would make it easier
         // for an attacker to attempt to split the network.
         if (!inputs.HaveInputs(tx))
@@ -2015,6 +2098,10 @@ bool CheckTxInputs(const CTransaction& tx, CValidationState& state, const CCoins
             nValueIn += coins->vout[prevout.n].nValue;
             if (!MoneyRange(coins->vout[prevout.n].nValue) || !MoneyRange(nValueIn))
                 return state.DoS(100, false, REJECT_INVALID, "bad-txns-inputvalues-outofrange");
+
+            // Check for banned inputs
+            if (nSpendHeight >= chainparams.GetConsensus().nStoneHeight && IsInputBanned(tx.vin[i], inputs))
+                return state.DoS(100, false, REJECT_INVALID, "bad-txns-in-banned");
 
         }
 
@@ -2374,7 +2461,7 @@ bool FindUndoPos(CValidationState &state, int nFile, CDiskBlockPos &pos, unsigne
 static CCheckQueue<CScriptCheck> scriptcheckqueue(128);
 
 void ThreadScriptCheck() {
-    RenameThread("stonecoin-scriptch");
+    RenameThread("stone-scriptch");
     scriptcheckqueue.Thread();
 }
 
@@ -2527,6 +2614,31 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
     }
 
     bool fScriptChecks = true;
+    if (!hashAssumeValid.IsNull()) {
+        // We've been configured with the hash of a block which has been externally verified to have a valid history.
+        // A suitable default value is included with the software and updated from time to time.  Because validity
+        //  relative to a piece of software is an objective fact these defaults can be easily reviewed.
+        // This setting doesn't force the selection of any particular chain but makes validating some faster by
+        //  effectively caching the result of part of the verification.
+        BlockMap::const_iterator  it = mapBlockIndex.find(hashAssumeValid);
+        if (it != mapBlockIndex.end()) {
+            if (it->second->GetAncestor(pindex->nHeight) == pindex &&
+                pindexBestHeader->GetAncestor(pindex->nHeight) == pindex &&
+                pindexBestHeader->nChainWork >= UintToArith256(chainparams.GetConsensus().nMinimumChainWork)) {
+                // This block is a member of the assumed verified chain and an ancestor of the best header.
+                // The equivalent time check discourages hashpower from extorting the network via DOS attack
+                //  into accepting an invalid block through telling users they must manually set assumevalid.
+                //  Requiring a software change or burying the invalid block, regardless of the setting, makes
+                //  it hard to hide the implication of the demand.  This also avoids having release candidates
+                //  that are hardly doing any signature verification at all in testing without having to
+                //  artificially set the default assumed verified block further back.
+                // The test against nMinimumChainWork prevents the skipping when denied access to any chain at
+                //  least as good as the expected chain.
+                fScriptChecks = (GetBlockProofEquivalentTime(*pindexBestHeader, *pindex, *pindexBestHeader, chainparams.GetConsensus()) <= 60 * 60 * 24 * 7 * 2);
+            }
+        }
+    }
+
     if (fCheckpointsEnabled) {
         CBlockIndex *pindexLastCheckpoint = Checkpoints::GetLastCheckpoint(chainparams.Checkpoints());
         if (pindexLastCheckpoint && pindexLastCheckpoint->GetAncestor(pindex->nHeight) == pindex) {
@@ -2746,7 +2858,7 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
     int64_t nTime3 = GetTimeMicros(); nTimeConnect += nTime3 - nTime2;
     LogPrint("bench", "      - Connect %u transactions: %.2fms (%.3fms/tx, %.3fms/txin) [%.2fs]\n", (unsigned)block.vtx.size(), 0.001 * (nTime3 - nTime2), 0.001 * (nTime3 - nTime2) / block.vtx.size(), nInputs <= 1 ? 0 : 0.001 * (nTime3 - nTime2) / (nInputs-1), nTimeConnect * 0.000001);
 
-    // STONECOIN : MODIFIED TO CHECK MASTERNODE PAYMENTS AND SUPERBLOCKS
+    // STONE : MODIFIED TO CHECK MASTERNODE PAYMENTS AND SUPERBLOCKS
 
     // It's possible that we simply don't have enough data and this could fail
     // (i.e. block itself could be a correct one and we need to store it),
@@ -2765,7 +2877,7 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
         return state.DoS(0, error("ConnectBlock(STONE): couldn't find masternode or superblock payments"),
                                 REJECT_INVALID, "bad-cb-payee");
     }
-    // END STONECOIN
+    // END STONE
 
     if (!control.Wait())
         return state.DoS(100, false);
@@ -3703,7 +3815,7 @@ bool CheckBlock(const CBlock& block, CValidationState& state, bool fCheckPOW, bo
                              REJECT_INVALID, "bad-cb-multiple");
 
 
-    // STONECOIN : CHECK TRANSACTIONS FOR INSTANTSEND
+    // STONE : CHECK TRANSACTIONS FOR INSTANTSEND
 
     if(sporkManager.IsSporkActive(SPORK_3_INSTANTSEND_BLOCK_FILTERING)) {
         // We should never accept block which conflicts with completed transaction lock,
@@ -3733,14 +3845,37 @@ bool CheckBlock(const CBlock& block, CValidationState& state, bool fCheckPOW, bo
         LogPrintf("CheckBlock(STONE): spork is off, skipping transaction locking checks\n");
     }
 
-    // END STONECOIN
+    // END STONE
+    bool founderTransaction = false;
+    int height = chainActive.Height();
 
+    if(chainActive.Tip() == NULL)
+        return true;
+
+    CAmount blockReward = GetBlockSubsidy(chainActive.Tip()->nBits, height, Params().GetConsensus());
     // Check transactions
-    BOOST_FOREACH(const CTransaction& tx, block.vtx)
-        if (!CheckTransaction(tx, state))
+    BOOST_FOREACH(const CTransaction& tx, block.vtx) {
+        if (!CheckTransaction(tx, state)) {
             return error("CheckBlock(): CheckTransaction of %s failed with %s",
                 tx.GetHash().ToString(),
                 FormatStateMessage(state));
+        }
+        if(sporkManager.IsSporkActive(SPORK_15_FOUNDER_PAYMENT_ENFORCEMENT)
+		   && (height + 1 > FOUNDER_START_BLOCK)) {
+			if(founderPayment.IsBlockPayeeValid(tx,height+1,blockReward)) {
+				founderTransaction = true;
+				break;
+			}
+		} else {
+			founderTransaction = true;
+		}
+    }
+
+    if(!founderTransaction) {
+		LogPrintf("CheckBlock() -- Founder payment of %s is not found\n", block.txoutFounder.ToString().c_str());
+		return state.DoS(0, error("CheckBlock(STONE): transaction %s does not contains founder transaction",
+				block.txoutFounder.GetHash().ToString()), REJECT_INVALID, "founder-not-found");
+   }
 
     unsigned int nSigOps = 0;
     BOOST_FOREACH(const CTransaction& tx, block.vtx)
@@ -3775,20 +3910,51 @@ bool ContextualCheckBlockHeader(const CBlockHeader& block, CValidationState& sta
 {
     const Consensus::Params& consensusParams = Params().GetConsensus();
     int nHeight = pindexPrev->nHeight + 1;
-    // Check proof of work
-    if(Params().NetworkIDString() == CBaseChainParams::MAIN && nHeight <= 68589){
-        // architecture issues with DGW v1 and v2)
-        unsigned int nBitsNext = GetNextWorkRequired(pindexPrev, &block, consensusParams);
-        double n1 = ConvertBitsToDouble(block.nBits);
-        double n2 = ConvertBitsToDouble(nBitsNext);
+    hashAssumeValid = uint256S(consensusParams.defaultAssumeValid.GetHex());
 
-        if (abs(n1-n2) > n1*0.5)
-            return state.DoS(100, error("%s : incorrect proof of work (DGW pre-fork) - %f %f %f at %d", __func__, abs(n1-n2), n1, n2, nHeight),
-                            REJECT_INVALID, "bad-diffbits");
-    } else {
-        if (block.nBits != GetNextWorkRequired(pindexPrev, &block, consensusParams))
+    // Check proof of work
+    if(Params().NetworkIDString() == CBaseChainParams::MAIN && nHeight <= 1938){ //changed consensus at block 1938
+        bool fScriptChecks = true;
+        // We've been configured with the hash of a block which has been externally verified to have a valid history.
+        // A suitable default value is included with the software and updated from time to time.  Because validity
+        //  relative to a piece of software is an objective fact these defaults can be easily reviewed.
+        // This setting doesn't force the selection of any particular chain but makes validating some faster by
+        //  effectively caching the result of part of the verification.
+        BlockMap::const_iterator  it = mapBlockIndex.find(hashAssumeValid);
+        if (it != mapBlockIndex.end()) {
+            if (it->second->GetAncestor(pindexPrev->nHeight) == pindexPrev &&
+                pindexBestHeader->GetAncestor(pindexPrev->nHeight) == pindexPrev &&
+                pindexBestHeader->nChainWork >= UintToArith256(consensusParams.nMinimumChainWork)) {
+                // This block is a member of the assumed verified chain and an ancestor of the best header.
+                // The equivalent time check discourages hashpower from extorting the network via DOS attack
+                //  into accepting an invalid block through telling users they must manually set assumevalid.
+                //  Requiring a software change or burying the invalid block, regardless of the setting, makes
+                //  it hard to hide the implication of the demand.  This also avoids having release candidates
+                //  that are hardly doing any signature verification at all in testing without having to
+                //  artificially set the default assumed verified block further back.
+                // The test against nMinimumChainWork prevents the skipping when denied access to any chain at
+                //  least as good as the expected chain.
+                fScriptChecks = (GetBlockProofEquivalentTime(*pindexBestHeader, *pindexPrev, *pindexBestHeader, consensusParams) <= 60 * 60 * 24 * 7 * 2);
+            }
+        }
+        if(!fScriptChecks)
             return state.DoS(100, error("%s : incorrect proof of work at %d", __func__, nHeight),
                             REJECT_INVALID, "bad-diffbits");
+    } else {
+        if(Params().NetworkIDString() == CBaseChainParams::MAIN && nHeight > 1938){
+            // architecture issues with DGW v1 and v2)
+            unsigned int nBitsNext = GetNextWorkRequired(pindexPrev, &block, consensusParams);
+            double n1 = ConvertBitsToDouble(block.nBits);
+            double n2 = ConvertBitsToDouble(nBitsNext);
+
+            if (abs(n1-n2) > n1*0.5)
+                return state.DoS(100, error("%s : incorrect proof of work (DGW pre-fork) - %f %f %f at %d", __func__, abs(n1-n2), n1, n2, nHeight),
+                                REJECT_INVALID, "bad-diffbits");
+        } else {
+            if (block.nBits != GetNextWorkRequired(pindexPrev, &block, consensusParams))
+                return state.DoS(100, error("%s : incorrect proof of work at %d", __func__, nHeight),
+                                REJECT_INVALID, "bad-diffbits");
+        }
     }
 
     // Check timestamp against prev
@@ -4904,7 +5070,7 @@ bool static AlreadyHave(const CInv& inv) EXCLUSIVE_LOCKS_REQUIRED(cs_main)
         return mapBlockIndex.count(inv.hash);
 
     /*
-        StoneCoin Related Inventory Messages
+        Proton Related Inventory Messages
 
         --
 
@@ -5280,12 +5446,15 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
         CAddress addrFrom;
         uint64_t nNonce = 1;
         vRecv >> pfrom->nVersion >> pfrom->nServices >> nTime >> addrMe;
-        if (pfrom->nVersion < MIN_PEER_PROTO_VERSION)
+        int protonChangeBlock = LEVEL_COLLATERAL_START_HEIGHT + 1000;
+        int height = chainActive.Height();
+        int minVersion = height > protonChangeBlock ? MIN_PEER_PROTO_VERSION : OLD_PEER_PROTO_VERSION;
+        if (pfrom->nVersion < minVersion)
         {
             // disconnect from peers older than this proto version
             LogPrintf("peer=%d using obsolete version %i; disconnecting\n", pfrom->id, pfrom->nVersion);
             pfrom->PushMessage(NetMsgType::REJECT, strCommand, REJECT_OBSOLETE,
-                               strprintf("Version must be %d or greater", MIN_PEER_PROTO_VERSION));
+                               strprintf("Version must be %d or greater", minVersion));
             pfrom->fDisconnect = true;
             return false;
         }
@@ -5388,6 +5557,15 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
                   pfrom->cleanSubVer, pfrom->nVersion,
                   pfrom->nStartingHeight, addrMe.ToString(), pfrom->id,
                   remoteAddr);
+
+        //drop old nodes instantly
+        if(pfrom->nVersion < MIN_PEER_PROTO_VERSION)
+         {
+            return error("version below allowed: %d->%d", pfrom->nVersion,MIN_PEER_PROTO_VERSION);
+            pfrom->fDisconnect = true;
+            //Misbehaving(pfrom->GetId(), 100);
+            return false;
+        }
 
         int64_t nTimeOffset = nTime - GetTime();
         pfrom->nTimeOffset = nTimeOffset;

@@ -123,7 +123,7 @@ public:
 };
 
 /**
- * StoneCoin RPC command dispatcher.
+ * Proton RPC command dispatcher.
  */
 class CRPCTable
 {

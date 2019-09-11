@@ -1,0 +1,6 @@
+usr/local/bin/stone-qt usr/bin
+share/pixmaps/stone32.xpm usr/share/pixmaps
+share/pixmaps/stone16.xpm usr/share/pixmaps
+share/pixmaps/stone128.png usr/share/pixmaps
+debian/stone-qt.desktop usr/share/applications
+debian/stone-qt.protocol usr/share/kde4/services/

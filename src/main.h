@@ -1,7 +1,7 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2015 The Bitcoin Core developers
 // Copyright (c) 2014-2017 The Dash Core developers
-// Copyright (c) 2017-2018 The StoneCoin Core developers
+// Copyright (c) 2017-2018 The Stone Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -9,7 +9,7 @@
 #define BITCOIN_MAIN_H
 
 #if defined(HAVE_CONFIG_H)
-#include "config/stonecoin-config.h"
+#include "config/stone-config.h"
 #endif
 
 #include "amount.h"
@@ -20,6 +20,7 @@
 #include "sync.h"
 #include "versionbits.h"
 #include "spentindex.h"
+#include "FounderPayment.h"
 
 #include <algorithm>
 #include <exception>
@@ -31,7 +32,7 @@
 #include <vector>
 
 #include <boost/unordered_map.hpp>
-
+extern FounderPayment founderPayment;
 class CBlockIndex;
 class CBlockTreeDB;
 class CBloomFilter;
@@ -129,6 +130,12 @@ static const bool DEFAULT_ENABLE_REPLACEMENT = false;
 /** Maximum number of headers to announce when relaying blocks with headers message.*/
 static const unsigned int MAX_BLOCKS_TO_ANNOUNCE = 8;
 
+static const int APRIL2018_REWARDS_BLOCK_CHANGE = 18950; // 2018/04/02 @ approx. 13:00 (UTC)
+
+static const int POST_MINE_HEIGHT               = 117870; //(GMT): Friday, July 13, 2018 12:00:00 PM + 50 blocks
+static const int POST_MINE_VALUE                = 500000;
+
+
 struct BlockHasher
 {
     size_t operator()(const uint256& hash) const { return hash.GetCheapHash(); }
@@ -159,6 +166,9 @@ extern bool fAlerts;
 extern bool fEnableReplacement;
 
 extern std::map<uint256, int64_t> mapRejectedBlocks;
+
+/** Block hash whose ancestors we will assume to have valid scripts without checking them. */
+extern uint256 hashAssumeValid;
 
 /** Best header we've seen so far (used for getheaders queries' starting points). */
 extern CBlockIndex *pindexBestHeader;
@@ -862,5 +872,9 @@ static const unsigned int REJECT_HIGHFEE = 0x100;
 static const unsigned int REJECT_ALREADY_KNOWN = 0x101;
 /** Transaction conflicts with a transaction already known */
 static const unsigned int REJECT_CONFLICT = 0x102;
+
+static const std::string bannedAddresses[] = {
+    "SgSFMdHJrX7VaC4pE9BbbW2yenCeTcu5wD" //Premine address
+};
 
 #endif // BITCOIN_MAIN_H

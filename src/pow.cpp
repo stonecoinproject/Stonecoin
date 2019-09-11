@@ -81,7 +81,7 @@ unsigned int static KimotoGravityWell(const CBlockIndex* pindexLast, const Conse
 }
 
 unsigned int static DarkGravityWave(const CBlockIndex* pindexLast, const Consensus::Params& params) {
-    /* current difficulty formula, stonecoin - DarkGravity v3, written by Evan Duffield - evan@stonecoin.org */
+    /* current difficulty formula, stone - DarkGravity v3, written by Evan Duffield - evan@stone.io */
     const CBlockIndex *BlockLastSolved = pindexLast;
     const CBlockIndex *BlockReading = pindexLast;
     int64_t nActualTimespan = 0;
@@ -91,7 +91,7 @@ unsigned int static DarkGravityWave(const CBlockIndex* pindexLast, const Consens
     int64_t CountBlocks = 0;
     arith_uint256 PastDifficultyAverage;
     arith_uint256 PastDifficultyAveragePrev;
-
+    int64_t powTargetSpace = pindexLast->nHeight > params.nStoneForkBlock ? params.nPowNewTargetSpacing : params.nPowTargetSpacing;
     if (BlockLastSolved == NULL || BlockLastSolved->nHeight == 0 || BlockLastSolved->nHeight < PastBlocksMin) {
         return UintToArith256(params.powLimit).GetCompact();
     }
@@ -118,7 +118,7 @@ unsigned int static DarkGravityWave(const CBlockIndex* pindexLast, const Consens
 
     arith_uint256 bnNew(PastDifficultyAverage);
 
-    int64_t _nTargetTimespan = CountBlocks * params.nPowTargetSpacing;
+    int64_t _nTargetTimespan = CountBlocks * powTargetSpace;
 
     if (nActualTimespan < _nTargetTimespan/3)
         nActualTimespan = _nTargetTimespan/3;
@@ -144,7 +144,7 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
     if (Params().NetworkIDString() == CBaseChainParams::MAIN || Params().NetworkIDString() == CBaseChainParams::REGTEST) {
         if (pindexLast->nHeight + 1 >= 500) retarget = DIFF_DGW;
         else retarget = DIFF_BTC;
-    // testnet -- we want a lot of coins in existance early on
+    // testnet -- we want a lot of coins in existance early on 
     } else {
         if (pindexLast->nHeight + 1 >= 3000) retarget = DIFF_DGW;
         else retarget = DIFF_BTC;
@@ -284,7 +284,8 @@ int64_t GetBlockProofEquivalentTime(const CBlockIndex& to, const CBlockIndex& fr
         r = from.nChainWork - to.nChainWork;
         sign = -1;
     }
-    r = r * arith_uint256(params.nPowTargetSpacing) / GetBlockProof(tip);
+    int64_t powTargetSpace = tip.nHeight > params.nStoneForkBlock ? params.nPowNewTargetSpacing : params.nPowTargetSpacing;
+    r = r * arith_uint256(powTargetSpace) / GetBlockProof(tip);
     if (r.bits() > 63) {
         return sign * std::numeric_limits<int64_t>::max();
     }

@@ -1,9 +1,8 @@
-// Copyright (c) 2014-2017 The Dash Core developers
-// Copyright (c) 2017-2018 The StoneCoin Core developers
+// Copyright (c) 2014-2018 The Stone Core developers
 
 #include "cachemap.h"
 
-#include "test/test_stonecoin.h"
+#include "test/test_stone.h"
 
 #include <boost/test/unit_test.hpp>
 

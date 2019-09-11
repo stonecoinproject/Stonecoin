@@ -1,7 +1,7 @@
 // Copyright (c) 2010 Satoshi Nakamoto
 // Copyright (c) 2009-2015 The Bitcoin Core developers
 // Copyright (c) 2014-2017 The Dash Core developers
-// Copyright (c) 2017-2018 The StoneCoin Core developers
+// Copyright (c) 2017-2018 The Stone Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -244,11 +244,11 @@ UniValue stop(const UniValue& params, bool fHelp)
     if (fHelp || params.size() > 1)
         throw runtime_error(
             "stop\n"
-            "\nStop StoneCoin Core server.");
+            "\nStop Stone Core server.");
     // Event loop will exit after current HTTP requests have been handled, so
     // this reply will get back to the client.
     StartShutdown();
-    return "StoneCoin Core server stopping";
+    return "Stone Core server stopping";
 }
 
 /**
@@ -343,19 +343,19 @@ static const CRPCCommand vRPCCommands[] =
     { "hidden",             "resendwallettransactions", &resendwallettransactions, true},
 #endif
 
-    /* StoneCoin features */
-    { "stonecoin",               "masternode",             &masternode,             true  },
-    { "stonecoin",               "masternodelist",         &masternodelist,         true  },
-    { "stonecoin",               "masternodebroadcast",    &masternodebroadcast,    true  },
-    { "stonecoin",               "gobject",                &gobject,                true  },
-    { "stonecoin",               "getgovernanceinfo",      &getgovernanceinfo,      true  },
-    { "stonecoin",               "getsuperblockbudget",    &getsuperblockbudget,    true  },
-    { "stonecoin",               "voteraw",                &voteraw,                true  },
-    { "stonecoin",               "mnsync",                 &mnsync,                 true  },
-    { "stonecoin",               "spork",                  &spork,                  true  },
-    { "stonecoin",               "getpoolinfo",            &getpoolinfo,            true  },
+    /* Proton features */
+    { "stone",               "masternode",             &masternode,             true  },
+    { "stone",               "masternodelist",         &masternodelist,         true  },
+    { "stone",               "masternodebroadcast",    &masternodebroadcast,    true  },
+    { "stone",               "gobject",                &gobject,                true  },
+    { "stone",               "getgovernanceinfo",      &getgovernanceinfo,      true  },
+    { "stone",               "getsuperblockbudget",    &getsuperblockbudget,    true  },
+    { "stone",               "voteraw",                &voteraw,                true  },
+    { "stone",               "mnsync",                 &mnsync,                 true  },
+    { "stone",               "spork",                  &spork,                  true  },
+    { "stone",               "getpoolinfo",            &getpoolinfo,            true  },
 #ifdef ENABLE_WALLET
-    { "stonecoin",               "privatesend",            &privatesend,            false },
+    { "stone",               "privatesend",            &privatesend,            false },
 
     /* Wallet */
     { "wallet",             "keepass",                &keepass,                true },
@@ -578,13 +578,13 @@ std::vector<std::string> CRPCTable::listCommands() const
 
 std::string HelpExampleCli(const std::string& methodname, const std::string& args)
 {
-    return "> stonecoin-cli " + methodname + " " + args + "\n";
+    return "> stone-cli " + methodname + " " + args + "\n";
 }
 
 std::string HelpExampleRpc(const std::string& methodname, const std::string& args)
 {
     return "> curl --user myusername --data-binary '{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", "
-        "\"method\": \"" + methodname + "\", \"params\": [" + args + "] }' -H 'content-type: text/plain;' http://127.0.0.1:22324/\n";
+        "\"method\": \"" + methodname + "\", \"params\": [" + args + "] }' -H 'content-type: text/plain;' http://127.0.0.1:8818/\n";
 }
 
 void RPCRegisterTimerInterface(RPCTimerInterface *iface)

@@ -1,5 +1,4 @@
-// Copyright (c) 2014-2017 The Dash Core developers
-// Copyright (c) 2017-2018 The StoneCoin Core developers
+// Copyright (c) 2014-2018 The Stone Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -886,19 +885,19 @@ bool CGovernanceManager::MasternodeRateCheck(const CGovernanceObject& govobj, up
         return false;
     }
     
-    double dMaxRate = 1.1 / nSuperblockCycleSeconds;
+    double dMaxRate = 2.2 / nSuperblockCycleSeconds;
     double dRate = 0.0;
     CRateCheckBuffer buffer;
     CRateCheckBuffer* pBuffer = NULL;
     switch(nObjectType) {
     case GOVERNANCE_OBJECT_TRIGGER:
-        // Allow 1 trigger per mn per cycle, with a small fudge factor
+        // Allow 2 trigger per mn per cycle, with a small fudge factor
         pBuffer = &it->second.triggerBuffer;
-        dMaxRate = 2 * 1.1 / double(nSuperblockCycleSeconds);
+        dMaxRate = 2 * 2.2 / double(nSuperblockCycleSeconds);
         break;
     case GOVERNANCE_OBJECT_WATCHDOG:
         pBuffer = &it->second.watchdogBuffer;
-        dMaxRate = 2 * 1.1 / 3600.;
+        dMaxRate = 2 * 2.2 / 1800.;
         break;
     default:
         break;

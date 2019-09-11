@@ -1,9 +1,9 @@
 # Linearize
 Construct a linear, no-fork, best version of the blockchain.
 
-## Step 0: Install stonecoin_hash
+## Step 0: Install stone_hash
 
-https://github.com/stonecrypto/stonecoin_hash
+https://github.com/stone/stone_hash
 
 ## Step 1: Download hash list
 

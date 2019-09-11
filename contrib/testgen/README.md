@@ -1,6 +1,6 @@
 ### TestGen ###
 
-Utilities to generate test vectors for the data-driven StoneCoin tests.
+Utilities to generate test vectors for the data-driven Proton tests.
 
 Usage: 
 

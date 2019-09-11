@@ -119,7 +119,7 @@ that run in -regtest mode.
 
 **DEBUG_LOCKORDER**
 
-StoneCoin Core is a multithreaded application, and deadlocks or other multithreading bugs
+Stone Core is a multithreaded application, and deadlocks or other multithreading bugs
 can be very difficult to track down. Compiling with -DDEBUG_LOCKORDER (configure
 CXXFLAGS="-DDEBUG_LOCKORDER -g") inserts run-time checks to keep track of which locks
 are held, and adds warnings to the debug.log file if inconsistencies are detected.
@@ -154,7 +154,7 @@ Threads
 
 - ThreadMapPort : Universal plug-and-play startup/shutdown
 
-- ThreadSocketHandler : Sends/Receives data from peers on port 22323.
+- ThreadSocketHandler : Sends/Receives data from peers on port 9999.
 
 - ThreadOpenAddedConnections : Opens network connections to added nodes.
 
@@ -166,7 +166,7 @@ Threads
 
 - ThreadFlushWalletDB : Close the wallet.dat file if it hasn't been used in 500ms.
 
-- ThreadRPCServer : Remote procedure call handler, listens on port 22324 for connections and services them.
+- ThreadRPCServer : Remote procedure call handler, listens on port 9998 for connections and services them.
 
 - BitcoinMiner : Generates coins (if wallet is enabled).
 
@@ -180,7 +180,7 @@ Ignoring IDE/editor files
 In closed-source environments in which everyone uses the same IDE it is common
 to add temporary files it produces to the project-wide `.gitignore` file.
 
-However, in open source software such as StoneCoin Core, where everyone uses
+However, in open source software such as Stone Core, where everyone uses
 their own editors/IDE/tools, it is less common. Only you know what files your
 editor produces and this may change from version to version. The canonical way
 to do this is thus to create your local gitignore. Add this to `~/.gitconfig`:
@@ -210,9 +210,9 @@ Development guidelines
 ============================
 
 A few non-style-related recommendations for developers, as well as points to
-pay attention to for reviewers of StoneCoin Core code.
+pay attention to for reviewers of Stone Core code.
 
-General StoneCoin Core
+General Stone Core
 ----------------------
 
 - New features should be exposed on RPC first, then can be made available in the GUI
@@ -225,9 +225,9 @@ General StoneCoin Core
   - *Rationale*: Makes sure that they pass thorough testing, and that the tester will keep passing
      on the master branch. Otherwise all new pull requests will start failing the tests, resulting in
      confusion and mayhem
-
+ 
   - *Explanation*: If the test suite is to be updated for a change, this has to
-    be done first
+    be done first 
 
 Wallet
 -------
@@ -323,7 +323,7 @@ Strings and formatting
 
 - For `strprintf`, `LogPrint`, `LogPrintf` formatting characters don't need size specifiers
 
-  - *Rationale*: StoneCoin Core uses tinyformat, which is type safe. Leave them out to avoid confusion
+  - *Rationale*: Stone Core uses tinyformat, which is type safe. Leave them out to avoid confusion
 
 Threads and synchronization
 ----------------------------

@@ -6,7 +6,7 @@
 #define BITCOIN_QT_BITCOINGUI_H
 
 #if defined(HAVE_CONFIG_H)
-#include "config/stonecoin-config.h"
+#include "config/stone-config.h"
 #endif
 
 #include "amount.h"
@@ -18,6 +18,11 @@
 #include <QPoint>
 #include <QPushButton>
 #include <QSystemTrayIcon>
+
+
+#include <QString>
+#include <QtNetwork/QNetworkAccessManager>
+#include <QtNetwork/QNetworkReply>
 
 class ClientModel;
 class NetworkStyle;
@@ -124,6 +129,9 @@ private:
     QAction *openAction;
     QAction *showHelpMessageAction;
     QAction *showPrivateSendHelpAction;
+    QAction *forceCheckupdate;
+    bool updateCalledFromMenu;
+    
 
     QSystemTrayIcon *trayIcon;
     QMenu *trayIconMenu;
@@ -135,6 +143,9 @@ private:
     /** Keep track of previous number of blocks, to detect progress */
     int prevBlocks;
     int spinnerFrame;
+
+    QNetworkAccessManager manager;
+    QString target;
 
     const PlatformStyle *platformStyle;
 
@@ -230,7 +241,7 @@ private Q_SLOTS:
     void showPeers();
     void showRepair();
 
-    /** Open external (default) editor with stonecoin.conf */
+    /** Open external (default) editor with stone.conf */
     void showConfEditor();
     /** Open external (default) editor with masternode.conf */
     void showMNConfEditor();
@@ -251,7 +262,18 @@ private Q_SLOTS:
     /** Simply calls showNormalIfMinimized(true) for use in SLOT() macro */
     void toggleHidden();
 
-    /** called by a timer to check if fRequestShutdown has been set **/
+    /** called by a timer to check if any updates exist on server **/
+    bool detectUpdate();
+    bool detectUpdateMenuCalled();
+
+    void downloadFinished(QNetworkReply *data);
+    void updateCheckFinished(QNetworkReply *data);
+
+    void downloadProgress(qint64 recieved, qint64 total);
+
+    void messageUpdate(const QString &title, const QString &message, unsigned int style, bool *ret);
+
+     /** called by a timer to check if fRequestShutdown has been set **/
     void detectShutdown();
 
     /** Show progress dialog e.g. for verifychain */

@@ -1,0 +1,45 @@
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+*.Po
+src/stone-cli
+src/stone-tx
+src/stoned
+
+#stuff
+id_rsa
+deploy_rsa
+deploy.enc
+deploy_rsa.enc
+scripts/relpush.sh
+.travis.yml
+

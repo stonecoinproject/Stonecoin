@@ -10,6 +10,7 @@ BITCOIN_INCLUDES=-I$(builddir) -I$(builddir)/obj $(BOOST_CPPFLAGS) $(LEVELDB_CPP
 
 BITCOIN_INCLUDES += -I$(srcdir)/secp256k1/include
 BITCOIN_INCLUDES += -I$(srcdir)/univalue/include
+BITCOIN_INCLUDES += -I$(srcdir)
 
 LIBBITCOIN_SERVER=libbitcoin_server.a
 LIBBITCOIN_WALLET=libbitcoin_wallet.a
@@ -30,24 +31,24 @@ $(LIBUNIVALUE): $(wildcard univalue/lib/*) $(wildcard univalue/include/*)
 # Make is not made aware of per-object dependencies to avoid limiting building parallelization
 # But to build the less dependent modules first, we manually select their order here:
 EXTRA_LIBRARIES += \
-  crypto/libbitcoin_crypto.a \
-  libbitcoin_util.a \
-  libbitcoin_common.a \
-  libbitcoin_server.a \
-  libbitcoin_cli.a
+  $(LIBBITCOIN_CRYPTO) \
+  $(LIBBITCOIN_UTIL) \
+  $(LIBBITCOIN_COMMON) \
+  $(LIBBITCOIN_SERVER) \
+  $(LIBBITCOIN_CLI)
 if ENABLE_WALLET
-BITCOIN_INCLUDES += $(BDB_CPPFLAGS)
-EXTRA_LIBRARIES += libbitcoin_wallet.a
+  BITCOIN_INCLUDES += $(BDB_CPPFLAGS)
+  EXTRA_LIBRARIES += libbitcoin_wallet.a
 endif
 if ENABLE_ZMQ
-EXTRA_LIBRARIES += libbitcoin_zmq.a
+  EXTRA_LIBRARIES += libbitcoin_zmq.a
 endif
 
 if BUILD_BITCOIN_LIBS
-lib_LTLIBRARIES = libbitcoinconsensus.la
-LIBBITCOIN_CONSENSUS=libbitcoinconsensus.la
+  lib_LTLIBRARIES = libbitcoinconsensus.la
+  LIBBITCOIN_CONSENSUS=libbitcoinconsensus.la
 else
-LIBBITCOIN_CONSENSUS=
+  LIBBITCOIN_CONSENSUS=
 endif
 
 bin_PROGRAMS =
@@ -55,15 +56,15 @@ TESTS =
 BENCHMARKS =
 
 if BUILD_BITCOIND
-  bin_PROGRAMS += stonecoind
+  bin_PROGRAMS += stoned
 endif
 
 if BUILD_BITCOIN_UTILS
-  bin_PROGRAMS += stonecoin-cli stonecoin-tx
+  bin_PROGRAMS += stone-cli stone-tx
 endif
 
 .PHONY: FORCE check-symbols check-security
-# stonecoin core #
+# stone core #
 BITCOIN_CORE_H = \
   activemasternode.h \
   addressindex.h \
@@ -86,6 +87,7 @@ BITCOIN_CORE_H = \
   coincontrol.h \
   coins.h \
   compat.h \
+  FounderPayment.h \
   compat/byteswap.h \
   compat/endian.h \
   compat/sanity.h \
@@ -107,6 +109,8 @@ BITCOIN_CORE_H = \
   governance-votedb.h \
   flat-database.h \
   hash.h \
+  hashSelection.h \
+  trihash.h \
   httprpc.h \
   httpserver.h \
   init.h \
@@ -117,6 +121,7 @@ BITCOIN_CORE_H = \
   dbwrapper.h \
   limitedmap.h \
   main.h \
+  masternode-level.h \
   masternode.h \
   masternode-payments.h \
   masternode-sync.h \
@@ -191,7 +196,7 @@ obj/build.h: FORCE
 	  $(abs_top_srcdir)
 libbitcoin_util_a-clientversion.$(OBJEXT): obj/build.h
 
-# server: shared between stonecoind and stonecoin-qt
+# server: shared between stoned and stone-qt
 libbitcoin_server_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(MINIUPNPC_CPPFLAGS) $(EVENT_CFLAGS) $(EVENT_PTHREADS_CFLAGS)
 libbitcoin_server_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 libbitcoin_server_a_SOURCES = \
@@ -210,6 +215,7 @@ libbitcoin_server_a_SOURCES = \
   governance-vote.cpp \
   governance-votedb.cpp \
   main.cpp \
+  FounderPayment.cpp \
   merkleblock.cpp \
   miner.cpp \
   net.cpp \
@@ -249,7 +255,7 @@ libbitcoin_zmq_a_SOURCES = \
 endif
 
 
-# wallet: shared between stonecoind and stonecoin-qt, but only linked
+# wallet: shared between stoned and stone-qt, but only linked
 # when wallet enabled
 libbitcoin_wallet_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
 libbitcoin_wallet_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
@@ -259,6 +265,7 @@ libbitcoin_wallet_a_SOURCES = \
   dsnotificationinterface.cpp \
   darksend-relay.cpp \
   instantx.cpp \
+  masternode-level.cpp \
   masternode.cpp \
   masternode-payments.cpp \
   masternode-sync.cpp \
@@ -279,6 +286,10 @@ libbitcoin_wallet_a_SOURCES = \
 crypto_libbitcoin_crypto_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_CONFIG_INCLUDES) $(PIC_FLAGS)
 crypto_libbitcoin_crypto_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS) $(PIC_FLAGS)
 crypto_libbitcoin_crypto_a_SOURCES = \
+  crypto/aes.cpp \
+  crypto/aes.h \
+  crypto/chacha20.h \
+  crypto/chacha20.cpp \
   crypto/common.h \
   crypto/hmac_sha256.cpp \
   crypto/hmac_sha256.h \
@@ -297,7 +308,16 @@ crypto_libbitcoin_crypto_a_SOURCES = \
   crypto/shavite.c \
   crypto/simd.c \
   crypto/skein.c \
+  crypto/haval.c \
   crypto/neoscrypt.c \
+  crypto/sph_hamsi.c \
+  crypto/sph_hamsi_helper.c \
+  crypto/sph_fugue.c \
+  crypto/sph_shabal.c \
+  crypto/sph_whirlpool.c \
+  crypto/sph_sha2.c \
+  crypto/sph_sha512.c \
+  crypto/ctaes/ctaes.c \
   crypto/neoscrypt.h \
   crypto/ripemd160.h \
   crypto/sha1.cpp \
@@ -316,11 +336,18 @@ crypto_libbitcoin_crypto_a_SOURCES = \
   crypto/sph_shavite.h \
   crypto/sph_simd.h \
   crypto/sph_skein.h \
+  crypto/sph_hamsi.h \
+  crypto/sph_fugue.h \
+  crypto/sph_shabal.h \
+  crypto/sph_whirlpool.h \
+  crypto/sph_sha2.h \
+  crypto/sph_haval.h \
   crypto/sph_types.h \
+  crypto/ctaes/ctaes.h \
   crypto/sha512.cpp \
   crypto/sha512.h
 
-# common: shared between stonecoind, and stonecoin-qt and non-server tools
+# common: shared between stoned, and stone-qt and non-server tools
 libbitcoin_common_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
 libbitcoin_common_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 libbitcoin_common_a_SOURCES = \
@@ -334,6 +361,8 @@ libbitcoin_common_a_SOURCES = \
   core_read.cpp \
   core_write.cpp \
   hash.cpp \
+  trihash.cpp \
+  hashSelection.cpp \
   key.cpp \
   keystore.cpp \
   netbase.cpp \
@@ -377,7 +406,7 @@ if GLIBC_BACK_COMPAT
 libbitcoin_util_a_SOURCES += compat/glibc_compat.cpp
 endif
 
-# cli: shared between stonecoin-cli and stonecoin-qt
+# cli: shared between stone-cli and stone-qt
 libbitcoin_cli_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
 libbitcoin_cli_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 libbitcoin_cli_a_SOURCES = \
@@ -388,16 +417,16 @@ nodist_libbitcoin_util_a_SOURCES = $(srcdir)/obj/build.h
 #
 
 # bitcoind binary #
-stonecoind_SOURCES = stonecoind.cpp
-stonecoind_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
-stonecoind_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
-stonecoind_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+stoned_SOURCES = stoned.cpp
+stoned_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
+stoned_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+stoned_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
 
 if TARGET_WINDOWS
-stonecoind_SOURCES += stonecoind-res.rc
+stoned_SOURCES += stoned-res.rc
 endif
 
-stonecoind_LDADD = \
+stoned_LDADD = \
   $(LIBBITCOIN_SERVER) \
   $(LIBBITCOIN_COMMON) \
   $(LIBUNIVALUE) \
@@ -408,50 +437,50 @@ stonecoind_LDADD = \
   $(LIBSECP256K1)
 
 if ENABLE_ZMQ
-stonecoind_LDADD += $(LIBBITCOIN_ZMQ) $(ZMQ_LIBS)
+stoned_LDADD += $(LIBBITCOIN_ZMQ) $(ZMQ_LIBS)
 endif
 
 if ENABLE_WALLET
-stonecoind_LDADD += libbitcoin_wallet.a
+stoned_LDADD += libbitcoin_wallet.a
 endif
 
-stonecoind_LDADD += $(BOOST_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS)
+stoned_LDADD += $(BOOST_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS)
 
-# stonecoin-cli binary #
-stonecoin_cli_SOURCES = stonecoin-cli.cpp
-stonecoin_cli_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(EVENT_CFLAGS)
-stonecoin_cli_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
-stonecoin_cli_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+# stone-cli binary #
+stone_cli_SOURCES = stone-cli.cpp
+stone_cli_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(EVENT_CFLAGS)
+stone_cli_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+stone_cli_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
 
 if TARGET_WINDOWS
-stonecoin_cli_SOURCES += stonecoin-cli-res.rc
+stone_cli_SOURCES += stone-cli-res.rc
 endif
 
-stonecoin_cli_LDADD = \
+stone_cli_LDADD = \
   $(LIBBITCOIN_CLI) \
   $(LIBUNIVALUE) \
   $(LIBBITCOIN_UTIL)
-stonecoin_cli_LDADD += $(BOOST_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(EVENT_LIBS)
+stone_cli_LDADD += $(BOOST_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(EVENT_LIBS)
 #
 
-# stonecoin-tx binary #
-stonecoin_tx_SOURCES = stonecoin-tx.cpp
-stonecoin_tx_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
-stonecoin_tx_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
-stonecoin_tx_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+# stone-tx binary #
+stone_tx_SOURCES = stone-tx.cpp
+stone_tx_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
+stone_tx_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+stone_tx_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
 
 if TARGET_WINDOWS
-stonecoin_tx_SOURCES += stonecoin-tx-res.rc
+stone_tx_SOURCES += stone-tx-res.rc
 endif
 
-stonecoin_tx_LDADD = \
+stone_tx_LDADD = \
   $(LIBUNIVALUE) \
   $(LIBBITCOIN_COMMON) \
   $(LIBBITCOIN_UTIL) \
   $(LIBBITCOIN_CRYPTO) \
   $(LIBSECP256K1)
 
-stonecoin_tx_LDADD += $(BOOST_LIBS) $(CRYPTO_LIBS)
+stone_tx_LDADD += $(BOOST_LIBS) $(CRYPTO_LIBS)
 #
 
 # bitcoinconsensus library #
@@ -484,7 +513,14 @@ libbitcoinconsensus_la_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 endif
 #
 
-CLEANFILES = leveldb/libleveldb.a leveldb/libmemenv.a
+CTAES_DIST =  crypto/ctaes/bench.c
+CTAES_DIST += crypto/ctaes/ctaes.c
+CTAES_DIST += crypto/ctaes/ctaes.h
+CTAES_DIST += crypto/ctaes/README.md
+CTAES_DIST += crypto/ctaes/test.c
+
+CLEANFILES = $(EXTRA_LIBRARIES)
+CLEANFILES += leveldb/libleveldb.a leveldb/libmemenv.a
 CLEANFILES += *.gcda *.gcno
 CLEANFILES += compat/*.gcda compat/*.gcno
 CLEANFILES += consensus/*.gcda consensus/*.gcno
@@ -500,7 +536,10 @@ CLEANFILES += zmq/*.gcda zmq/*.gcno
 
 DISTCLEANFILES = obj/build.h
 
-EXTRA_DIST = leveldb
+EXTRA_DIST = $(CTAES_DIST)
+EXTRA_DIST += leveldb
+EXTRA_DIST += crypto/haval_helper.c
+EXTRA_DIST += crypto/md_helper.c
 
 clean-local:
 	-$(MAKE) -C leveldb clean
@@ -531,7 +570,7 @@ endif
 
 %.pb.cc %.pb.h: %.proto
 	@test -f $(PROTOC)
-	$(AM_V_GEN) $(PROTOC) --cpp_out=$(@D) --proto_path=$(abspath $(<D) $<)
+	$(AM_V_GEN) $(PROTOC) --cpp_out=$(@D) --proto_path=$(<D) $<
 
 if EMBEDDED_LEVELDB
 include Makefile.leveldb.include

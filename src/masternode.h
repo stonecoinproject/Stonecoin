@@ -1,5 +1,5 @@
 // Copyright (c) 2014-2017 The Dash Core developers
-// Copyright (c) 2017-2018 The StoneCoin Core developers
+// Copyright (c) 2017-2018 The Stone Core developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -11,6 +11,7 @@
 #include "net.h"
 #include "spork.h"
 #include "timedata.h"
+#include "masternode-level.h"
 
 class CMasternode;
 class CMasternodeBroadcast;
@@ -24,6 +25,7 @@ static const int MASTERNODE_WATCHDOG_MAX_SECONDS        = 120 * 60;
 static const int MASTERNODE_NEW_START_REQUIRED_SECONDS  = 180 * 60;
 
 static const int MASTERNODE_POSE_BAN_MAX_SCORE          = 5;
+static const CAmount MN_COLLATERAL                          = 1500;
 //
 // The Masternode Ping Class : Contains a different serialize method for sending pings from masternodes throughout the network
 //
@@ -135,7 +137,7 @@ struct masternode_info_t
 };
 
 //
-// The Masternode Class. For managing the Darksend process. It contains the input of the 1500STONE, signature to prove
+// The Masternode Class. For managing the Darksend process. It contains the input of the 5000 STONE, signature to prove
 // it's the one who own that ip address and code for calculating the payment election.
 //
 class CMasternode

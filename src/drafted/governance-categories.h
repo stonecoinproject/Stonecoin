@@ -4,22 +4,22 @@
 
 	* means the category has an associated class
 	
-	CStoneCoinNetwork: STONECOIN NETWORK (ROOT)
+	CProtonNetwork: STONE NETWORK (ROOT)
 	has:
 		vector<CNetworkVariable> vecNetworkVariables;
-		vector<CStoneCoinProject> vecProjects;
+		vector<CProtonProject> vecProjects;
 		vector<CGovernanceObject> vecProposals;
 		vector<CBudgetContract> vecContracts;
 		vector<CBudgetUsers> vecUsers;
 
-	CStoneCoinProject:
+	CProtonProject:
 	has:
 		name
 		employees
 
 */
 
-	// STONECOIN NETWORK (ROOT)
+	// STONE NETWORK (ROOT)
 	// 	-> NETWORK VARIABLE
 	// 		-> switch, setting
 	// 	-> CATEGORIES

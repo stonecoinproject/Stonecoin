@@ -1,0 +1,20 @@
+<!DOCTYPE RCC><RCC version="1.0">
+    <qresource prefix="/translations">
+        <file alias="bg">locale/stone_bg.qm</file>
+        <file alias="de">locale/stone_de.qm</file>
+        <file alias="en">locale/stone_en.qm</file>
+        <file alias="es">locale/stone_es.qm</file>
+        <file alias="fi">locale/stone_fi.qm</file>
+        <file alias="fr">locale/stone_fr.qm</file>
+        <file alias="it">locale/stone_it.qm</file>
+        <file alias="ja">locale/stone_ja.qm</file>
+        <file alias="pl">locale/stone_pl.qm</file>
+        <file alias="pt">locale/stone_pt.qm</file>
+        <file alias="ru">locale/stone_ru.qm</file>
+        <file alias="sk">locale/stone_sk.qm</file>
+        <file alias="sv">locale/stone_sv.qm</file>
+        <file alias="vi">locale/stone_vi.qm</file>
+        <file alias="zh_CN">locale/stone_zh_CN.qm</file>
+        <file alias="zh_TW">locale/stone_zh_TW.qm</file>
+    </qresource>
+</RCC>
