@@ -62,7 +62,7 @@ env:
 # Linux stoned
      - HOST=x86_64-pc-linux-gnu PLATFORM="linux-no-qt" PPA="ppa:bitcoin/bitcoin" PACKAGES="g++-multilib bc python3-zmq" DEP_OPTS="NO_QT=1" RUN_TESTS=false GOAL="install" BITCOIN_CONFIG="--enable-zmq --enable-glibc-back-compat --enable-reduce-exports LDFLAGS=-static-libstdc++" USE_SHELL="/bin/dash" PYZMQ=true
 # No wallet
-     - HOST=x86_64-pc-linux-gnu PLATFORM="linux-no-wallet" PPA="ppa:bitcoin/bitcoin" PACKAGES="python3 g++-multilib python3-zmq bc faketime build-essential" DEP_OPTS="NO_WALLET=1" RUN_TESTS=false GOAL="install" BITCOIN_CONFIG="--disable-wallet --enable-glibc-back-compat --enable-reduce-exports"
+#     - HOST=x86_64-pc-linux-gnu PLATFORM="linux-no-wallet" PPA="ppa:bitcoin/bitcoin" PACKAGES="python3 g++-multilib python3-zmq bc faketime build-essential" DEP_OPTS="NO_WALLET=1" RUN_TESTS=false GOAL="install" BITCOIN_CONFIG="--disable-wallet --enable-glibc-back-compat --enable-reduce-exports"
 # Cross-Mac
 #    - HOST=x86_64-apple-darwin11 PLATFORM="osx" USES=compiler:c++14-lang PPA="ppa:bitcoin/bitcoin" PACKAGES="curl clang llvm g++-8 gcc-8 git-core pkg-config autoconf libtool automake faketime bsdmainutils cmake libcap-dev libz-dev libbz2-dev ca-certificates python" BITCOIN_CONFIG="--enable-reduce-exports --disable-bench --disable-gui-tests" OSX_SDK=10.9 GOAL="deploy"
      - HOST=x86_64-apple-darwin11 PLATFORM="osx" USES=compiler:c++14-lang PPA="ppa:bitcoin/bitcoin" PACKAGES="curl swift gcc-9 g++-9 git-core pkg-config faketime cmake imagemagick libcap-dev librsvg2-bin libz-dev libbz2-dev libtiff-tools python-dev" BITCOIN_CONFIG="--enable-gui --enable-reduce-exports --disable-gui-tests --disable-bench" OSX_SDK=10.9 GOAL="deploy" CC=/usr/local/opt/llvm/bin/clang CXX=/usr/local/opt/llvm/bin/clang++
@@ -138,7 +138,7 @@ after_script:
 - if [ -e "./build/$RNAME.tar.gz" ]; then cp ./build/$RNAME.tar.gz stone-$HOST-$PLATFORM.tar.gz;
   /home/travis/build/CryptoDragonLady/Stonecoin/scripts/relpush.sh stone-$HOST-$PLATFORM.tar.gz; export FRNAME=stone-$HOST-$PLATFORM.tar.gz;
   ssh -o StrictHostKeyChecking=no stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/relmove-s.sh stone-$HOST-$PLATFORM.tar.gz $GITCOM"; fi
-- if [ -e "/bin/stone-qt.exe" ]; then
+- if [ -e "/bin/stoned"]; then
   cp /bin/stone* /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST; 
   cp /bin/libbitcoinconsensus-0.dll /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST/; 
   export CCD=`pwd`;
@@ -150,7 +150,7 @@ after_script:
   cp /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST-$PLATFORM.tar.gz /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST-$PLATFORM-$GITCOM.tar.gz;
   /home/travis/build/CryptoDragonLady/Stonecoin/scripts/relpush.sh /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST-$PLATFORM-$GITCOM.tar.gz;
   ssh -o StrictHostKeyChecking=no stone@88.198.86.0 "/var/www/files.worxcoin.io/htdocs/relmove-s.sh stone-$HOST-$PLATFORM-$GITCOM.tar.gz $GITCOM"; exit 0;
-  fi
+  fi 
 - if [ -e "./build/Stone-Core.dmg" ]; then
   cp ./build/Stone* /home/travis/build/CryptoDragonLady/Stonecoin/build/stone-$HOST; 
   export CCD=`pwd`;
