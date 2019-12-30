@@ -655,7 +655,7 @@ bool CMasternodeBroadcast::CheckOutpoint(int& nDos)
         }
         int height = chainActive.Height();
         if(!isValidMasternode(coins.vout[vin.prevout.n].nValue, height)) {
-            LogPrint("masternode", "CMasternodeBroadcast::CheckOutpoint -- Masternode UTXO should have at least %"PRId64" STONE, masternode=%s\n", getMinimumCollateral(height), vin.prevout.ToStringShort());
+            LogPrint("masternode", "CMasternodeBroadcast::CheckOutpoint -- Masternode UTXO should have at least %" PRId64 " STONE, masternode=%s\n", getMinimumCollateral(height), vin.prevout.ToStringShort());
             return false;
         }
 

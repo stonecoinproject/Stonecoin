@@ -5449,6 +5449,13 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
         int protonChangeBlock = LEVEL_COLLATERAL_START_HEIGHT + 1000;
         int height = chainActive.Height();
         int minVersion = height > protonChangeBlock ? MIN_PEER_PROTO_VERSION : OLD_PEER_PROTO_VERSION;
+	int spork16blockheight = SPORK_16_BLOCK_HEIGHT;
+	int spork16protoversion = SPORK_16_PROTO_VERSION;
+            // update minVersion to disconnect straggler peers after blockheight 411500
+	if (height >= spork16blockheight)
+        {
+            minVersion = spork16protoversion;
+	}
         if (pfrom->nVersion < minVersion)
         {
             // disconnect from peers older than this proto version

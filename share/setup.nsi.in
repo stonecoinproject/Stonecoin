@@ -73,12 +73,12 @@ ShowUninstDetails show
 Section -Main SEC0000
     SetOutPath $INSTDIR
     SetOverwrite on
-    File @abs_top_srcdir@/release/stone-qt.exe
+    File @abs_top_srcdir@/build/release/stone-qt.exe
     File /oname=COPYING.txt @abs_top_srcdir@/COPYING
     File /oname=readme.txt @abs_top_srcdir@/doc/README_windows.txt
     SetOutPath $INSTDIR\daemon
-    File @abs_top_srcdir@/release/stoned.exe
-    File @abs_top_srcdir@/release/stone-cli.exe
+    File @abs_top_srcdir@/build/release/stoned.exe
+    File @abs_top_srcdir@/build/release/stone-cli.exe
     SetOutPath $INSTDIR\doc
     File /r @abs_top_srcdir@/doc\*.*
     SetOutPath $INSTDIR

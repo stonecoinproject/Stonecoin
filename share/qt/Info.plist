@@ -3,7 +3,7 @@
 <plist version="0.9">
 <dict>
   <key>LSMinimumSystemVersion</key>
-  <string>10.7.0</string>
+  <string>10.8.0</string>
 
   <key>LSArchitecturePriority</key>
   <array>
@@ -17,28 +17,28 @@
   <string>APPL</string>
 
   <key>CFBundleGetInfoString</key>
-  <string>2.1.0, Copyright © 2009-2018 The Bitcoin Core developers, 2014-2018 The Stone Core developers</string>
+  <string>2.1.1.2, Copyright © 2009-2017 The Bitcoin Core developers, 2014-2017 The Dash and PIVX Core Developers, 2018-2019 The Stone Core developers</string>
 
   <key>CFBundleShortVersionString</key>
-  <string>2.1.0</string>
+  <string>2.1.1.2</string>
 
   <key>CFBundleVersion</key>
-  <string>2.1.0</string>
+  <string>2.1.1.2</string>
 
   <key>CFBundleSignature</key>
   <string>????</string>
 
   <key>CFBundleExecutable</key>
-  <string>Proton-Qt</string>
+  <string>Stone-Qt</string>
   
   <key>CFBundleName</key>
-  <string>Proton-Qt</string>
+  <string>Stone-Qt</string>
 
   <key>LSHasLocalizedDisplayName</key>
   <true/>
 
   <key>CFBundleIdentifier</key>
-  <string>org.stone.Proton-Qt</string>
+  <string>org.stone.Stone-Qt</string>
 
   <key>CFBundleURLTypes</key>
   <array>
@@ -60,7 +60,7 @@
       <key>UTTypeIdentifier</key>
       <string>org.stone.paymentrequest</string>
       <key>UTTypeDescription</key>
-      <string>Proton payment request</string>
+      <string>Stone payment request</string>
       <key>UTTypeConformsTo</key>
       <array>
         <string>public.data</string>

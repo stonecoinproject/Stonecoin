@@ -13,4 +13,4 @@ Always verify the signatures and checksums.
 
 See doc/build-*.md for instructions on building stoned,
 the intended-for-services, no-graphical-interface, reference
-implementation of Proton.
+implementation of Stone.

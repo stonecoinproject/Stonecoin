@@ -29,16 +29,16 @@
   <string>????</string>
 
   <key>CFBundleExecutable</key>
-  <string>Proton-Qt</string>
+  <string>Stone-Qt</string>
   
   <key>CFBundleName</key>
-  <string>Proton-Qt</string>
+  <string>Stone-Qt</string>
 
   <key>LSHasLocalizedDisplayName</key>
   <true/>
 
   <key>CFBundleIdentifier</key>
-  <string>org.stone.Proton-Qt</string>
+  <string>org.stone.Stone-Qt</string>
 
   <key>CFBundleURLTypes</key>
   <array>
@@ -60,7 +60,7 @@
       <key>UTTypeIdentifier</key>
       <string>org.stone.paymentrequest</string>
       <key>UTTypeDescription</key>
-      <string>Proton payment request</string>
+      <string>Stone payment request</string>
       <key>UTTypeConformsTo</key>
       <array>
         <string>public.data</string>
